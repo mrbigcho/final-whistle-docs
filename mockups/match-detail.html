@@ -1,0 +1,250 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Final Whistle — 경기 상세</title>
+<link rel="stylesheet" href="_common.css">
+<style>
+.match-info-card {
+  margin: 16px;
+  background: var(--surface2);
+  border-radius: 16px;
+  border: 1px solid var(--border);
+  overflow: hidden;
+}
+.match-round-label {
+  padding: 10px 16px;
+  background: var(--surface3);
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--on-surface-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.8px;
+  border-bottom: 1px solid var(--border);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+.match-vs-row {
+  display: flex;
+  align-items: center;
+  padding: 20px 16px;
+  gap: 8px;
+}
+.match-player-box {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+}
+.match-player-avatar {
+  width: 52px; height: 52px;
+  border-radius: 50%;
+  background: var(--surface3);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 22px;
+  border: 2px solid var(--border);
+}
+.match-player-avatar.winner-av {
+  border-color: var(--primary);
+  background: rgba(108,99,255,0.1);
+  box-shadow: 0 0 12px rgba(108,99,255,0.3);
+}
+.match-player-name {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--on-surface);
+  text-align: center;
+}
+.match-player-score {
+  font-size: 28px;
+  font-weight: 800;
+}
+.score-winner { color: var(--primary-light); }
+.score-loser { color: var(--on-surface-muted); }
+.vs-divider {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  flex-shrink: 0;
+}
+.vs-text {
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--on-surface-muted);
+  letter-spacing: 1px;
+}
+.match-status-row {
+  padding: 0 16px 14px;
+  display: flex;
+  justify-content: center;
+}
+
+/* Result report form */
+.report-form {
+  margin: 0 16px 16px;
+  background: var(--surface2);
+  border-radius: 14px;
+  border: 1px solid var(--border);
+  overflow: hidden;
+}
+.report-form-title {
+  padding: 12px 16px;
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--on-surface-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  background: var(--surface3);
+  border-bottom: 1px solid var(--border);
+}
+.report-form-body {
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+.radio-option {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 12px;
+  border-radius: 10px;
+  border: 1.5px solid var(--border);
+  cursor: pointer;
+}
+.radio-option.selected {
+  border-color: var(--primary);
+  background: rgba(108,99,255,0.08);
+}
+.radio-dot {
+  width: 18px; height: 18px;
+  border-radius: 50%;
+  border: 2px solid var(--border);
+  display: flex; align-items: center; justify-content: center;
+  flex-shrink: 0;
+}
+.radio-dot.selected { border-color: var(--primary); }
+.radio-dot.selected::after {
+  content: '';
+  width: 8px; height: 8px;
+  border-radius: 50%;
+  background: var(--primary);
+}
+.radio-label {
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--on-surface);
+}
+
+/* Reported results */
+.result-item {
+  margin: 0 16px 8px;
+  background: var(--surface2);
+  border-radius: 12px;
+  border: 1px solid var(--border);
+  padding: 12px 14px;
+}
+.result-reporter {
+  font-size: 11px;
+  color: var(--on-surface-muted);
+  margin-bottom: 6px;
+}
+.result-claim {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--on-surface);
+  margin-bottom: 8px;
+}
+.result-actions {
+  display: flex;
+  gap: 8px;
+}
+</style>
+</head>
+<body>
+<nav class="page-nav">
+  <span class="nav-title">목업:</span>
+  <a href="index.html">← 목록</a>
+  <a href="competition-detail.html">대회 상세</a>
+  <a href="bracket.html">대진표</a>
+</nav>
+
+<div class="phone-frame">
+  <div class="phone-screen">
+    <div class="app-bar">
+      <div class="app-bar-icon">←</div>
+      <span class="app-bar-title">경기 상세</span>
+    </div>
+
+    <div class="content" style="padding: 0 0 16px;">
+      <!-- Match info card -->
+      <div class="match-info-card">
+        <div class="match-round-label">
+          <span>준결승 · 매치 1</span>
+          <span class="chip progress" style="font-size:10px;">진행 중</span>
+        </div>
+        <div class="match-vs-row">
+          <div class="match-player-box">
+            <div class="match-player-avatar winner-av">👤</div>
+            <div class="match-player-name">김민준</div>
+            <div class="match-player-score score-winner">3</div>
+          </div>
+          <div class="vs-divider">
+            <div class="vs-text">VS</div>
+          </div>
+          <div class="match-player-box">
+            <div class="match-player-avatar">👤</div>
+            <div class="match-player-name">박지호</div>
+            <div class="match-player-score score-loser">1</div>
+          </div>
+        </div>
+        <div class="match-status-row">
+          <span class="chip success" style="font-size:11px;">🏆 김민준 승리</span>
+        </div>
+      </div>
+
+      <!-- Reported results -->
+      <div class="section-header">보고된 결과</div>
+      <div class="result-item">
+        <div class="result-reporter">김민준이 보고함 · 방금 전</div>
+        <div class="result-claim">김민준 승리 (3 - 1)</div>
+        <div class="result-actions">
+          <button class="btn btn-filled btn-sm" style="font-size:11px;">✓ 확인</button>
+          <button class="btn btn-danger btn-sm" style="font-size:11px;">✗ 이의 제기</button>
+        </div>
+      </div>
+
+      <!-- Report result form -->
+      <div class="section-header">결과 보고</div>
+      <div class="report-form">
+        <div class="report-form-title">승자 선택</div>
+        <div class="report-form-body">
+          <div class="radio-option selected">
+            <div class="radio-dot selected"></div>
+            <div class="radio-label">김민준 승리</div>
+          </div>
+          <div class="radio-option">
+            <div class="radio-dot"></div>
+            <div class="radio-label">박지호 승리</div>
+          </div>
+          <div>
+            <label class="input-label">스코어 (선택)</label>
+            <input class="input-field" placeholder="예: 3-1" value="3-1" style="font-size:14px;">
+          </div>
+          <button class="btn btn-filled btn-full">결과 제출</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div style="margin-top:16px; text-align:center;">
+  <p class="text-muted text-sm">match_detail_screen.dart · MatchDetailScreen</p>
+  <p class="text-muted text-xs" style="margin-top:4px">매치 정보 카드 + 보고된 결과 + 결과 보고 폼(라디오 버튼)</p>
+</div>
+</body>
+</html>

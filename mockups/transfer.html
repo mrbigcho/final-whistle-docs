@@ -1,0 +1,256 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Final Whistle — 이적 시장</title>
+<link rel="stylesheet" href="_common.css">
+<style>
+.player-drop-card {
+  display: flex;
+  align-items: center;
+  padding: 12px 16px;
+  gap: 12px;
+  border-bottom: 1px solid rgba(58,58,82,0.4);
+}
+.drop-avatar {
+  width: 44px; height: 44px;
+  border-radius: 50%;
+  background: var(--surface3);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 20px;
+  flex-shrink: 0;
+  border: 2px solid var(--border);
+}
+.drop-info { flex: 1; min-width: 0; }
+.drop-name {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--on-surface);
+  margin-bottom: 2px;
+}
+.drop-meta {
+  font-size: 11px;
+  color: var(--on-surface-muted);
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+.drop-btn {
+  width: 34px; height: 34px;
+  border-radius: 10px;
+  background: rgba(244,67,54,0.1);
+  border: 1px solid rgba(244,67,54,0.3);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 16px;
+  cursor: pointer;
+  flex-shrink: 0;
+}
+.drop-btn:hover { background: rgba(244,67,54,0.2); }
+
+.trade-card {
+  margin: 8px 16px;
+  background: var(--surface2);
+  border-radius: 14px;
+  border: 1px solid var(--border);
+  padding: 14px;
+}
+.trade-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 10px;
+}
+.trade-parties {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--on-surface);
+}
+.trade-body {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 10px;
+}
+.trade-side {
+  flex: 1;
+  background: var(--surface3);
+  border-radius: 10px;
+  padding: 10px;
+}
+.trade-side-label {
+  font-size: 10px;
+  color: var(--on-surface-muted);
+  text-transform: uppercase;
+  font-weight: 600;
+  letter-spacing: 0.5px;
+  margin-bottom: 6px;
+}
+.trade-player {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+.trade-player-name {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--on-surface);
+}
+.trade-player-ovr {
+  font-size: 11px;
+  color: var(--on-surface-muted);
+}
+.trade-arrow {
+  font-size: 20px;
+  color: var(--on-surface-muted);
+  flex-shrink: 0;
+}
+.trade-actions {
+  display: flex;
+  gap: 8px;
+}
+
+.faab-card {
+  display: flex;
+  align-items: center;
+  padding: 12px 16px;
+  gap: 12px;
+  border-bottom: 1px solid rgba(58,58,82,0.4);
+}
+.faab-info { flex: 1; }
+.faab-name {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--on-surface);
+  margin-bottom: 2px;
+}
+.faab-meta { font-size: 11px; color: var(--on-surface-muted); }
+.faab-bid-row {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 4px;
+}
+.faab-current-bid {
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--primary-light);
+}
+.faab-bid-input {
+  width: 70px;
+  background: var(--surface3);
+  border: 1.5px solid var(--border);
+  border-radius: 8px;
+  padding: 5px 8px;
+  font-size: 12px;
+  color: var(--on-surface);
+  text-align: right;
+  font-family: inherit;
+}
+</style>
+</head>
+<body>
+<nav class="page-nav">
+  <span class="nav-title">목업:</span>
+  <a href="index.html">← 목록</a>
+  <a href="league-detail.html">리그 상세</a>
+  <a href="auction.html">경매</a>
+</nav>
+
+<div class="phone-frame">
+  <div class="phone-screen">
+    <div class="app-bar">
+      <div class="app-bar-icon">←</div>
+      <span class="app-bar-title">이적 시장</span>
+    </div>
+
+    <div class="tab-bar">
+      <div class="tab active">선수 방출</div>
+      <div class="tab">트레이드</div>
+      <div class="tab">자유선수</div>
+    </div>
+
+    <div class="content" style="padding-bottom: 16px;">
+
+      <!-- Drop tab content -->
+      <div style="padding: 12px 16px 8px; font-size:12px; color:var(--on-surface-muted);">
+        내 팀 선수 (6명) · 방출 시 복구 불가
+      </div>
+
+      <div class="player-drop-card">
+        <div class="drop-avatar">⚽</div>
+        <div class="drop-info">
+          <div class="drop-name">손흥민</div>
+          <div class="drop-meta">
+            <span class="chip ovr-gold" style="background:rgba(255,193,7,0.15); color:#FFC107; font-size:10px; padding:2px 6px;">92</span>
+            <span>FW · 토트넘</span>
+          </div>
+        </div>
+        <div class="drop-btn">🗑️</div>
+      </div>
+
+      <div class="player-drop-card">
+        <div class="drop-avatar">⚽</div>
+        <div class="drop-info">
+          <div class="drop-name">황희찬</div>
+          <div class="drop-meta">
+            <span style="background:rgba(176,196,222,0.15); color:#B0C4DE; font-size:10px; padding:2px 6px; border-radius:999px; font-weight:600;">84</span>
+            <span>FW · 울버햄튼</span>
+          </div>
+        </div>
+        <div class="drop-btn">🗑️</div>
+      </div>
+
+      <div class="player-drop-card">
+        <div class="drop-avatar">⚽</div>
+        <div class="drop-info">
+          <div class="drop-name">정우영</div>
+          <div class="drop-meta">
+            <span style="background:rgba(176,196,222,0.15); color:#B0C4DE; font-size:10px; padding:2px 6px; border-radius:999px; font-weight:600;">82</span>
+            <span>MF · 프라이부르크</span>
+          </div>
+        </div>
+        <div class="drop-btn">🗑️</div>
+      </div>
+
+      <div class="player-drop-card">
+        <div class="drop-avatar">⚽</div>
+        <div class="drop-info">
+          <div class="drop-name">조현우</div>
+          <div class="drop-meta">
+            <span style="background:rgba(205,133,63,0.15); color:#CD853F; font-size:10px; padding:2px 6px; border-radius:999px; font-weight:600;">80</span>
+            <span>GK · 울산</span>
+          </div>
+        </div>
+        <div class="drop-btn">🗑️</div>
+      </div>
+
+      <div class="player-drop-card">
+        <div class="drop-avatar">⚽</div>
+        <div class="drop-info">
+          <div class="drop-name">설영우</div>
+          <div class="drop-meta">
+            <span style="background:var(--surface3); color:var(--on-surface-muted); font-size:10px; padding:2px 6px; border-radius:999px; font-weight:600;">77</span>
+            <span>DF · 울산</span>
+          </div>
+        </div>
+        <div class="drop-btn">🗑️</div>
+      </div>
+
+      <!-- Propose trade button -->
+      <div style="padding: 16px;">
+        <button class="btn btn-outlined btn-full">
+          ⇄ 트레이드 제안하기
+        </button>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<div style="margin-top:16px; text-align:center;">
+  <p class="text-muted text-sm">transfer_screen.dart · TransferScreen</p>
+  <p class="text-muted text-xs" style="margin-top:4px">TabBar(선수방출|트레이드|자유선수) · 방출 버튼 + 트레이드 제안</p>
+</div>
+</body>
+</html>

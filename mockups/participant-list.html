@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Final Whistle — 참가자 목록</title>
+<link rel="stylesheet" href="_common.css">
+<style>
+.control-panel {
+  padding: 12px 16px;
+  background: var(--surface2);
+  border-bottom: 1px solid var(--border);
+  display: flex;
+  gap: 8px;
+}
+.invite-banner {
+  margin: 12px 16px;
+  background: rgba(108,99,255,0.1);
+  border: 1px solid rgba(108,99,255,0.3);
+  border-radius: 12px;
+  padding: 12px 14px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.invite-code {
+  flex: 1;
+}
+.invite-label {
+  font-size: 10px;
+  color: var(--primary-light);
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  margin-bottom: 2px;
+}
+.invite-value {
+  font-size: 15px;
+  font-weight: 700;
+  color: var(--on-surface);
+  letter-spacing: 2px;
+  font-family: monospace;
+}
+.copy-btn {
+  width: 36px; height: 36px;
+  border-radius: 10px;
+  background: rgba(108,99,255,0.2);
+  display: flex; align-items: center; justify-content: center;
+  cursor: pointer;
+  font-size: 16px;
+}
+.participant-count {
+  padding: 8px 16px 4px;
+  font-size: 12px;
+  color: var(--on-surface-muted);
+}
+</style>
+</head>
+<body>
+<nav class="page-nav">
+  <span class="nav-title">목업:</span>
+  <a href="index.html">← 목록</a>
+  <a href="competition-detail.html">대회 상세</a>
+</nav>
+
+<div class="phone-frame">
+  <div class="phone-screen">
+    <div class="app-bar">
+      <div class="app-bar-icon">←</div>
+      <span class="app-bar-title">참가자 목록</span>
+    </div>
+
+    <!-- Creator control panel -->
+    <div class="control-panel">
+      <button class="btn btn-outlined btn-sm">📋 멤버 초대</button>
+      <button class="btn btn-outlined btn-sm">🤖 Bot 추가</button>
+    </div>
+
+    <!-- Invite code banner -->
+    <div class="invite-banner">
+      <div class="invite-code">
+        <div class="invite-label">초대 코드</div>
+        <div class="invite-value">FW-2025-OPEN</div>
+      </div>
+      <div class="copy-btn">📋</div>
+    </div>
+
+    <div class="participant-count">참가자 8명</div>
+
+    <!-- List -->
+    <div class="content" style="padding-bottom:16px;">
+      <div class="list-tile">
+        <div class="leading" style="background:rgba(255,193,7,0.15); color:#FFC107;">⭐</div>
+        <div class="tile-content">
+          <div class="tile-title">김민준</div>
+          <div class="tile-subtitle">주최자</div>
+        </div>
+      </div>
+      <div class="divider"></div>
+
+      <div class="list-tile">
+        <div class="leading">👤</div>
+        <div class="tile-content">
+          <div class="tile-title">이서준</div>
+        </div>
+      </div>
+      <div class="divider"></div>
+
+      <div class="list-tile">
+        <div class="leading">👤</div>
+        <div class="tile-content">
+          <div class="tile-title">박지호</div>
+        </div>
+      </div>
+      <div class="divider"></div>
+
+      <div class="list-tile">
+        <div class="leading">👤</div>
+        <div class="tile-content">
+          <div class="tile-title">최현우</div>
+        </div>
+      </div>
+      <div class="divider"></div>
+
+      <div class="list-tile">
+        <div class="leading">👤</div>
+        <div class="tile-content">
+          <div class="tile-title">윤성민</div>
+        </div>
+      </div>
+      <div class="divider"></div>
+
+      <div class="list-tile">
+        <div class="leading">👤</div>
+        <div class="tile-content">
+          <div class="tile-title">정우진</div>
+        </div>
+      </div>
+      <div class="divider"></div>
+
+      <div class="list-tile">
+        <div class="leading" style="background:rgba(33,150,243,0.15); color:#64B5F6;">🤖</div>
+        <div class="tile-content">
+          <div class="tile-title">Bot_1</div>
+          <div class="tile-subtitle">봇 플레이어</div>
+        </div>
+      </div>
+      <div class="divider"></div>
+
+      <div class="list-tile">
+        <div class="leading" style="background:rgba(33,150,243,0.15); color:#64B5F6;">🤖</div>
+        <div class="tile-content">
+          <div class="tile-title">Bot_2</div>
+          <div class="tile-subtitle">봇 플레이어</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div style="margin-top:16px; text-align:center;">
+  <p class="text-muted text-sm">participant_list_screen.dart · ParticipantListScreen</p>
+  <p class="text-muted text-xs" style="margin-top:4px">초대코드 배너 + 참가자 ListView(⭐주최자 / 👤일반 / 🤖Bot)</p>
+</div>
+</body>
+</html>

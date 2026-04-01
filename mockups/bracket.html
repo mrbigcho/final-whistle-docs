@@ -1,0 +1,281 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Final Whistle — 대진표</title>
+<link rel="stylesheet" href="_common.css">
+<style>
+.bracket-scroll {
+  flex: 1;
+  overflow: auto;
+  padding: 16px 12px;
+  scrollbar-width: none;
+}
+.bracket-scroll::-webkit-scrollbar { display: none; }
+.bracket-tree {
+  display: flex;
+  gap: 16px;
+  align-items: center;
+  min-width: 600px;
+}
+.bracket-round {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+  flex-shrink: 0;
+}
+.round-header {
+  font-size: 10px;
+  font-weight: 700;
+  color: var(--on-surface-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.8px;
+  text-align: center;
+  margin-bottom: 8px;
+  padding: 4px 8px;
+  background: var(--surface3);
+  border-radius: 6px;
+}
+.match-wrapper {
+  display: flex;
+  align-items: center;
+  position: relative;
+}
+.match-card {
+  width: 140px;
+  background: var(--surface2);
+  border-radius: 10px;
+  border: 1px solid var(--border);
+  overflow: hidden;
+  cursor: pointer;
+  transition: border-color 0.2s;
+  flex-shrink: 0;
+}
+.match-card:hover { border-color: var(--primary); }
+.match-player {
+  padding: 8px 10px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-size: 12px;
+  gap: 4px;
+}
+.match-player:first-child {
+  border-bottom: 1px solid var(--border);
+}
+.match-player.winner {
+  color: var(--primary-light);
+  font-weight: 600;
+  background: rgba(108,99,255,0.08);
+}
+.match-player:not(.winner) {
+  color: var(--on-surface-muted);
+}
+.match-player.tbd { color: var(--border); font-style: italic; }
+.player-name {
+  flex: 1;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.player-score {
+  font-weight: 700;
+  font-size: 13px;
+  min-width: 18px;
+  text-align: right;
+}
+.win-icon { font-size: 10px; margin-left: 2px; }
+
+/* Connector lines */
+.connector {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 16px;
+  flex-shrink: 0;
+}
+.connector-line {
+  width: 2px;
+  background: var(--border);
+  flex: 1;
+}
+.connector-h {
+  height: 2px;
+  width: 16px;
+  background: var(--border);
+}
+
+/* Round spacers for visual alignment */
+.round-qf { gap: 8px; }
+.round-sf .match-wrapper { margin: 28px 0; }
+.round-f .match-wrapper { margin: 70px 0; }
+
+/* Tab bar for format switch */
+.format-tabs {
+  display: flex;
+  background: var(--surface3);
+  border-radius: 10px;
+  margin: 12px 16px;
+  padding: 4px;
+  gap: 4px;
+  flex-shrink: 0;
+}
+.format-tab {
+  flex: 1;
+  padding: 7px;
+  text-align: center;
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--on-surface-muted);
+  border-radius: 7px;
+  cursor: pointer;
+}
+.format-tab.active {
+  background: var(--surface);
+  color: var(--on-surface);
+}
+</style>
+</head>
+<body>
+<nav class="page-nav">
+  <span class="nav-title">목업:</span>
+  <a href="index.html">← 목록</a>
+  <a href="competition-detail.html">대회 상세</a>
+  <a href="match-detail.html">경기 상세</a>
+</nav>
+
+<div class="phone-frame">
+  <div class="phone-screen">
+    <div class="app-bar">
+      <div class="app-bar-icon">←</div>
+      <span class="app-bar-title">서울 오픈 2025</span>
+    </div>
+
+    <div class="format-tabs">
+      <div class="format-tab active">싱글 엘리미네이션</div>
+      <div class="format-tab">라운드 로빈</div>
+    </div>
+
+    <!-- Bracket scroll area -->
+    <div class="bracket-scroll">
+      <div class="bracket-tree">
+
+        <!-- 8강 -->
+        <div class="bracket-round round-qf">
+          <div class="round-header">8강</div>
+          <div class="match-wrapper" style="margin-bottom:8px;">
+            <div class="match-card">
+              <div class="match-player winner">
+                <span class="player-name">🏆 김민준</span>
+                <span class="player-score">3</span>
+              </div>
+              <div class="match-player">
+                <span class="player-name">이서준</span>
+                <span class="player-score">0</span>
+              </div>
+            </div>
+          </div>
+          <div class="match-wrapper" style="margin-bottom:8px;">
+            <div class="match-card">
+              <div class="match-player winner">
+                <span class="player-name">🏆 박지호</span>
+                <span class="player-score">2</span>
+              </div>
+              <div class="match-player">
+                <span class="player-name">정우진</span>
+                <span class="player-score">1</span>
+              </div>
+            </div>
+          </div>
+          <div class="match-wrapper" style="margin-bottom:8px;">
+            <div class="match-card">
+              <div class="match-player winner">
+                <span class="player-name">🏆 최현우</span>
+                <span class="player-score">3</span>
+              </div>
+              <div class="match-player">
+                <span class="player-name">강도현</span>
+                <span class="player-score">2</span>
+              </div>
+            </div>
+          </div>
+          <div class="match-wrapper">
+            <div class="match-card">
+              <div class="match-player winner">
+                <span class="player-name">🏆 윤성민</span>
+                <span class="player-score">3</span>
+              </div>
+              <div class="match-player">
+                <span class="player-name">임재원</span>
+                <span class="player-score">1</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div style="display:flex;flex-direction:column;justify-content:space-around;height:240px;width:16px;">
+          <div style="height:2px;background:var(--border);width:16px;margin-top:18px;"></div>
+          <div style="height:2px;background:var(--border);width:16px;margin-bottom:18px;"></div>
+        </div>
+
+        <!-- 준결승 -->
+        <div class="bracket-round" style="gap:0;">
+          <div class="round-header">준결승</div>
+          <div class="match-wrapper" style="margin-bottom: 40px;">
+            <div class="match-card">
+              <div class="match-player winner">
+                <span class="player-name">🏆 김민준</span>
+                <span class="player-score">3</span>
+              </div>
+              <div class="match-player">
+                <span class="player-name">박지호</span>
+                <span class="player-score">1</span>
+              </div>
+            </div>
+          </div>
+          <div class="match-wrapper">
+            <div class="match-card">
+              <div class="match-player winner">
+                <span class="player-name">🏆 윤성민</span>
+                <span class="player-score">2</span>
+              </div>
+              <div class="match-player">
+                <span class="player-name">최현우</span>
+                <span class="player-score">0</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div style="display:flex;flex-direction:column;justify-content:center;height:200px;width:16px;margin-top:18px;">
+          <div style="height:2px;background:var(--border);width:16px;"></div>
+        </div>
+
+        <!-- 결승 -->
+        <div class="bracket-round">
+          <div class="round-header">결승</div>
+          <div class="match-wrapper" style="margin-top:40px;">
+            <div class="match-card" style="border-color: rgba(108,99,255,0.5);">
+              <div class="match-player tbd">
+                <span class="player-name">김민준</span>
+                <span class="player-score" style="color:var(--border);">-</span>
+              </div>
+              <div class="match-player tbd">
+                <span class="player-name">윤성민</span>
+                <span class="player-score" style="color:var(--border);">-</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div style="margin-top:16px; text-align:center;">
+  <p class="text-muted text-sm">bracket_screen.dart · BracketScreen</p>
+  <p class="text-muted text-xs" style="margin-top:4px">InteractiveViewer + 라운드별 MatchCard + 커넥터 라인</p>
+</div>
+</body>
+</html>

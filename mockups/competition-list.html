@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Final Whistle — 대회 목록</title>
+<link rel="stylesheet" href="_common.css">
+<style>
+.comp-card {
+  margin: 4px 16px;
+  background: var(--surface2);
+  border-radius: 14px;
+  padding: 14px 16px;
+  border: 1px solid var(--border);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  transition: border-color 0.2s;
+}
+.comp-card:hover { border-color: var(--primary); }
+.comp-card-icon {
+  width: 44px; height: 44px;
+  border-radius: 12px;
+  background: rgba(108,99,255,0.15);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 22px;
+  flex-shrink: 0;
+}
+.comp-card-body { flex: 1; min-width: 0; }
+.comp-card-name {
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--on-surface);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  margin-bottom: 4px;
+}
+.comp-card-meta {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 11px;
+  color: var(--on-surface-muted);
+}
+.meta-dot { color: var(--border); }
+</style>
+</head>
+<body>
+<nav class="page-nav">
+  <span class="nav-title">목업:</span>
+  <a href="index.html">← 목록</a>
+  <a href="competition-detail.html">대회 상세</a>
+  <a href="bracket.html">대진표</a>
+  <a href="participant-list.html">참가자</a>
+</nav>
+
+<div class="phone-frame">
+  <div class="phone-screen">
+    <div class="app-bar">
+      <span class="app-bar-title">대회</span>
+    </div>
+
+    <!-- Filter chips -->
+    <div class="filter-chips">
+      <div class="filter-chip active">전체</div>
+      <div class="filter-chip">모집 중</div>
+      <div class="filter-chip">진행 중</div>
+      <div class="filter-chip">완료</div>
+    </div>
+
+    <div class="content" style="padding-bottom: 100px;">
+
+      <div class="comp-card">
+        <div class="comp-card-icon">🏆</div>
+        <div class="comp-card-body">
+          <div class="comp-card-name">서울 오픈 2025</div>
+          <div class="comp-card-meta">
+            <span class="chip progress" style="font-size:10px; padding:2px 8px;">진행 중</span>
+            <span class="meta-dot">·</span>
+            <span>👥 8명</span>
+            <span class="meta-dot">·</span>
+            <span>📅 3/15</span>
+          </div>
+        </div>
+        <span style="color:var(--on-surface-muted); font-size:18px;">›</span>
+      </div>
+
+      <div class="comp-card" style="margin-top:8px">
+        <div class="comp-card-icon">⚡</div>
+        <div class="comp-card-body">
+          <div class="comp-card-name">스프링 인비테이셔널</div>
+          <div class="comp-card-meta">
+            <span class="chip open" style="font-size:10px; padding:2px 8px;">모집 중</span>
+            <span class="meta-dot">·</span>
+            <span>👥 4/16명</span>
+            <span class="meta-dot">·</span>
+            <span>📅 4/1</span>
+          </div>
+        </div>
+        <span style="color:var(--on-surface-muted); font-size:18px;">›</span>
+      </div>
+
+      <div class="comp-card" style="margin-top:8px">
+        <div class="comp-card-icon">🎯</div>
+        <div class="comp-card-body">
+          <div class="comp-card-name">FC 스카이 내부리그</div>
+          <div class="comp-card-meta">
+            <span class="chip open" style="font-size:10px; padding:2px 8px;">모집 중</span>
+            <span class="meta-dot">·</span>
+            <span>👥 6/8명</span>
+            <span class="meta-dot">·</span>
+            <span>📅 4/5</span>
+          </div>
+        </div>
+        <span style="color:var(--on-surface-muted); font-size:18px;">›</span>
+      </div>
+
+      <div class="comp-card" style="margin-top:8px">
+        <div class="comp-card-icon">🏅</div>
+        <div class="comp-card-body">
+          <div class="comp-card-name">윈터 챔피언십</div>
+          <div class="comp-card-meta">
+            <span class="chip done" style="font-size:10px; padding:2px 8px;">완료</span>
+            <span class="meta-dot">·</span>
+            <span>👥 16명</span>
+            <span class="meta-dot">·</span>
+            <span>📅 2/10</span>
+          </div>
+        </div>
+        <span style="color:var(--on-surface-muted); font-size:18px;">›</span>
+      </div>
+
+      <div class="comp-card" style="margin-top:8px">
+        <div class="comp-card-icon">🥇</div>
+        <div class="comp-card-body">
+          <div class="comp-card-name">친선 매치 토너먼트</div>
+          <div class="comp-card-meta">
+            <span class="chip done" style="font-size:10px; padding:2px 8px;">완료</span>
+            <span class="meta-dot">·</span>
+            <span>👥 8명</span>
+            <span class="meta-dot">·</span>
+            <span>📅 1/20</span>
+          </div>
+        </div>
+        <span style="color:var(--on-surface-muted); font-size:18px;">›</span>
+      </div>
+    </div>
+
+    <!-- FAB -->
+    <div class="fab-extended" style="bottom:88px;">
+      <span>＋</span>
+      <span>대회 만들기</span>
+    </div>
+
+    <div class="bottom-nav">
+      <div class="bottom-nav-item">
+        <span class="nav-icon">🏠</span>
+        <span class="nav-label">홈</span>
+      </div>
+      <div class="bottom-nav-item active">
+        <span class="nav-icon">🏆</span>
+        <span class="nav-label">대회</span>
+      </div>
+      <div class="bottom-nav-item">
+        <span class="nav-icon">👥</span>
+        <span class="nav-label">클럽</span>
+      </div>
+      <div class="bottom-nav-item">
+        <span class="nav-icon">👤</span>
+        <span class="nav-label">MY</span>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div style="margin-top:16px; text-align:center;">
+  <p class="text-muted text-sm">competition_list_screen.dart · CompetitionListScreen</p>
+  <p class="text-muted text-xs" style="margin-top:4px">FilterChip(전체/모집중/진행중/완료) + ListView + FAB(대회 만들기)</p>
+</div>
+</body>
+</html>

@@ -1,0 +1,241 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Final Whistle — UI 목업 목록</title>
+<link rel="stylesheet" href="_common.css">
+<style>
+body { padding: 40px 20px; }
+.hero {
+  text-align: center;
+  margin-bottom: 48px;
+}
+.hero h1 {
+  font-size: 36px;
+  font-weight: 800;
+  background: linear-gradient(135deg, #6C63FF, #9D97FF);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  margin-bottom: 8px;
+}
+.hero p { color: #8E8EA0; font-size: 15px; }
+
+.grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+  gap: 16px;
+  max-width: 960px;
+  width: 100%;
+}
+.mock-card {
+  background: #1E1E2E;
+  border: 1.5px solid #3A3A52;
+  border-radius: 16px;
+  overflow: hidden;
+  text-decoration: none;
+  transition: all 0.2s;
+  display: flex;
+  flex-direction: column;
+}
+.mock-card:hover {
+  border-color: #6C63FF;
+  transform: translateY(-2px);
+  box-shadow: 0 8px 24px rgba(108,99,255,0.25);
+}
+.mock-preview {
+  height: 100px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 44px;
+  background: linear-gradient(135deg, #1a1a2e, #2a2a3e);
+}
+.mock-info {
+  padding: 14px 16px;
+  flex: 1;
+}
+.mock-title {
+  font-size: 15px;
+  font-weight: 700;
+  color: #E2E2F0;
+  margin-bottom: 4px;
+}
+.mock-desc {
+  font-size: 12px;
+  color: #8E8EA0;
+  line-height: 1.5;
+}
+.mock-path {
+  font-size: 10px;
+  color: #6C63FF;
+  margin-top: 6px;
+  font-family: monospace;
+}
+
+.section-title {
+  font-size: 12px;
+  font-weight: 600;
+  color: #8E8EA0;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  margin: 32px 0 12px;
+  max-width: 960px;
+  width: 100%;
+}
+.badge {
+  display: inline-block;
+  padding: 2px 8px;
+  border-radius: 999px;
+  font-size: 10px;
+  font-weight: 600;
+  background: rgba(108,99,255,0.2);
+  color: #9D97FF;
+  margin-left: 6px;
+  vertical-align: middle;
+}
+</style>
+</head>
+<body>
+<div class="hero">
+  <h1>⚽ Final Whistle</h1>
+  <p>UI 목업 — 개발자 참고용 화면 명세서</p>
+</div>
+
+<p class="section-title">인증</p>
+<div class="grid">
+  <a href="login.html" class="mock-card">
+    <div class="mock-preview">🔐</div>
+    <div class="mock-info">
+      <div class="mock-title">로그인 / 회원가입</div>
+      <div class="mock-desc">이메일·비밀번호 로그인 및 회원가입 탭 화면</div>
+      <div class="mock-path">auth_screen.dart</div>
+    </div>
+  </a>
+</div>
+
+<p class="section-title">메인 쉘</p>
+<div class="grid">
+  <a href="home.html" class="mock-card">
+    <div class="mock-preview">🏠</div>
+    <div class="mock-info">
+      <div class="mock-title">홈</div>
+      <div class="mock-desc">빠른 동작, 참가 중인 대회, 클럽 소식</div>
+      <div class="mock-path">home_screen.dart</div>
+    </div>
+  </a>
+  <a href="profile.html" class="mock-card">
+    <div class="mock-preview">👤</div>
+    <div class="mock-info">
+      <div class="mock-title">MY 프로필</div>
+      <div class="mock-desc">사용자 정보, 프로필 수정, 로그아웃</div>
+      <div class="mock-path">my_screen.dart</div>
+    </div>
+  </a>
+  <a href="edit-profile.html" class="mock-card">
+    <div class="mock-preview">✏️</div>
+    <div class="mock-info">
+      <div class="mock-title">프로필 수정</div>
+      <div class="mock-desc">닉네임, 표시 이름, 자기소개 편집</div>
+      <div class="mock-path">edit_profile_screen.dart</div>
+    </div>
+  </a>
+</div>
+
+<p class="section-title">대회</p>
+<div class="grid">
+  <a href="competition-list.html" class="mock-card">
+    <div class="mock-preview">🏆</div>
+    <div class="mock-info">
+      <div class="mock-title">대회 목록</div>
+      <div class="mock-desc">대회 필터, 목록, 대회 만들기</div>
+      <div class="mock-path">competition_list_screen.dart</div>
+    </div>
+  </a>
+  <a href="competition-detail.html" class="mock-card">
+    <div class="mock-preview">📊</div>
+    <div class="mock-info">
+      <div class="mock-title">대회 상세</div>
+      <div class="mock-desc">대진표 탭, 순위표 탭, 참가/스테이지 관리</div>
+      <div class="mock-path">competition_detail_screen.dart</div>
+    </div>
+  </a>
+  <a href="bracket.html" class="mock-card">
+    <div class="mock-preview">🎯</div>
+    <div class="mock-info">
+      <div class="mock-title">대진표</div>
+      <div class="mock-desc">토너먼트 트리, 라운드로빈 일정</div>
+      <div class="mock-path">bracket_screen.dart</div>
+    </div>
+  </a>
+  <a href="participant-list.html" class="mock-card">
+    <div class="mock-preview">👥</div>
+    <div class="mock-info">
+      <div class="mock-title">참가자 목록</div>
+      <div class="mock-desc">참가자 전체보기, 초대 코드, Bot 추가</div>
+      <div class="mock-path">participant_list_screen.dart</div>
+    </div>
+  </a>
+  <a href="match-detail.html" class="mock-card">
+    <div class="mock-preview">⚔️</div>
+    <div class="mock-info">
+      <div class="mock-title">경기 상세</div>
+      <div class="mock-desc">경기 결과 보고, 승패 확인, 분쟁 처리</div>
+      <div class="mock-path">match_detail_screen.dart</div>
+    </div>
+  </a>
+</div>
+
+<p class="section-title">클럽</p>
+<div class="grid">
+  <a href="club-list.html" class="mock-card">
+    <div class="mock-preview">🏟️</div>
+    <div class="mock-info">
+      <div class="mock-title">클럽 목록</div>
+      <div class="mock-desc">가입 클럽 목록, 클럽 만들기, ID로 찾기</div>
+      <div class="mock-path">club_list_screen.dart</div>
+    </div>
+  </a>
+  <a href="club-detail.html" class="mock-card">
+    <div class="mock-preview">🛡️</div>
+    <div class="mock-info">
+      <div class="mock-title">클럽 상세</div>
+      <div class="mock-desc">대회·리그·멤버 탭, 클럽 정보 편집</div>
+      <div class="mock-path">club_detail_screen.dart</div>
+    </div>
+  </a>
+</div>
+
+<p class="section-title">판타지 리그</p>
+<div class="grid">
+  <a href="league-detail.html" class="mock-card">
+    <div class="mock-preview">🌟</div>
+    <div class="mock-info">
+      <div class="mock-title">리그 상세</div>
+      <div class="mock-desc">선수 목록, 팀 관리, 경매 시작</div>
+      <div class="mock-path">league_detail_screen.dart</div>
+    </div>
+  </a>
+  <a href="auction.html" class="mock-card">
+    <div class="mock-preview">🔨</div>
+    <div class="mock-info">
+      <div class="mock-title">경매</div>
+      <div class="mock-desc">실시간 선수 경매, 입찰, 예산 관리</div>
+      <div class="mock-path">auction_screen.dart</div>
+    </div>
+  </a>
+  <a href="transfer.html" class="mock-card">
+    <div class="mock-preview">🔄</div>
+    <div class="mock-info">
+      <div class="mock-title">이적 시장</div>
+      <div class="mock-desc">선수 방출, 트레이드, 자유선수 입찰</div>
+      <div class="mock-path">transfer_screen.dart</div>
+    </div>
+  </a>
+</div>
+
+<p style="margin-top: 48px; color: #3A3A52; font-size: 12px; text-align: center;">
+  Final Whistle UI 목업 — 개발자 참고용 · 실제 Flutter 위젯 구조 반영
+</p>
+</body>
+</html>

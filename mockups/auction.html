@@ -1,0 +1,328 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Final Whistle — 경매</title>
+<link rel="stylesheet" href="_common.css">
+<style>
+.live-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 4px 10px;
+  background: rgba(244,67,54,0.2);
+  color: #EF5350;
+  border-radius: 999px;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.5px;
+}
+.live-dot {
+  width: 7px; height: 7px;
+  border-radius: 50%;
+  background: #EF5350;
+  animation: pulse 1.2s infinite;
+}
+@keyframes pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.3; }
+}
+
+.current-player-card {
+  margin: 12px 16px;
+  background: linear-gradient(135deg, #1a1040, #2d2068);
+  border-radius: 20px;
+  border: 1px solid rgba(108,99,255,0.4);
+  padding: 20px;
+  box-shadow: 0 8px 32px rgba(108,99,255,0.2);
+}
+.player-card-top {
+  display: flex;
+  align-items: flex-start;
+  gap: 14px;
+  margin-bottom: 16px;
+}
+.player-big-avatar {
+  width: 64px; height: 64px;
+  border-radius: 50%;
+  background: rgba(108,99,255,0.3);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 30px;
+  border: 2px solid rgba(108,99,255,0.5);
+}
+.player-card-info { flex: 1; }
+.player-card-name {
+  font-size: 20px;
+  font-weight: 800;
+  color: #fff;
+  margin-bottom: 6px;
+}
+.player-card-badges {
+  display: flex;
+  gap: 6px;
+  flex-wrap: wrap;
+}
+.pos-badge {
+  padding: 3px 10px;
+  border-radius: 8px;
+  font-size: 12px;
+  font-weight: 700;
+  background: rgba(255,255,255,0.15);
+  color: #fff;
+}
+.ovr-badge {
+  padding: 3px 10px;
+  border-radius: 8px;
+  font-size: 12px;
+  font-weight: 700;
+  background: rgba(255,193,7,0.25);
+  color: #FFC107;
+}
+
+.countdown {
+  background: rgba(0,0,0,0.3);
+  border-radius: 12px;
+  padding: 10px 14px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 14px;
+}
+.countdown-label { font-size: 11px; color: rgba(255,255,255,0.5); }
+.countdown-time {
+  font-size: 22px;
+  font-weight: 800;
+  color: #EF5350;
+  font-family: monospace;
+  letter-spacing: 1px;
+}
+
+.current-bid-row {
+  display: flex;
+  align-items: baseline;
+  gap: 6px;
+  margin-bottom: 14px;
+}
+.current-bid-label {
+  font-size: 12px;
+  color: rgba(255,255,255,0.5);
+}
+.current-bid-amount {
+  font-size: 28px;
+  font-weight: 800;
+  color: #fff;
+}
+.current-bid-unit { font-size: 14px; color: rgba(255,255,255,0.5); }
+.current-bid-by {
+  font-size: 11px;
+  color: var(--primary-light);
+  margin-left: auto;
+}
+
+.quick-bids {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 12px;
+}
+.quick-bid-btn {
+  flex: 1;
+  padding: 8px 4px;
+  border-radius: 10px;
+  background: rgba(255,255,255,0.1);
+  border: 1px solid rgba(255,255,255,0.15);
+  color: #fff;
+  font-size: 12px;
+  font-weight: 600;
+  text-align: center;
+  cursor: pointer;
+}
+.quick-bid-btn:hover { background: rgba(108,99,255,0.3); }
+
+.custom-bid-row {
+  display: flex;
+  gap: 8px;
+}
+.custom-bid-input {
+  flex: 1;
+  background: rgba(0,0,0,0.3);
+  border: 1.5px solid rgba(255,255,255,0.2);
+  border-radius: 10px;
+  padding: 10px 12px;
+  color: #fff;
+  font-size: 14px;
+  font-family: inherit;
+}
+.bid-submit-btn {
+  padding: 10px 18px;
+  background: var(--primary);
+  color: #fff;
+  border-radius: 10px;
+  font-size: 14px;
+  font-weight: 700;
+  cursor: pointer;
+  white-space: nowrap;
+}
+
+/* Budget cards */
+.budget-card {
+  margin: 0 16px 12px;
+  background: var(--surface2);
+  border-radius: 14px;
+  border: 1px solid var(--border);
+  padding: 14px 16px;
+}
+.budget-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 4px;
+}
+.budget-label { font-size: 12px; color: var(--on-surface-muted); }
+.budget-value { font-size: 18px; font-weight: 800; color: var(--on-surface); }
+.budget-bar {
+  height: 6px;
+  background: var(--surface3);
+  border-radius: 3px;
+  margin-top: 8px;
+  overflow: hidden;
+}
+.budget-fill {
+  height: 100%;
+  border-radius: 3px;
+  background: linear-gradient(90deg, var(--primary), var(--primary-light));
+}
+
+.team-budget-table {
+  margin: 0 16px 16px;
+  background: var(--surface2);
+  border-radius: 14px;
+  border: 1px solid var(--border);
+  overflow: hidden;
+}
+.table-header {
+  padding: 10px 14px;
+  display: flex;
+  gap: 8px;
+  background: var(--surface3);
+  border-bottom: 1px solid var(--border);
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--on-surface-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+.table-row {
+  padding: 10px 14px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  border-bottom: 1px solid rgba(58,58,82,0.4);
+  font-size: 13px;
+}
+.table-row:last-child { border-bottom: none; }
+.table-row.highlight { background: rgba(108,99,255,0.08); }
+.team-name { flex: 1; color: var(--on-surface); font-weight: 500; }
+.team-budget-val { color: var(--on-surface); font-weight: 700; font-family: monospace; }
+</style>
+</head>
+<body>
+<nav class="page-nav">
+  <span class="nav-title">목업:</span>
+  <a href="index.html">← 목록</a>
+  <a href="league-detail.html">리그 상세</a>
+  <a href="transfer.html">이적 시장</a>
+</nav>
+
+<div class="phone-frame">
+  <div class="phone-screen">
+    <div class="app-bar">
+      <div class="app-bar-icon">←</div>
+      <span class="app-bar-title">경매</span>
+      <span class="live-badge"><span class="live-dot"></span>LIVE</span>
+    </div>
+
+    <div class="content" style="padding-bottom: 16px;">
+
+      <!-- Current player card -->
+      <div class="current-player-card">
+        <div class="player-card-top">
+          <div class="player-big-avatar">⚽</div>
+          <div class="player-card-info">
+            <div class="player-card-name">손흥민</div>
+            <div class="player-card-badges">
+              <span class="pos-badge">FW</span>
+              <span class="ovr-badge">OVR 92</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="countdown">
+          <span class="countdown-label">⏱ 입찰 마감까지</span>
+          <span class="countdown-time">00:23</span>
+        </div>
+
+        <div class="current-bid-row">
+          <span class="current-bid-label">현재 최고 입찰</span>
+          <span class="current-bid-amount">850</span>
+          <span class="current-bid-unit">만원</span>
+          <span class="current-bid-by">팀A ›</span>
+        </div>
+
+        <div class="quick-bids">
+          <div class="quick-bid-btn">+50</div>
+          <div class="quick-bid-btn">+100</div>
+          <div class="quick-bid-btn">+200</div>
+          <div class="quick-bid-btn">+500</div>
+        </div>
+
+        <div class="custom-bid-row">
+          <input class="custom-bid-input" placeholder="직접 입력 (만원)" value="1000">
+          <div class="bid-submit-btn">입찰</div>
+        </div>
+      </div>
+
+      <!-- My budget -->
+      <div class="budget-card">
+        <div class="budget-row">
+          <span class="budget-label">내 팀 잔여 예산 (팀B)</span>
+          <span class="budget-value">3,200<span style="font-size:12px; color:var(--on-surface-muted); font-weight:400;"> 만원</span></span>
+        </div>
+        <div class="budget-bar"><div class="budget-fill" style="width:64%"></div></div>
+      </div>
+
+      <!-- All teams budget -->
+      <div class="section-header">팀별 예산 현황</div>
+      <div class="team-budget-table">
+        <div class="table-header">
+          <span style="flex:1;">팀</span>
+          <span>잔여 예산</span>
+        </div>
+        <div class="table-row">
+          <span class="team-name">팀A (입찰 중)</span>
+          <span class="team-budget-val" style="color:#EF5350;">1,500만</span>
+        </div>
+        <div class="table-row highlight">
+          <span class="team-name">팀B (나)</span>
+          <span class="team-budget-val">3,200만</span>
+        </div>
+        <div class="table-row">
+          <span class="team-name">팀C</span>
+          <span class="team-budget-val">2,800만</span>
+        </div>
+        <div class="table-row">
+          <span class="team-name">팀D</span>
+          <span class="team-budget-val">4,100만</span>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<div style="margin-top:16px; text-align:center;">
+  <p class="text-muted text-sm">auction_screen.dart · AuctionScreen</p>
+  <p class="text-muted text-xs" style="margin-top:4px">현재 선수 카드 + 카운트다운 + 빠른입찰 + 팀별 예산표</p>
+</div>
+</body>
+</html>
