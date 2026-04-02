@@ -8,8 +8,8 @@
 <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
 <style>
 *, *::before, *::after { box-sizing: border-box; }
-html { overflow-x: hidden; width: 100%; max-width: 100vw; }
-body { padding: 24px 4vw; overflow-x: hidden; width: 100%; max-width: 100vw; }
+html { overflow-x: hidden; width: 100%; max-width: 100%; }
+body { padding: 16px; overflow-x: hidden; width: 100%; max-width: 100%; }
 
 .back-link {
   display: inline-flex;
@@ -26,15 +26,13 @@ body { padding: 24px 4vw; overflow-x: hidden; width: 100%; max-width: 100vw; }
 }
 .back-link-wrap {
   width: 100%;
-  max-width: 800px;
-  margin: 0 auto;
+  margin: 0;
 }
 .back-link:hover { background: rgba(108,99,255,0.12); }
 
 .doc-header {
   width: 100%;
-  max-width: 800px;
-  margin: 0 auto 24px;
+  margin: 0 0 24px;
   padding-bottom: 20px;
   border-bottom: 1px solid #2E2E42;
 }
@@ -53,8 +51,7 @@ body { padding: 24px 4vw; overflow-x: hidden; width: 100%; max-width: 100vw; }
 
 .content-wrap {
   width: 100%;
-  max-width: 800px;
-  margin: 0 auto;
+  margin: 0;
 }
 
 /* Loading */
@@ -175,7 +172,7 @@ body { padding: 24px 4vw; overflow-x: hidden; width: 100%; max-width: 100vw; }
 .markdown-body img { max-width: 100%; height: auto; display: block; }
 
 @media (max-width: 600px) {
-  body { padding: 16px 3vw; }
+  body { padding: 16px; }
   .markdown-body { font-size: 13px; }
   .markdown-body h1 { font-size: 1.6em; }
   .markdown-body h2 { font-size: 1.3em; }
@@ -184,7 +181,7 @@ body { padding: 24px 4vw; overflow-x: hidden; width: 100%; max-width: 100vw; }
   .markdown-body pre { padding: 12px; font-size: 12px; }
 }
 @media (max-width: 480px) {
-  body { padding: 12px 2.5vw; }
+  body { padding: 12px; }
   .markdown-body { font-size: 13px; }
   .markdown-body h1 { font-size: 1.4em; }
   .markdown-body h2 { font-size: 1.2em; }
