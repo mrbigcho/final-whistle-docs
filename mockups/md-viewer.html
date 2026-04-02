@@ -1,254 +1,85 @@
 <!DOCTYPE html>
 <html lang="ko">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Final Whistle — 문서 뷰어</title>
-<link rel="stylesheet" href="_common.css">
-<script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
-<style>
-*, *::before, *::after { box-sizing: border-box; }
-html { overflow-x: hidden; width: 100%; max-width: 100%; }
-body { padding: 16px; overflow-x: hidden; width: 100%; max-width: 100%; }
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>문서 뷰어</title>
+  <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { overflow-x: hidden; }
+    body {
+      background: #0d1117;
+      color: #c9d1d9;
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      font-size: 16px;
+      line-height: 1.6;
+      padding: 16px;
+      min-height: 100vh;
+    }
+    a { color: #58a6ff; }
+    .back-link { display: inline-block; margin-bottom: 16px; font-size: 14px; }
+    .doc-title { font-size: 20px; color: #e6edf3; margin-bottom: 4px; }
+    .doc-path { font-size: 12px; color: #8b949e; margin-bottom: 24px; }
+    .loading { text-align: center; padding: 40px 0; color: #8b949e; }
+    .error { background: #3d1f1f; border: 1px solid #f85149; border-radius: 8px; padding: 16px; color: #f85149; }
 
-.back-link {
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-  color: #9D97FF;
-  text-decoration: none;
-  font-size: 13px;
-  font-weight: 500;
-  margin-bottom: 20px;
-  padding: 6px 10px;
-  border-radius: 6px;
-  transition: background 0.15s;
-}
-.back-link-wrap {
-  width: 100%;
-  margin: 0;
-}
-.back-link:hover { background: rgba(108,99,255,0.12); }
-
-.doc-header {
-  width: 100%;
-  margin: 0 0 24px;
-  padding-bottom: 20px;
-  border-bottom: 1px solid #2E2E42;
-}
-.doc-title {
-  font-size: 22px;
-  font-weight: 700;
-  color: #E6EDF3;
-  margin: 0;
-}
-.doc-path {
-  font-size: 12px;
-  color: #5A5A72;
-  margin-top: 6px;
-  font-family: 'SFMono-Regular', Consolas, 'Liberation Mono', Menlo, monospace;
-}
-
-.content-wrap {
-  width: 100%;
-  margin: 0;
-}
-
-/* Loading */
-.spinner-wrap {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  padding: 80px 0;
-  gap: 12px;
-  color: #8E8EA0;
-  font-size: 13px;
-}
-.spinner {
-  width: 28px;
-  height: 28px;
-  border: 3px solid #3A3A52;
-  border-top-color: #6C63FF;
-  border-radius: 50%;
-  animation: spin 0.7s linear infinite;
-}
-@keyframes spin { to { transform: rotate(360deg); } }
-
-/* Error */
-.error-box {
-  background: rgba(255, 80, 80, 0.1);
-  border: 1.5px solid rgba(255, 80, 80, 0.4);
-  border-radius: 12px;
-  padding: 16px 20px;
-  color: #FF8080;
-  max-width: 480px;
-  font-size: 13px;
-  line-height: 1.6;
-}
-.error-box strong { display: block; margin-bottom: 4px; font-size: 15px; }
-
-/* GitHub-style dark markdown */
-.markdown-body {
-  width: 100%;
-  color: #C9D1D9;
-  font-size: 14px;
-  line-height: 1.7;
-  word-wrap: break-word;
-  overflow-wrap: break-word;
-  word-break: break-word;
-}
-.markdown-body h1, .markdown-body h2 {
-  padding-bottom: 0.3em;
-  border-bottom: 1px solid #21262D;
-  margin-top: 24px;
-  margin-bottom: 16px;
-  font-weight: 600;
-  color: #E6EDF3;
-}
-.markdown-body h1 { font-size: 2em; }
-.markdown-body h2 { font-size: 1.5em; }
-.markdown-body h3 { font-size: 1.25em; color: #E6EDF3; margin-top: 24px; margin-bottom: 16px; font-weight: 600; }
-.markdown-body h4, .markdown-body h5, .markdown-body h6 { color: #E6EDF3; margin-top: 24px; margin-bottom: 16px; font-weight: 600; }
-.markdown-body p { margin-top: 0; margin-bottom: 16px; }
-.markdown-body a { color: #58A6FF; text-decoration: none; }
-.markdown-body a:hover { text-decoration: underline; }
-.markdown-body code {
-  padding: 0.2em 0.4em;
-  background: rgba(110,118,129,0.4);
-  border-radius: 4px;
-  font-size: 85%;
-  font-family: 'SFMono-Regular', Consolas, 'Liberation Mono', Menlo, monospace;
-  color: #E6EDF3;
-}
-.markdown-body pre {
-  padding: 16px;
-  overflow-x: auto;
-  max-width: 100%;
-  background: #161B22;
-  border: 1px solid #30363D;
-  border-radius: 6px;
-  margin-bottom: 16px;
-  word-wrap: normal;
-}
-.markdown-body pre code {
-  padding: 0;
-  background: transparent;
-  font-size: 85%;
-  white-space: pre;
-}
-.markdown-body blockquote {
-  padding: 0 1em;
-  color: #8B949E;
-  border-left: 0.25em solid #3B434B;
-  margin: 0 0 16px;
-}
-.markdown-body ul, .markdown-body ol {
-  padding-left: 2em;
-  margin-top: 0;
-  margin-bottom: 16px;
-}
-.markdown-body li { margin-top: 4px; }
-.markdown-body li + li { margin-top: 4px; }
-.markdown-body table {
-  border-collapse: collapse;
-  display: block;
-  overflow-x: auto;
-  max-width: 100%;
-  margin-bottom: 16px;
-}
-.markdown-body table th, .markdown-body table td {
-  padding: 6px 13px;
-  border: 1px solid #30363D;
-}
-.markdown-body table th { background: #161B22; font-weight: 600; color: #E6EDF3; }
-.markdown-body table tr:nth-child(even) { background: #1C2128; }
-.markdown-body hr {
-  height: 2px;
-  background: #21262D;
-  border: none;
-  margin: 24px 0;
-}
-.markdown-body img { max-width: 100%; height: auto; display: block; }
-
-@media (max-width: 600px) {
-  body { padding: 16px; }
-  .markdown-body { font-size: 13px; }
-  .markdown-body h1 { font-size: 1.6em; }
-  .markdown-body h2 { font-size: 1.3em; }
-  .markdown-body h3 { font-size: 1.1em; }
-  .markdown-body ul, .markdown-body ol { padding-left: 1.4em; }
-  .markdown-body pre { padding: 12px; font-size: 12px; }
-}
-@media (max-width: 480px) {
-  body { padding: 12px; }
-  .markdown-body { font-size: 13px; }
-  .markdown-body h1 { font-size: 1.4em; }
-  .markdown-body h2 { font-size: 1.2em; }
-  .markdown-body h3 { font-size: 1.05em; }
-  .markdown-body pre { padding: 10px; font-size: 11.5px; }
-  .doc-title { font-size: 18px; }
-}
-</style>
+    /* 마크다운 스타일 - 모든 요소가 100% 안에서 */
+    .md h1 { font-size: 1.5em; color: #e6edf3; border-bottom: 1px solid #30363d; padding-bottom: 8px; margin: 24px 0 16px; }
+    .md h2 { font-size: 1.3em; color: #e6edf3; border-bottom: 1px solid #30363d; padding-bottom: 6px; margin: 20px 0 12px; }
+    .md h3 { font-size: 1.1em; color: #e6edf3; margin: 16px 0 8px; }
+    .md p { margin: 0 0 16px; }
+    .md ul, .md ol { padding-left: 24px; margin: 0 0 16px; }
+    .md li { margin: 4px 0; }
+    .md code { background: #161b22; padding: 2px 6px; border-radius: 4px; font-size: 0.9em; }
+    .md pre { background: #161b22; padding: 12px; border-radius: 8px; overflow-x: auto; margin: 0 0 16px; }
+    .md pre code { background: none; padding: 0; }
+    .md blockquote { border-left: 3px solid #30363d; padding-left: 12px; color: #8b949e; margin: 0 0 16px; }
+    .md table { width: 100%; border-collapse: collapse; margin: 0 0 16px; font-size: 14px; }
+    .md th, .md td { border: 1px solid #30363d; padding: 8px; text-align: left; }
+    .md th { background: #161b22; color: #e6edf3; }
+    .md img { max-width: 100%; height: auto; }
+    .md hr { border: none; border-top: 1px solid #30363d; margin: 24px 0; }
+    .table-wrap { overflow-x: auto; margin: 0 0 16px; }
+    .table-wrap table { margin: 0; }
+  </style>
 </head>
 <body>
+  <a href="./" class="back-link">← 목록으로 돌아가기</a>
+  <div id="title" class="doc-title"></div>
+  <div id="path" class="doc-path"></div>
+  <div id="content"><div class="loading">로딩 중...</div></div>
 
-<div class="back-link-wrap"><a href="index.html" class="back-link">← 목록으로 돌아가기</a></div>
+  <script>
+    const params = new URLSearchParams(location.search);
+    const file = params.get('file');
+    const titleEl = document.getElementById('title');
+    const pathEl = document.getElementById('path');
+    const contentEl = document.getElementById('content');
 
-<div id="app"></div>
+    if (!file) {
+      contentEl.innerHTML = '<div class="error">파일 경로가 지정되지 않았습니다.</div>';
+    } else {
+      const name = file.split('/').pop().replace('.md', '').replace(/-/g, ' ');
+      titleEl.textContent = name.charAt(0).toUpperCase() + name.slice(1);
+      pathEl.textContent = file;
 
-<script>
-const REPO = 'mrbigcho/final-whistle-docs';
-const RAW_BASE = `https://raw.githubusercontent.com/${REPO}/main`;
-
-function labelFromFilename(filename) {
-  return filename
-    .replace(/\.md$/i, '')
-    .replace(/-/g, ' ')
-    .replace(/\b\w/g, c => c.toUpperCase());
-}
-
-async function main() {
-  const app = document.getElementById('app');
-  const params = new URLSearchParams(location.search);
-  const filePath = params.get('file');
-
-  if (!filePath) {
-    app.innerHTML = `<div class="error-box"><strong>파일 경로 없음</strong>URL에 ?file=경로 파라미터가 필요합니다.</div>`;
-    return;
-  }
-
-  const filename = filePath.split('/').pop();
-  const title = labelFromFilename(filename);
-  document.title = `${title} — Final Whistle`;
-
-  app.innerHTML = `
-    <div class="doc-header">
-      <h1 class="doc-title">${title}</h1>
-      <div class="doc-path">mockups/${filePath}</div>
-    </div>
-    <div class="content-wrap">
-      <div class="spinner-wrap"><div class="spinner"></div><span>불러오는 중…</span></div>
-    </div>`;
-
-  try {
-    const res = await fetch(`${RAW_BASE}/mockups/${filePath}`);
-    if (!res.ok) throw new Error(`${res.status} ${res.statusText}`);
-    const md = await res.text();
-    app.querySelector('.content-wrap').innerHTML = `<div class="markdown-body">${marked.parse(md)}</div>`;
-    document.querySelectorAll('.markdown-body table').forEach(t => {
-      const wrapper = document.createElement('div');
-      wrapper.style.overflowX = 'auto';
-      wrapper.style.maxWidth = '100%';
-      t.parentNode.insertBefore(wrapper, t);
-      wrapper.appendChild(t);
-    });
-  } catch (err) {
-    app.querySelector('.content-wrap').innerHTML = `<div class="error-box"><strong>불러오기 실패</strong>${err.message}</div>`;
-  }
-}
-
-main();
-</script>
+      fetch(`https://raw.githubusercontent.com/mrbigcho/final-whistle-docs/main/mockups/${file}`)
+        .then(r => { if (!r.ok) throw new Error(r.status); return r.text(); })
+        .then(md => {
+          contentEl.innerHTML = '<div class="md">' + marked.parse(md) + '</div>';
+          // table을 스크롤 가능한 div로 감싸기
+          contentEl.querySelectorAll('table').forEach(t => {
+            const wrap = document.createElement('div');
+            wrap.className = 'table-wrap';
+            t.parentNode.insertBefore(wrap, t);
+            wrap.appendChild(t);
+          });
+        })
+        .catch(e => {
+          contentEl.innerHTML = '<div class="error">문서를 불러올 수 없습니다: ' + e.message + '</div>';
+        });
+    }
+  </script>
 </body>
 </html>
