@@ -7,7 +7,7 @@
 <link rel="stylesheet" href="_common.css">
 <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
 <style>
-body { padding: 24px 20px; }
+body { padding: 24px 20px; box-sizing: border-box; }
 
 .back-link {
   display: inline-flex;
@@ -21,12 +21,17 @@ body { padding: 24px 20px; }
   padding: 6px 10px;
   border-radius: 6px;
   transition: background 0.15s;
+  max-width: 800px;
+}
+.back-link-wrap {
+  max-width: 800px;
+  margin: 0 auto;
 }
 .back-link:hover { background: rgba(108,99,255,0.12); }
 
 .doc-header {
-  max-width: 860px;
-  margin-bottom: 24px;
+  max-width: 800px;
+  margin: 0 auto 24px;
   padding-bottom: 20px;
   border-bottom: 1px solid #2E2E42;
 }
@@ -44,7 +49,8 @@ body { padding: 24px 20px; }
 }
 
 .content-wrap {
-  max-width: 860px;
+  max-width: 800px;
+  margin: 0 auto;
 }
 
 /* Loading */
@@ -140,7 +146,10 @@ body { padding: 24px 20px; }
 .markdown-body li + li { margin-top: 4px; }
 .markdown-body table {
   border-collapse: collapse;
-  width: 100%;
+  display: block;
+  overflow-x: auto;
+  width: max-content;
+  max-width: 100%;
   margin-bottom: 16px;
 }
 .markdown-body table th, .markdown-body table td {
@@ -155,12 +164,22 @@ body { padding: 24px 20px; }
   border: none;
   margin: 24px 0;
 }
-.markdown-body img { max-width: 100%; }
+.markdown-body img { max-width: 100%; height: auto; display: block; }
+
+@media (max-width: 600px) {
+  body { padding: 16px 14px; }
+  .markdown-body { font-size: 13px; }
+  .markdown-body h1 { font-size: 1.6em; }
+  .markdown-body h2 { font-size: 1.3em; }
+  .markdown-body h3 { font-size: 1.1em; }
+  .markdown-body ul, .markdown-body ol { padding-left: 1.4em; }
+  .markdown-body pre { padding: 12px; font-size: 12px; }
+}
 </style>
 </head>
 <body>
 
-<a href="index.html" class="back-link">← 목록으로 돌아가기</a>
+<div class="back-link-wrap"><a href="index.html" class="back-link">← 목록으로 돌아가기</a></div>
 
 <div id="app"></div>
 
