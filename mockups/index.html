@@ -5,7 +5,6 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Final Whistle — UI 목업 목록</title>
 <link rel="stylesheet" href="_common.css">
-<script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
 <style>
 body { padding: 32px 20px; }
 .hero {
@@ -169,145 +168,6 @@ body { padding: 32px 20px; }
   width: 100%;
 }
 
-/* Markdown Modal */
-.md-modal-overlay {
-  display: none;
-  position: fixed;
-  inset: 0;
-  background: rgba(0,0,0,0.7);
-  z-index: 1000;
-  overflow-y: auto;
-  padding: 24px 16px;
-  box-sizing: border-box;
-}
-.md-modal-overlay.open { display: block; }
-.md-modal {
-  max-width: 860px;
-  margin: 0 auto;
-  background: #161B22;
-  border: 1px solid #30363D;
-  border-radius: 12px;
-  overflow: hidden;
-}
-.md-modal-header {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  padding: 14px 20px;
-  background: #1C2128;
-  border-bottom: 1px solid #30363D;
-  position: sticky;
-  top: 0;
-  z-index: 1;
-}
-.md-modal-title {
-  font-size: 14px;
-  font-weight: 600;
-  color: #C8C8E0;
-  flex: 1;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-}
-.md-modal-close {
-  background: none;
-  border: none;
-  color: #8E8EA0;
-  font-size: 20px;
-  cursor: pointer;
-  padding: 0 4px;
-  line-height: 1;
-  flex-shrink: 0;
-}
-.md-modal-close:hover { color: #C8C8E0; }
-.md-modal-body {
-  padding: 32px 40px;
-}
-.md-modal-loading {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 10px;
-  padding: 40px;
-  color: #8E8EA0;
-  font-size: 13px;
-}
-
-/* GitHub-style dark markdown */
-.markdown-body {
-  color: #C9D1D9;
-  font-size: 14px;
-  line-height: 1.7;
-  word-wrap: break-word;
-}
-.markdown-body h1, .markdown-body h2 {
-  padding-bottom: 0.3em;
-  border-bottom: 1px solid #21262D;
-  margin-top: 24px;
-  margin-bottom: 16px;
-  font-weight: 600;
-  color: #E6EDF3;
-}
-.markdown-body h1 { font-size: 2em; }
-.markdown-body h2 { font-size: 1.5em; }
-.markdown-body h3 { font-size: 1.25em; color: #E6EDF3; margin-top: 24px; margin-bottom: 16px; font-weight: 600; }
-.markdown-body h4, .markdown-body h5, .markdown-body h6 { color: #E6EDF3; margin-top: 24px; margin-bottom: 16px; font-weight: 600; }
-.markdown-body p { margin-top: 0; margin-bottom: 16px; }
-.markdown-body a { color: #58A6FF; text-decoration: none; }
-.markdown-body a:hover { text-decoration: underline; }
-.markdown-body code {
-  padding: 0.2em 0.4em;
-  background: rgba(110,118,129,0.4);
-  border-radius: 4px;
-  font-size: 85%;
-  font-family: 'SFMono-Regular', Consolas, 'Liberation Mono', Menlo, monospace;
-  color: #E6EDF3;
-}
-.markdown-body pre {
-  padding: 16px;
-  overflow: auto;
-  background: #161B22;
-  border: 1px solid #30363D;
-  border-radius: 6px;
-  margin-bottom: 16px;
-}
-.markdown-body pre code {
-  padding: 0;
-  background: transparent;
-  font-size: 85%;
-  white-space: pre;
-}
-.markdown-body blockquote {
-  padding: 0 1em;
-  color: #8B949E;
-  border-left: 0.25em solid #3B434B;
-  margin: 0 0 16px;
-}
-.markdown-body ul, .markdown-body ol {
-  padding-left: 2em;
-  margin-top: 0;
-  margin-bottom: 16px;
-}
-.markdown-body li { margin-top: 4px; }
-.markdown-body li + li { margin-top: 4px; }
-.markdown-body table {
-  border-collapse: collapse;
-  width: 100%;
-  margin-bottom: 16px;
-}
-.markdown-body table th, .markdown-body table td {
-  padding: 6px 13px;
-  border: 1px solid #30363D;
-}
-.markdown-body table th { background: #161B22; font-weight: 600; color: #E6EDF3; }
-.markdown-body table tr:nth-child(even) { background: #1C2128; }
-.markdown-body hr {
-  height: 2px;
-  background: #21262D;
-  border: none;
-  margin: 24px 0;
-}
-.markdown-body img { max-width: 100%; }
 </style>
 </head>
 <body>
@@ -318,17 +178,6 @@ body { padding: 32px 20px; }
 
 <div id="app"></div>
 
-<!-- Markdown Modal -->
-<div class="md-modal-overlay" id="mdOverlay" onclick="closeMdModal(event)">
-  <div class="md-modal">
-    <div class="md-modal-header">
-      <span class="mock-emoji" id="mdModalEmoji">📄</span>
-      <span class="md-modal-title" id="mdModalTitle"></span>
-      <button class="md-modal-close" onclick="closeMdModalBtn()">✕</button>
-    </div>
-    <div class="md-modal-body" id="mdModalBody"></div>
-  </div>
-</div>
 
 <script>
 const REPO = 'mrbigcho/final-whistle-docs';
@@ -419,12 +268,11 @@ function renderSection(folderKey, files) {
     const typeLabel = f.isMd ? 'md' : 'html';
 
     if (f.isMd) {
-      const rawPath = `${BASE_PATH}/${f.href}`;
-      return `<button class="mock-card" onclick="openMdModal('${rawPath}','${title}','${emoji}')">
+      return `<a href="md-viewer.html?file=${encodeURIComponent(f.href)}" class="mock-card">
         <span class="mock-emoji">${emoji}</span>
         <span class="mock-title">${title}</span>
         <span class="mock-type md">.md</span>
-      </button>`;
+      </a>`;
     } else {
       return `<a href="${f.href}" class="mock-card">
         <span class="mock-emoji">${emoji}</span>
@@ -450,43 +298,6 @@ function toggleSection(header) {
   header.closest('.section').classList.toggle('collapsed');
 }
 
-async function openMdModal(rawPath, title, emoji) {
-  const overlay = document.getElementById('mdOverlay');
-  const body = document.getElementById('mdModalBody');
-  const titleEl = document.getElementById('mdModalTitle');
-  const emojiEl = document.getElementById('mdModalEmoji');
-
-  titleEl.textContent = title;
-  emojiEl.textContent = emoji;
-  body.innerHTML = `<div class="md-modal-loading"><div class="spinner"></div><span>불러오는 중…</span></div>`;
-  overlay.classList.add('open');
-  document.body.style.overflow = 'hidden';
-
-  try {
-    const res = await fetch(`${RAW_BASE}/${rawPath}`);
-    if (!res.ok) throw new Error(`${res.status} ${res.statusText}`);
-    const md = await res.text();
-    body.innerHTML = `<div class="markdown-body">${marked.parse(md)}</div>`;
-  } catch (err) {
-    body.innerHTML = `<div class="error-box"><strong>불러오기 실패</strong>${err.message}</div>`;
-  }
-}
-
-function closeMdModalBtn() {
-  const overlay = document.getElementById('mdOverlay');
-  overlay.classList.remove('open');
-  document.body.style.overflow = '';
-}
-
-function closeMdModal(e) {
-  if (e.target === document.getElementById('mdOverlay')) {
-    closeMdModalBtn();
-  }
-}
-
-document.addEventListener('keydown', e => {
-  if (e.key === 'Escape') closeMdModalBtn();
-});
 
 async function main() {
   const app = document.getElementById('app');
