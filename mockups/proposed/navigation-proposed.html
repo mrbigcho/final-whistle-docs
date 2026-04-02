@@ -971,6 +971,407 @@
 </div><!-- /flow-row 2 -->
 
 <!-- ═══════════════════════════════════════════════════════════════════
+     SECTION 3 — Phase 2 옵션 B 전체 흐름
+     ═══════════════════════════════════════════════════════════════════ -->
+
+<div class="section-label">
+  Phase 2 옵션 B — 대회 독립 BottomNav 전체 흐름 <span class="badge green">권장 (중기 v2)</span>
+  <span style="font-size:12px; color:var(--on-surface-muted); font-weight:400;">StatefulShellRoute 기반 대회 전용 BottomNav 탭별 화면</span>
+</div>
+
+<div class="flow-row">
+
+  <!-- B-1. 대진표 탭 -->
+  <div class="frame-wrapper">
+    <div class="frame-label comp">① 대진표 탭</div>
+    <div class="phone-frame-sm comp-context">
+      <div class="phone-screen-sm">
+        <div class="app-bar" style="background:#0f1f12; border-bottom:1px solid #1e4d22;">
+          <div class="app-bar-icon">←</div>
+          <span class="app-bar-title">서울 5인제 리그</span>
+          <div class="app-bar-icon">⋮</div>
+        </div>
+        <div class="context-banner comp">🏆 대회 모드 · 서울 5인제 리그 2026</div>
+        <div class="content">
+          <div style="padding:10px 16px 4px;">
+            <div style="font-size:11px; color:var(--on-surface-muted); margin-bottom:10px;">4강 · 진행 중</div>
+
+            <!-- 결승 -->
+            <div style="font-size:10px; color:#81C784; font-weight:700; text-transform:uppercase; letter-spacing:1px; margin-bottom:6px;">결승</div>
+            <div class="bracket-match" style="border:1px solid rgba(76,175,80,0.2);">
+              <div><div class="bracket-team">FC 서울 라이온스</div><div style="font-size:11px; color:var(--on-surface-muted); margin-top:2px;">TBD</div></div>
+              <div style="font-size:11px; color:var(--on-surface-muted);">vs</div>
+              <div style="text-align:right;"><div class="bracket-team">성동 스타즈</div><div style="font-size:11px; color:var(--on-surface-muted); margin-top:2px;">TBD</div></div>
+            </div>
+
+            <!-- 4강 -->
+            <div style="font-size:10px; color:#81C784; font-weight:700; text-transform:uppercase; letter-spacing:1px; margin:10px 0 6px;">4강</div>
+            <div class="bracket-match">
+              <div><div class="bracket-team">FC 서울 라이온스</div><div class="bracket-score">3</div></div>
+              <div style="font-size:11px; color:var(--on-surface-muted);">vs</div>
+              <div style="text-align:right;"><div class="bracket-team">강남 FC</div><div class="bracket-score lose">1</div></div>
+            </div>
+            <div class="bracket-match" style="margin-top:6px;">
+              <div><div class="bracket-team">마포 풋살단</div><div class="bracket-score lose">2</div></div>
+              <div style="font-size:11px; color:var(--on-surface-muted);">vs</div>
+              <div style="text-align:right;"><div class="bracket-team">성동 스타즈</div><div class="bracket-score">4</div></div>
+            </div>
+
+            <div style="margin-top:10px; background:rgba(76,175,80,0.07); border:1px dashed rgba(76,175,80,0.25); border-radius:8px; padding:8px 12px;">
+              <div style="font-size:10px; color:#81C784; font-weight:600;">StatefulShell — 탭 전환 시 스크롤 위치 유지</div>
+            </div>
+          </div>
+        </div>
+        <div class="bottom-nav-comp">
+          <div class="bottom-nav-item active"><span class="nav-icon" style="font-size:18px;">📋</span><span class="nav-label" style="font-size:10px;">대진표</span></div>
+          <div class="bottom-nav-item"><span class="nav-icon" style="font-size:18px;">⚽</span><span class="nav-label" style="font-size:10px;">경기</span></div>
+          <div class="bottom-nav-item"><span class="nav-icon" style="font-size:18px;">👥</span><span class="nav-label" style="font-size:10px;">참가자</span></div>
+          <div class="bottom-nav-item"><span class="nav-icon" style="font-size:18px;">📊</span><span class="nav-label" style="font-size:10px;">순위표</span></div>
+          <div class="bottom-nav-item"><span class="nav-icon" style="font-size:18px;">ℹ️</span><span class="nav-label" style="font-size:10px;">정보</span></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Arrow B-1→B-2 -->
+  <div class="flow-arrow green">
+    <div class="arrow-line"></div>
+    <div class="arrow-label">경기 탭</div>
+  </div>
+
+  <!-- B-2. 경기 탭 -->
+  <div class="frame-wrapper">
+    <div class="frame-label comp">② 경기 탭</div>
+    <div class="phone-frame-sm comp-context">
+      <div class="phone-screen-sm">
+        <div class="app-bar" style="background:#0f1f12; border-bottom:1px solid #1e4d22;">
+          <div class="app-bar-icon">←</div>
+          <span class="app-bar-title">서울 5인제 리그</span>
+          <div class="app-bar-icon">⋮</div>
+        </div>
+        <div class="context-banner comp">🏆 대회 모드 · 서울 5인제 리그 2026</div>
+        <div class="filter-chips" style="background:var(--surface);">
+          <div class="filter-chip active">전체</div>
+          <div class="filter-chip">예정</div>
+          <div class="filter-chip">완료</div>
+        </div>
+        <div class="content">
+          <div class="section-header">예정 경기</div>
+          <div class="comp-item">
+            <div class="comp-icon" style="background:rgba(76,175,80,0.15); font-size:13px;">📅</div>
+            <div class="comp-info">
+              <div class="comp-name">결승 — FC 서울 vs 성동</div>
+              <div class="comp-meta">4/15 (토) 14:00 · 서울 풋살파크</div>
+            </div>
+            <span class="chip open" style="font-size:10px; background:rgba(76,175,80,0.15); color:#81C784;">예정</span>
+          </div>
+          <div class="section-header">완료된 경기</div>
+          <div class="comp-item">
+            <div class="comp-icon" style="background:rgba(76,175,80,0.15); font-size:13px;">✅</div>
+            <div class="comp-info">
+              <div class="comp-name">4강 — FC 서울 vs 강남</div>
+              <div class="comp-meta">4/8 (토) · 3:1 완료</div>
+            </div>
+            <span class="chip done" style="font-size:10px;">완료</span>
+          </div>
+          <div class="comp-item">
+            <div class="comp-icon" style="background:rgba(76,175,80,0.15); font-size:13px;">✅</div>
+            <div class="comp-info">
+              <div class="comp-name">4강 — 마포 vs 성동</div>
+              <div class="comp-meta">4/8 (토) · 2:4 완료</div>
+            </div>
+            <span class="chip done" style="font-size:10px;">완료</span>
+          </div>
+        </div>
+        <div class="bottom-nav-comp">
+          <div class="bottom-nav-item"><span class="nav-icon" style="font-size:18px;">📋</span><span class="nav-label" style="font-size:10px;">대진표</span></div>
+          <div class="bottom-nav-item active"><span class="nav-icon" style="font-size:18px;">⚽</span><span class="nav-label" style="font-size:10px;">경기</span></div>
+          <div class="bottom-nav-item"><span class="nav-icon" style="font-size:18px;">👥</span><span class="nav-label" style="font-size:10px;">참가자</span></div>
+          <div class="bottom-nav-item"><span class="nav-icon" style="font-size:18px;">📊</span><span class="nav-label" style="font-size:10px;">순위표</span></div>
+          <div class="bottom-nav-item"><span class="nav-icon" style="font-size:18px;">ℹ️</span><span class="nav-label" style="font-size:10px;">정보</span></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Arrow B-2→B-3 -->
+  <div class="flow-arrow green">
+    <div class="arrow-line"></div>
+    <div class="arrow-label">참가자 탭</div>
+  </div>
+
+  <!-- B-3. 참가자 탭 -->
+  <div class="frame-wrapper">
+    <div class="frame-label comp">③ 참가자 탭</div>
+    <div class="phone-frame-sm comp-context">
+      <div class="phone-screen-sm">
+        <div class="app-bar" style="background:#0f1f12; border-bottom:1px solid #1e4d22;">
+          <div class="app-bar-icon">←</div>
+          <span class="app-bar-title">서울 5인제 리그</span>
+          <div class="app-bar-icon">⋮</div>
+        </div>
+        <div class="context-banner comp">🏆 대회 모드 · 서울 5인제 리그 2026</div>
+        <div class="content">
+          <div style="padding:10px 16px 4px;">
+            <div style="font-size:12px; color:var(--on-surface-muted); margin-bottom:8px;">참가 팀 4 / 8 최대</div>
+            <div style="background:var(--surface2); border-radius:8px; overflow:hidden; border:1px solid var(--border);">
+              <div class="member-item" style="padding:10px 12px;">
+                <div class="member-avatar-sm" style="background:rgba(108,99,255,0.2); color:var(--primary-light);">🛡️</div>
+                <div style="flex:1;">
+                  <div style="font-size:13px; color:var(--on-surface);">FC 서울 라이온스</div>
+                  <div style="font-size:10px; color:var(--on-surface-muted);">멤버 24명 · 4강 진출</div>
+                </div>
+                <span class="chip progress" style="font-size:10px;">4강</span>
+              </div>
+              <div class="member-item" style="padding:10px 12px;">
+                <div class="member-avatar-sm" style="background:rgba(76,175,80,0.15);">⚽</div>
+                <div style="flex:1;">
+                  <div style="font-size:13px; color:var(--on-surface);">성동 스타즈</div>
+                  <div style="font-size:10px; color:var(--on-surface-muted);">멤버 9명 · 4강 진출</div>
+                </div>
+                <span class="chip progress" style="font-size:10px;">4강</span>
+              </div>
+              <div class="member-item" style="padding:10px 12px;">
+                <div class="member-avatar-sm" style="background:rgba(255,152,0,0.15);">🏃</div>
+                <div style="flex:1;">
+                  <div style="font-size:13px; color:var(--on-surface);">강남 FC</div>
+                  <div style="font-size:10px; color:var(--on-surface-muted);">멤버 16명 · 탈락</div>
+                </div>
+                <span class="chip done" style="font-size:10px;">탈락</span>
+              </div>
+              <div class="member-item" style="padding:10px 12px;">
+                <div class="member-avatar-sm" style="background:rgba(244,67,54,0.1);">🌟</div>
+                <div style="flex:1;">
+                  <div style="font-size:13px; color:var(--on-surface);">마포 풋살단</div>
+                  <div style="font-size:10px; color:var(--on-surface-muted);">멤버 11명 · 탈락</div>
+                </div>
+                <span class="chip done" style="font-size:10px;">탈락</span>
+              </div>
+            </div>
+            <div style="margin-top:10px; background:rgba(76,175,80,0.07); border:1px dashed rgba(76,175,80,0.25); border-radius:8px; padding:8px 12px;">
+              <div style="font-size:10px; color:#81C784; font-weight:600;">기존 별도 화면(/participants) → 탭으로 통합</div>
+              <div style="font-size:10px; color:var(--on-surface-muted); margin-top:3px;">컨텍스트 유지 및 접근성 향상</div>
+            </div>
+          </div>
+        </div>
+        <div class="bottom-nav-comp">
+          <div class="bottom-nav-item"><span class="nav-icon" style="font-size:18px;">📋</span><span class="nav-label" style="font-size:10px;">대진표</span></div>
+          <div class="bottom-nav-item"><span class="nav-icon" style="font-size:18px;">⚽</span><span class="nav-label" style="font-size:10px;">경기</span></div>
+          <div class="bottom-nav-item active"><span class="nav-icon" style="font-size:18px;">👥</span><span class="nav-label" style="font-size:10px;">참가자</span></div>
+          <div class="bottom-nav-item"><span class="nav-icon" style="font-size:18px;">📊</span><span class="nav-label" style="font-size:10px;">순위표</span></div>
+          <div class="bottom-nav-item"><span class="nav-icon" style="font-size:18px;">ℹ️</span><span class="nav-label" style="font-size:10px;">정보</span></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Arrow B-3→B-4 -->
+  <div class="flow-arrow green">
+    <div class="arrow-line"></div>
+    <div class="arrow-label">순위표 탭</div>
+  </div>
+
+  <!-- B-4. 순위표 탭 -->
+  <div class="frame-wrapper">
+    <div class="frame-label comp">④ 순위표 탭</div>
+    <div class="phone-frame-sm comp-context">
+      <div class="phone-screen-sm">
+        <div class="app-bar" style="background:#0f1f12; border-bottom:1px solid #1e4d22;">
+          <div class="app-bar-icon">←</div>
+          <span class="app-bar-title">서울 5인제 리그</span>
+          <div class="app-bar-icon">⋮</div>
+        </div>
+        <div class="context-banner comp">🏆 대회 모드 · 서울 5인제 리그 2026</div>
+        <div class="content">
+          <div style="padding:10px 16px 4px;">
+            <div style="background:var(--surface2); border-radius:8px; overflow:hidden; border:1px solid var(--border);">
+              <!-- 테이블 헤더 -->
+              <div style="display:flex; align-items:center; padding:8px 12px; border-bottom:1px solid var(--border); font-size:10px; color:var(--on-surface-muted); font-weight:600; gap:4px;">
+                <span style="width:22px; text-align:center;">#</span>
+                <span style="flex:1;">팀</span>
+                <span style="width:24px; text-align:center;">경기</span>
+                <span style="width:24px; text-align:center;">승</span>
+                <span style="width:24px; text-align:center;">패</span>
+                <span style="width:32px; text-align:center;">승점</span>
+              </div>
+              <!-- 1위 -->
+              <div style="display:flex; align-items:center; padding:10px 12px; border-bottom:1px solid var(--border); gap:4px; background:rgba(76,175,80,0.08);">
+                <span style="width:22px; text-align:center; font-size:14px; font-weight:700; color:#81C784;">1</span>
+                <div style="flex:1; display:flex; align-items:center; gap:6px;">
+                  <span style="font-size:13px;">🛡️</span>
+                  <div>
+                    <div style="font-size:12px; color:var(--on-surface); font-weight:600;">FC 서울 라이온스</div>
+                    <div style="font-size:10px; color:#81C784;">🥇 1위</div>
+                  </div>
+                </div>
+                <span style="width:24px; text-align:center; font-size:12px; color:var(--on-surface-muted);">3</span>
+                <span style="width:24px; text-align:center; font-size:12px; color:#81C784; font-weight:600;">3</span>
+                <span style="width:24px; text-align:center; font-size:12px; color:var(--on-surface-muted);">0</span>
+                <span style="width:32px; text-align:center; font-size:13px; font-weight:700; color:#81C784;">9</span>
+              </div>
+              <!-- 2위 -->
+              <div style="display:flex; align-items:center; padding:10px 12px; border-bottom:1px solid var(--border); gap:4px;">
+                <span style="width:22px; text-align:center; font-size:14px; font-weight:700; color:#FFB74D;">2</span>
+                <div style="flex:1; display:flex; align-items:center; gap:6px;">
+                  <span style="font-size:13px;">🌟</span>
+                  <div>
+                    <div style="font-size:12px; color:var(--on-surface); font-weight:600;">성동 스타즈</div>
+                  </div>
+                </div>
+                <span style="width:24px; text-align:center; font-size:12px; color:var(--on-surface-muted);">3</span>
+                <span style="width:24px; text-align:center; font-size:12px; color:#81C784;">2</span>
+                <span style="width:24px; text-align:center; font-size:12px; color:var(--on-surface-muted);">1</span>
+                <span style="width:32px; text-align:center; font-size:13px; font-weight:700; color:var(--on-surface);">6</span>
+              </div>
+              <!-- 3위 -->
+              <div style="display:flex; align-items:center; padding:10px 12px; border-bottom:1px solid var(--border); gap:4px;">
+                <span style="width:22px; text-align:center; font-size:14px; font-weight:600; color:var(--on-surface-muted);">3</span>
+                <div style="flex:1; display:flex; align-items:center; gap:6px;">
+                  <span style="font-size:13px;">⚽</span>
+                  <div>
+                    <div style="font-size:12px; color:var(--on-surface);">강남 FC</div>
+                  </div>
+                </div>
+                <span style="width:24px; text-align:center; font-size:12px; color:var(--on-surface-muted);">3</span>
+                <span style="width:24px; text-align:center; font-size:12px; color:var(--on-surface-muted);">1</span>
+                <span style="width:24px; text-align:center; font-size:12px; color:var(--on-surface-muted);">2</span>
+                <span style="width:32px; text-align:center; font-size:13px; font-weight:700; color:var(--on-surface);">3</span>
+              </div>
+              <!-- 4위 -->
+              <div style="display:flex; align-items:center; padding:10px 12px; gap:4px;">
+                <span style="width:22px; text-align:center; font-size:14px; font-weight:600; color:var(--on-surface-muted);">4</span>
+                <div style="flex:1; display:flex; align-items:center; gap:6px;">
+                  <span style="font-size:13px;">🏃</span>
+                  <div>
+                    <div style="font-size:12px; color:var(--on-surface);">마포 풋살단</div>
+                  </div>
+                </div>
+                <span style="width:24px; text-align:center; font-size:12px; color:var(--on-surface-muted);">3</span>
+                <span style="width:24px; text-align:center; font-size:12px; color:var(--on-surface-muted);">0</span>
+                <span style="width:24px; text-align:center; font-size:12px; color:var(--on-surface-muted);">3</span>
+                <span style="width:32px; text-align:center; font-size:13px; font-weight:700; color:var(--on-surface);">0</span>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="bottom-nav-comp">
+          <div class="bottom-nav-item"><span class="nav-icon" style="font-size:18px;">📋</span><span class="nav-label" style="font-size:10px;">대진표</span></div>
+          <div class="bottom-nav-item"><span class="nav-icon" style="font-size:18px;">⚽</span><span class="nav-label" style="font-size:10px;">경기</span></div>
+          <div class="bottom-nav-item"><span class="nav-icon" style="font-size:18px;">👥</span><span class="nav-label" style="font-size:10px;">참가자</span></div>
+          <div class="bottom-nav-item active"><span class="nav-icon" style="font-size:18px;">📊</span><span class="nav-label" style="font-size:10px;">순위표</span></div>
+          <div class="bottom-nav-item"><span class="nav-icon" style="font-size:18px;">ℹ️</span><span class="nav-label" style="font-size:10px;">정보</span></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Arrow B-4→B-5 -->
+  <div class="flow-arrow green">
+    <div class="arrow-line"></div>
+    <div class="arrow-label">정보 탭</div>
+  </div>
+
+  <!-- B-5. 정보 탭 -->
+  <div class="frame-wrapper">
+    <div class="frame-label comp">⑤ 정보 탭</div>
+    <div class="phone-frame-sm comp-context">
+      <div class="phone-screen-sm">
+        <div class="app-bar" style="background:#0f1f12; border-bottom:1px solid #1e4d22;">
+          <div class="app-bar-icon">←</div>
+          <span class="app-bar-title">서울 5인제 리그</span>
+          <div class="app-bar-icon">⋮</div>
+        </div>
+        <div class="context-banner comp">🏆 대회 모드 · 서울 5인제 리그 2026</div>
+        <div class="content">
+          <div style="padding:10px 16px 4px;">
+            <div style="display:flex; align-items:center; gap:12px; padding:12px; background:var(--surface2); border-radius:10px; border:1px solid var(--border); margin-bottom:10px;">
+              <div style="width:44px; height:44px; border-radius:12px; background:rgba(76,175,80,0.2); display:flex; align-items:center; justify-content:center; font-size:22px;">🏆</div>
+              <div>
+                <div style="font-size:14px; font-weight:700; color:var(--on-surface);">서울 5인제 리그 2026</div>
+                <div style="font-size:11px; color:var(--on-surface-muted); margin-top:3px;">토너먼트 · 4팀 · 공개</div>
+              </div>
+            </div>
+
+            <div class="section-header">대회 정보</div>
+            <div class="settings-item" style="padding:9px 0;">
+              <div style="font-size:11px; color:var(--on-surface-muted); width:70px; flex-shrink:0;">주최</div>
+              <div style="font-size:12px; color:var(--on-surface);">FC 서울 라이온스</div>
+            </div>
+            <div class="settings-item" style="padding:9px 0;">
+              <div style="font-size:11px; color:var(--on-surface-muted); width:70px; flex-shrink:0;">기간</div>
+              <div style="font-size:12px; color:var(--on-surface);">2026.03.15 ~ 04.15</div>
+            </div>
+            <div class="settings-item" style="padding:9px 0;">
+              <div style="font-size:11px; color:var(--on-surface-muted); width:70px; flex-shrink:0;">장소</div>
+              <div style="font-size:12px; color:var(--on-surface);">서울 풋살파크 (서초)</div>
+            </div>
+            <div class="settings-item" style="padding:9px 0; border-bottom:none;">
+              <div style="font-size:11px; color:var(--on-surface-muted); width:70px; flex-shrink:0;">참가비</div>
+              <div style="font-size:12px; color:var(--on-surface);">팀당 50,000원</div>
+            </div>
+
+            <div class="section-header">규정</div>
+            <div style="font-size:12px; color:var(--on-surface-muted); line-height:1.6; padding:4px 0;">
+              5인제 풋살 경기 방식으로 진행됩니다. 각 경기는 전·후반 각 15분이며, 동점 시 승부차기로 결정합니다.
+            </div>
+
+            <div style="margin-top:10px; background:rgba(76,175,80,0.07); border:1px dashed rgba(76,175,80,0.25); border-radius:8px; padding:8px 12px;">
+              <div style="font-size:10px; color:#81C784; font-weight:600;">대회 정보 탭: 확장 포인트</div>
+              <div style="font-size:10px; color:var(--on-surface-muted); margin-top:3px;">공지, 규정, 문의 등 추가 콘텐츠 수용</div>
+            </div>
+          </div>
+        </div>
+        <div class="bottom-nav-comp">
+          <div class="bottom-nav-item"><span class="nav-icon" style="font-size:18px;">📋</span><span class="nav-label" style="font-size:10px;">대진표</span></div>
+          <div class="bottom-nav-item"><span class="nav-icon" style="font-size:18px;">⚽</span><span class="nav-label" style="font-size:10px;">경기</span></div>
+          <div class="bottom-nav-item"><span class="nav-icon" style="font-size:18px;">👥</span><span class="nav-label" style="font-size:10px;">참가자</span></div>
+          <div class="bottom-nav-item"><span class="nav-icon" style="font-size:18px;">📊</span><span class="nav-label" style="font-size:10px;">순위표</span></div>
+          <div class="bottom-nav-item active"><span class="nav-icon" style="font-size:18px;">ℹ️</span><span class="nav-label" style="font-size:10px;">정보</span></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div><!-- /flow-row 3 -->
+
+<!-- Phase 2 옵션 B GoRouter 구조 -->
+<div class="structure-section" style="border-color:rgba(76,175,80,0.3);">
+  <div style="font-size:15px; font-weight:700; color:var(--on-surface); margin-bottom:16px; display:flex; align-items:center; gap:8px;">
+    🗂 Phase 2 옵션 B — GoRouter 구조 (대회 독립 BottomNav 적용 시)
+    <span style="font-size:11px; font-weight:400; color:#81C784; background:rgba(76,175,80,0.1); border:1px solid rgba(76,175,80,0.25); border-radius:12px; padding:2px 8px;">중기 v2</span>
+  </div>
+  <div class="tree">
+    <span class="node-main">GoRouter</span><br>
+    &nbsp;&nbsp;└── <span class="node-main">StatefulShellRoute.indexedStack</span> <span class="node-note">// [L1] 메인 BottomNav (4탭)</span><br>
+    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;├── <span class="node-branch">Branch[0]</span> /home<br>
+    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;├── <span class="node-branch">Branch[1]</span> /competitions<br>
+    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;│&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;└── <span class="node-new">ShellRoute (CompetitionShell)</span> <span class="node-note">// 대회 컨텍스트 래퍼 ✨ 신규</span><br>
+    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;│&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;└── <span class="node-l3">StatefulShellRoute.indexedStack</span> <span class="node-note">// [L2] 대회 BottomNav (5탭)</span><br>
+    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;│&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;├── <span class="node-branch">Branch[0]</span> /competitions/:id/bracket<br>
+    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;│&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;├── <span class="node-branch">Branch[1]</span> /competitions/:id/matches<br>
+    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;│&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;├── <span class="node-branch">Branch[2]</span> /competitions/:id/participants<br>
+    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;│&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;├── <span class="node-branch">Branch[3]</span> /competitions/:id/standings<br>
+    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;│&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;└── <span class="node-branch">Branch[4]</span> /competitions/:id/info<br>
+    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;├── <span class="node-branch">Branch[2]</span> /clubs<br>
+    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;│&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;└── <span class="node-new">ShellRoute (ClubShell)</span> <span class="node-note">// 클럽 컨텍스트 래퍼</span><br>
+    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;│&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;└── <span class="node-l2">StatefulShellRoute.indexedStack</span> <span class="node-note">// [L2] 클럽 BottomNav</span><br>
+    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;│&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;├── /clubs/:id/home<br>
+    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;│&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;├── /clubs/:id/competitions<br>
+    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;│&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;│&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;└── /clubs/:id/competitions/:cid <span class="node-note">// 대회 BottomNav 재사용</span><br>
+    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;│&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;├── /clubs/:id/members<br>
+    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;│&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;└── /clubs/:id/settings<br>
+    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;└── <span class="node-branch">Branch[3]</span> /my
+  </div>
+  <div style="margin-top:16px; padding:12px 16px; background:rgba(255,152,0,0.06); border:1px solid rgba(255,152,0,0.2); border-radius:10px;">
+    <div style="font-size:12px; font-weight:700; color:#FFB74D; margin-bottom:6px;">⚠️ 클럽 내 대회 진입 시 Shell 3단 중첩 주의</div>
+    <div style="font-size:11px; color:var(--on-surface-muted); line-height:1.6;">
+      메인(L1) → 클럽(L2) → 대회(L3) 구조에서 GoRouter Back 스택 관리가 복잡해질 수 있습니다.
+      클럽 독립 네비게이션(Phase 1) 안정화 후 단계적으로 적용하세요.
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════════════════
      COMPARISON TABLE
      ═══════════════════════════════════════════════════════════════════ -->
 
