@@ -1,0 +1,749 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>현재 네비게이션 구조 — Final Whistle</title>
+<link rel="stylesheet" href="_common.css">
+<style>
+  .page-title {
+    width: 100%;
+    max-width: 1400px;
+    padding: 16px 0 8px;
+    font-size: 22px;
+    font-weight: 700;
+    color: var(--on-surface);
+  }
+  .page-subtitle {
+    width: 100%;
+    max-width: 1400px;
+    font-size: 13px;
+    color: var(--on-surface-muted);
+    margin-bottom: 24px;
+  }
+
+  /* Layout: row of phone frames + arrows */
+  .flow-row {
+    display: flex;
+    align-items: flex-start;
+    gap: 0;
+    max-width: 1400px;
+    width: 100%;
+    overflow-x: auto;
+    padding-bottom: 24px;
+  }
+
+  /* Arrow between frames */
+  .flow-arrow {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    padding: 0 8px;
+    flex-shrink: 0;
+    margin-top: 280px;
+  }
+  .flow-arrow .arrow-line {
+    width: 40px;
+    height: 2px;
+    background: var(--primary);
+    position: relative;
+  }
+  .flow-arrow .arrow-line::after {
+    content: '';
+    position: absolute;
+    right: -1px;
+    top: -5px;
+    border: 6px solid transparent;
+    border-left-color: var(--primary);
+  }
+  .flow-arrow .arrow-label {
+    font-size: 11px;
+    color: var(--primary-light);
+    white-space: nowrap;
+    text-align: center;
+    max-width: 64px;
+  }
+
+  /* Frame wrapper with label */
+  .frame-wrapper {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 12px;
+    flex-shrink: 0;
+  }
+  .frame-label {
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--on-surface-muted);
+    padding: 4px 12px;
+    background: var(--surface2);
+    border-radius: 20px;
+    border: 1px solid var(--border);
+  }
+
+  /* Compact phone frame */
+  .phone-frame-sm {
+    width: 340px;
+    height: 720px;
+    background: var(--bg);
+    border-radius: 40px;
+    border: 7px solid #2C2C3E;
+    box-shadow: 0 24px 60px rgba(0,0,0,0.5), inset 0 0 0 1px #3A3A52;
+    overflow: hidden;
+    position: relative;
+    display: flex;
+    flex-direction: column;
+  }
+  .phone-frame-sm::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 50%;
+    transform: translateX(-50%);
+    width: 110px; height: 28px;
+    background: #2C2C3E;
+    border-radius: 0 0 16px 16px;
+    z-index: 100;
+  }
+  .phone-screen-sm {
+    flex: 1;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    background: var(--bg);
+    padding-top: 34px;
+  }
+
+  /* Structure diagram */
+  .structure-section {
+    width: 100%;
+    max-width: 1400px;
+    margin-top: 40px;
+    background: var(--surface2);
+    border-radius: 16px;
+    padding: 24px;
+    border: 1px solid var(--border);
+  }
+  .structure-title {
+    font-size: 15px;
+    font-weight: 700;
+    color: var(--on-surface);
+    margin-bottom: 16px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .structure-title::before {
+    content: '🗂';
+  }
+
+  .tree {
+    font-family: 'Courier New', monospace;
+    font-size: 13px;
+    line-height: 1.8;
+    color: var(--on-surface-muted);
+  }
+  .tree .node-main { color: var(--primary-light); font-weight: 700; }
+  .tree .node-branch { color: #82B1FF; }
+  .tree .node-leaf { color: var(--on-surface); }
+  .tree .node-note { color: var(--on-surface-muted); font-size: 11px; }
+  .tree .node-problem { color: #FF8A80; }
+
+  /* Problem callout */
+  .problem-list {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+    gap: 12px;
+    width: 100%;
+    max-width: 1400px;
+    margin-top: 20px;
+  }
+  .problem-card {
+    background: rgba(244,67,54,0.08);
+    border: 1px solid rgba(244,67,54,0.25);
+    border-radius: 12px;
+    padding: 16px;
+  }
+  .problem-card .p-title {
+    font-size: 13px;
+    font-weight: 600;
+    color: #EF5350;
+    margin-bottom: 6px;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+  .problem-card .p-desc {
+    font-size: 12px;
+    color: var(--on-surface-muted);
+    line-height: 1.5;
+  }
+
+  /* Home content */
+  .hero-banner {
+    background: linear-gradient(135deg, #1a1535, #2a1f6e);
+    padding: 20px 16px 24px;
+    border-bottom: 1px solid var(--border);
+  }
+  .hero-greeting { font-size: 12px; color: var(--primary-light); margin-bottom: 4px; }
+  .hero-title { font-size: 18px; font-weight: 700; color: var(--on-surface); }
+
+  .quick-stats {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 8px;
+    padding: 12px 16px;
+  }
+  .stat-card {
+    background: var(--surface2);
+    border-radius: 10px;
+    padding: 10px 8px;
+    text-align: center;
+  }
+  .stat-value { font-size: 16px; font-weight: 700; color: var(--primary-light); }
+  .stat-key { font-size: 10px; color: var(--on-surface-muted); margin-top: 2px; }
+
+  /* Competition list item */
+  .comp-item {
+    display: flex;
+    align-items: center;
+    padding: 10px 16px;
+    gap: 12px;
+    border-bottom: 1px solid var(--border);
+  }
+  .comp-icon {
+    width: 36px; height: 36px;
+    border-radius: 10px;
+    background: rgba(108,99,255,0.2);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 16px;
+    flex-shrink: 0;
+  }
+  .comp-info { flex: 1; min-width: 0; }
+  .comp-name { font-size: 13px; font-weight: 600; color: var(--on-surface); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .comp-meta { font-size: 11px; color: var(--on-surface-muted); margin-top: 2px; }
+
+  /* Club detail content */
+  .club-header {
+    background: linear-gradient(160deg, #1a1535, #251b4f);
+    padding: 16px 16px 12px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    border-bottom: 1px solid var(--border);
+  }
+  .club-avatar {
+    width: 48px; height: 48px;
+    border-radius: 14px;
+    background: linear-gradient(135deg, var(--primary), #9D4DFF);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 22px;
+    flex-shrink: 0;
+  }
+  .club-info .club-name { font-size: 15px; font-weight: 700; color: var(--on-surface); }
+  .club-info .club-sub { font-size: 11px; color: var(--on-surface-muted); margin-top: 2px; }
+
+  .member-item {
+    display: flex;
+    align-items: center;
+    padding: 8px 16px;
+    gap: 10px;
+    border-bottom: 1px solid var(--border);
+  }
+  .member-avatar-sm {
+    width: 32px; height: 32px;
+    border-radius: 50%;
+    background: var(--surface3);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 14px;
+    flex-shrink: 0;
+  }
+  .member-name { font-size: 13px; color: var(--on-surface); }
+  .member-role { font-size: 10px; color: var(--on-surface-muted); }
+  .role-badge {
+    font-size: 10px;
+    padding: 2px 7px;
+    border-radius: 4px;
+    background: rgba(108,99,255,0.2);
+    color: var(--primary-light);
+    margin-left: auto;
+  }
+  .role-badge.admin { background: rgba(255,152,0,0.15); color: #FFB74D; }
+
+  /* Problem indicator overlay */
+  .problem-indicator {
+    position: absolute;
+    top: 8px;
+    right: 8px;
+    background: rgba(244,67,54,0.9);
+    color: #fff;
+    font-size: 10px;
+    font-weight: 700;
+    padding: 3px 8px;
+    border-radius: 6px;
+    z-index: 200;
+  }
+</style>
+</head>
+<body>
+
+<nav class="page-nav">
+  <span class="nav-title">Final Whistle 목업</span>
+  <a href="index.html">← 목록</a>
+  <a href="navigation-proposed.html">제안 구조 →</a>
+</nav>
+
+<div class="page-title">현재 네비게이션 구조</div>
+<div class="page-subtitle">현재 앱의 BottomNav 및 TabBar 구조와 문제점 분석</div>
+
+<!-- ───────────────────────────── FLOW ROW ───────────────────────────── -->
+<div class="flow-row">
+
+  <!-- 1. 메인 홈 -->
+  <div class="frame-wrapper">
+    <div class="frame-label">① 메인 홈</div>
+    <div class="phone-frame-sm">
+      <div class="phone-screen-sm">
+        <!-- AppBar -->
+        <div class="app-bar">
+          <span class="app-bar-title">Final Whistle</span>
+          <div class="app-bar-icon">🔔</div>
+          <div class="app-bar-icon">⚙️</div>
+        </div>
+        <!-- Content -->
+        <div class="content">
+          <div class="hero-banner">
+            <div class="hero-greeting">안녕하세요, 이상우 님 👋</div>
+            <div class="hero-title">오늘의 경기를 확인하세요</div>
+          </div>
+          <div class="quick-stats">
+            <div class="stat-card">
+              <div class="stat-value">3</div>
+              <div class="stat-key">참가 대회</div>
+            </div>
+            <div class="stat-card">
+              <div class="stat-value">12</div>
+              <div class="stat-key">내 클럽</div>
+            </div>
+            <div class="stat-card">
+              <div class="stat-value">5</div>
+              <div class="stat-key">예정 경기</div>
+            </div>
+          </div>
+          <div class="section-header">최근 활동</div>
+          <div class="comp-item">
+            <div class="comp-icon">🏆</div>
+            <div class="comp-info">
+              <div class="comp-name">서울 5인제 리그 2026</div>
+              <div class="comp-meta">진행 중 · 4강</div>
+            </div>
+            <span class="chip progress" style="font-size:10px;">진행</span>
+          </div>
+          <div class="comp-item">
+            <div class="comp-icon">⚽</div>
+            <div class="comp-info">
+              <div class="comp-name">봄맞이 친선 토너먼트</div>
+              <div class="comp-meta">접수 중 · ~4/10</div>
+            </div>
+            <span class="chip open" style="font-size:10px;">모집</span>
+          </div>
+          <div class="comp-item">
+            <div class="comp-icon">🥅</div>
+            <div class="comp-info">
+              <div class="comp-name">강남구 조기축구 클럽리그</div>
+              <div class="comp-meta">완료 · 우승 🥇</div>
+            </div>
+            <span class="chip done" style="font-size:10px;">완료</span>
+          </div>
+        </div>
+        <!-- BottomNav -->
+        <div class="bottom-nav">
+          <div class="bottom-nav-item active">
+            <span class="nav-icon">🏠</span>
+            <span class="nav-label">홈</span>
+          </div>
+          <div class="bottom-nav-item">
+            <span class="nav-icon">🏆</span>
+            <span class="nav-label">대회</span>
+          </div>
+          <div class="bottom-nav-item">
+            <span class="nav-icon">🛡️</span>
+            <span class="nav-label">클럽</span>
+          </div>
+          <div class="bottom-nav-item">
+            <span class="nav-icon">👤</span>
+            <span class="nav-label">MY</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Arrow 1→2 -->
+  <div class="flow-arrow">
+    <div class="arrow-line"></div>
+    <div class="arrow-label">클럽 탭</div>
+  </div>
+
+  <!-- 2. 클럽 목록 -->
+  <div class="frame-wrapper">
+    <div class="frame-label">② 클럽 목록</div>
+    <div class="phone-frame-sm">
+      <div class="phone-screen-sm">
+        <div class="app-bar">
+          <span class="app-bar-title">내 클럽</span>
+          <div class="app-bar-icon">➕</div>
+        </div>
+        <div class="content">
+          <div class="list-tile" style="border-bottom:1px solid var(--border);">
+            <div class="leading">🛡️</div>
+            <div class="tile-content">
+              <div class="tile-title">FC 서울 라이온스</div>
+              <div class="tile-subtitle">멤버 24명 · 관리자</div>
+            </div>
+            <span class="trailing">›</span>
+          </div>
+          <div class="list-tile" style="border-bottom:1px solid var(--border);">
+            <div class="leading">⚽</div>
+            <div class="tile-content">
+              <div class="tile-title">강남 FC</div>
+              <div class="tile-subtitle">멤버 16명 · 일반</div>
+            </div>
+            <span class="trailing">›</span>
+          </div>
+          <div class="list-tile" style="border-bottom:1px solid var(--border);">
+            <div class="leading">🏃</div>
+            <div class="tile-content">
+              <div class="tile-title">마포 풋살단</div>
+              <div class="tile-subtitle">멤버 11명 · 일반</div>
+            </div>
+            <span class="trailing">›</span>
+          </div>
+          <div class="list-tile" style="border-bottom:1px solid var(--border);">
+            <div class="leading">🌟</div>
+            <div class="tile-content">
+              <div class="tile-title">성동 스타즈</div>
+              <div class="tile-subtitle">멤버 9명 · 관리자</div>
+            </div>
+            <span class="trailing">›</span>
+          </div>
+        </div>
+        <div class="bottom-nav">
+          <div class="bottom-nav-item">
+            <span class="nav-icon">🏠</span>
+            <span class="nav-label">홈</span>
+          </div>
+          <div class="bottom-nav-item">
+            <span class="nav-icon">🏆</span>
+            <span class="nav-label">대회</span>
+          </div>
+          <div class="bottom-nav-item active">
+            <span class="nav-icon">🛡️</span>
+            <span class="nav-label">클럽</span>
+          </div>
+          <div class="bottom-nav-item">
+            <span class="nav-icon">👤</span>
+            <span class="nav-label">MY</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Arrow 2→3 -->
+  <div class="flow-arrow">
+    <div class="arrow-line"></div>
+    <div class="arrow-label">클럽 선택</div>
+  </div>
+
+  <!-- 3. 클럽 상세 (대회 탭) -->
+  <div class="frame-wrapper">
+    <div class="frame-label">③ 클럽 상세 — 대회 탭</div>
+    <div class="phone-frame-sm" style="position:relative;">
+      <div class="problem-indicator">⚠ 문제 1</div>
+      <div class="phone-screen-sm">
+        <div class="app-bar">
+          <div class="app-bar-icon">←</div>
+          <span class="app-bar-title">FC 서울 라이온스</span>
+          <div class="app-bar-icon">⋮</div>
+        </div>
+        <div class="club-header">
+          <div class="club-avatar">🛡️</div>
+          <div class="club-info">
+            <div class="club-name">FC 서울 라이온스</div>
+            <div class="club-sub">멤버 24명 · 서울 · 공개 클럽</div>
+          </div>
+        </div>
+        <!-- Inner TabBar -->
+        <div class="tab-bar">
+          <div class="tab active">대회</div>
+          <div class="tab">리그</div>
+          <div class="tab">멤버</div>
+        </div>
+        <div class="content">
+          <div class="comp-item">
+            <div class="comp-icon">🏆</div>
+            <div class="comp-info">
+              <div class="comp-name">서울 5인제 리그 2026</div>
+              <div class="comp-meta">진행 중 · 참가팀 8</div>
+            </div>
+            <span class="chip progress" style="font-size:10px;">진행</span>
+          </div>
+          <div class="comp-item">
+            <div class="comp-icon">⚽</div>
+            <div class="comp-info">
+              <div class="comp-name">봄 친선 토너먼트</div>
+              <div class="comp-meta">접수 중 · ~4/10</div>
+            </div>
+            <span class="chip open" style="font-size:10px;">모집</span>
+          </div>
+          <div class="comp-item">
+            <div class="comp-icon">🥅</div>
+            <div class="comp-info">
+              <div class="comp-name">강남구 클럽리그</div>
+              <div class="comp-meta">완료</div>
+            </div>
+            <span class="chip done" style="font-size:10px;">완료</span>
+          </div>
+        </div>
+        <!-- 메인 BottomNav 그대로 유지 -->
+        <div class="bottom-nav">
+          <div class="bottom-nav-item">
+            <span class="nav-icon">🏠</span>
+            <span class="nav-label">홈</span>
+          </div>
+          <div class="bottom-nav-item">
+            <span class="nav-icon">🏆</span>
+            <span class="nav-label">대회</span>
+          </div>
+          <div class="bottom-nav-item active">
+            <span class="nav-icon">🛡️</span>
+            <span class="nav-label">클럽</span>
+          </div>
+          <div class="bottom-nav-item">
+            <span class="nav-icon">👤</span>
+            <span class="nav-label">MY</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Arrow 3→4 -->
+  <div class="flow-arrow">
+    <div class="arrow-line"></div>
+    <div class="arrow-label">대회 탭 선택</div>
+  </div>
+
+  <!-- 4. 클럽 상세 (멤버 탭) -->
+  <div class="frame-wrapper">
+    <div class="frame-label">④ 클럽 상세 — 멤버 탭</div>
+    <div class="phone-frame-sm" style="position:relative;">
+      <div class="problem-indicator">⚠ 문제 2</div>
+      <div class="phone-screen-sm">
+        <div class="app-bar">
+          <div class="app-bar-icon">←</div>
+          <span class="app-bar-title">FC 서울 라이온스</span>
+          <div class="app-bar-icon">⋮</div>
+        </div>
+        <div class="club-header">
+          <div class="club-avatar">🛡️</div>
+          <div class="club-info">
+            <div class="club-name">FC 서울 라이온스</div>
+            <div class="club-sub">멤버 24명 · 서울 · 공개 클럽</div>
+          </div>
+        </div>
+        <div class="tab-bar">
+          <div class="tab">대회</div>
+          <div class="tab">리그</div>
+          <div class="tab active">멤버</div>
+        </div>
+        <div class="content">
+          <div class="member-item">
+            <div class="member-avatar-sm">👤</div>
+            <div style="flex:1;">
+              <div class="member-name">이상우</div>
+              <div class="member-role">관리자</div>
+            </div>
+            <span class="role-badge admin">Admin</span>
+          </div>
+          <div class="member-item">
+            <div class="member-avatar-sm">👤</div>
+            <div style="flex:1;">
+              <div class="member-name">김민준</div>
+              <div class="member-role">일반 멤버</div>
+            </div>
+            <span class="role-badge">멤버</span>
+          </div>
+          <div class="member-item">
+            <div class="member-avatar-sm">👤</div>
+            <div style="flex:1;">
+              <div class="member-name">박서연</div>
+              <div class="member-role">일반 멤버</div>
+            </div>
+            <span class="role-badge">멤버</span>
+          </div>
+          <div class="member-item">
+            <div class="member-avatar-sm">👤</div>
+            <div style="flex:1;">
+              <div class="member-name">최도윤</div>
+              <div class="member-role">일반 멤버</div>
+            </div>
+            <span class="role-badge">멤버</span>
+          </div>
+          <div style="padding:10px 16px;">
+            <div style="font-size:11px; color:var(--on-surface-muted);">
+              + 20명 더보기
+            </div>
+          </div>
+          <!-- 설정은 ⋮ 메뉴 안에 숨어 있음 -->
+          <div style="background:rgba(244,67,54,0.06); border:1px dashed rgba(244,67,54,0.3); border-radius:8px; margin:8px 16px; padding:10px 12px;">
+            <div style="font-size:11px; color:#EF5350; font-weight:600;">⚠ 설정은 ⋮ 메뉴 안에 숨어 있음</div>
+            <div style="font-size:10px; color:var(--on-surface-muted); margin-top:4px;">관리자도 설정에 빠르게 접근하기 어려움</div>
+          </div>
+        </div>
+        <div class="bottom-nav">
+          <div class="bottom-nav-item">
+            <span class="nav-icon">🏠</span>
+            <span class="nav-label">홈</span>
+          </div>
+          <div class="bottom-nav-item">
+            <span class="nav-icon">🏆</span>
+            <span class="nav-label">대회</span>
+          </div>
+          <div class="bottom-nav-item active">
+            <span class="nav-icon">🛡️</span>
+            <span class="nav-label">클럽</span>
+          </div>
+          <div class="bottom-nav-item">
+            <span class="nav-icon">👤</span>
+            <span class="nav-label">MY</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Arrow 3→5 (대회 상세) -->
+  <div class="flow-arrow">
+    <div class="arrow-line"></div>
+    <div class="arrow-label">대회 선택</div>
+  </div>
+
+  <!-- 5. 대회 상세 -->
+  <div class="frame-wrapper">
+    <div class="frame-label">⑤ 대회 상세 — 대진표 탭</div>
+    <div class="phone-frame-sm" style="position:relative;">
+      <div class="problem-indicator">⚠ 문제 3</div>
+      <div class="phone-screen-sm">
+        <div class="app-bar">
+          <div class="app-bar-icon">←</div>
+          <span class="app-bar-title">서울 5인제 리그</span>
+          <div class="app-bar-icon">⋮</div>
+        </div>
+        <!-- TabBar: 탭 2개만 -->
+        <div class="tab-bar">
+          <div class="tab active">대진표</div>
+          <div class="tab">순위표</div>
+        </div>
+        <div class="content">
+          <div style="padding:12px 16px;">
+            <div style="font-size:12px; color:var(--on-surface-muted); margin-bottom:8px;">4강 · 진행 중</div>
+            <!-- Bracket stub -->
+            <div style="background:var(--surface2); border-radius:8px; padding:12px; margin-bottom:8px; display:flex; justify-content:space-between; align-items:center;">
+              <div>
+                <div style="font-size:12px; color:var(--on-surface);">FC 서울 라이온스</div>
+                <div style="font-size:18px; font-weight:700; color:var(--primary-light);">3</div>
+              </div>
+              <div style="font-size:11px; color:var(--on-surface-muted);">vs</div>
+              <div style="text-align:right;">
+                <div style="font-size:12px; color:var(--on-surface);">강남 FC</div>
+                <div style="font-size:18px; font-weight:700; color:var(--on-surface-muted);">1</div>
+              </div>
+            </div>
+            <div style="background:var(--surface2); border-radius:8px; padding:12px; display:flex; justify-content:space-between; align-items:center;">
+              <div>
+                <div style="font-size:12px; color:var(--on-surface);">마포 풋살단</div>
+                <div style="font-size:18px; font-weight:700; color:var(--on-surface-muted);">2</div>
+              </div>
+              <div style="font-size:11px; color:var(--on-surface-muted);">vs</div>
+              <div style="text-align:right;">
+                <div style="font-size:12px; color:var(--on-surface);">성동 스타즈</div>
+                <div style="font-size:18px; font-weight:700; color:var(--primary-light);">4</div>
+              </div>
+            </div>
+            <!-- 문제 표시 -->
+            <div style="background:rgba(244,67,54,0.06); border:1px dashed rgba(244,67,54,0.3); border-radius:8px; margin-top:12px; padding:10px 12px;">
+              <div style="font-size:11px; color:#EF5350; font-weight:600;">⚠ 경기 일정·참가자 탭 없음</div>
+              <div style="font-size:10px; color:var(--on-surface-muted); margin-top:4px;">탭 2개로 기능 확장 어려움</div>
+            </div>
+          </div>
+        </div>
+        <!-- 메인 BottomNav → 클럽 컨텍스트 손실 -->
+        <div class="bottom-nav">
+          <div class="bottom-nav-item">
+            <span class="nav-icon">🏠</span>
+            <span class="nav-label">홈</span>
+          </div>
+          <div class="bottom-nav-item active">
+            <span class="nav-icon">🏆</span>
+            <span class="nav-label">대회</span>
+          </div>
+          <div class="bottom-nav-item">
+            <span class="nav-icon">🛡️</span>
+            <span class="nav-label">클럽</span>
+          </div>
+          <div class="bottom-nav-item">
+            <span class="nav-icon">👤</span>
+            <span class="nav-label">MY</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div><!-- /flow-row -->
+
+<!-- ───────────────────────────── STRUCTURE TREE ───────────────────────────── -->
+<div class="structure-section">
+  <div class="structure-title">GoRouter 현재 구조</div>
+  <div class="tree">
+    <span class="node-main">GoRouter</span><br>
+    &nbsp;&nbsp;└── <span class="node-main">StatefulShellRoute.indexedStack</span> <span class="node-note">// 메인 BottomNav (4탭)</span><br>
+    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;├── <span class="node-branch">Branch[0]</span> /home<br>
+    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;├── <span class="node-branch">Branch[1]</span> /competitions<br>
+    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;│&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;└── <span class="node-leaf">/competitions/:id</span> <span class="node-note">// TabBar: 대진표/순위표</span><br>
+    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;├── <span class="node-branch">Branch[2]</span> /clubs<br>
+    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;│&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;└── <span class="node-leaf">/clubs/:id</span> &nbsp;<span class="node-problem">← 내부 TabBar (대회/리그/멤버) — 클럽 컨텍스트만 존재</span><br>
+    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;│&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;└── <span class="node-leaf">/clubs/:id/competitions/:cid</span> <span class="node-problem">← 메인 BottomNav로 전환됨 ⚠</span><br>
+    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;└── <span class="node-branch">Branch[3]</span> /my
+  </div>
+</div>
+
+<!-- ───────────────────────────── PROBLEM CARDS ───────────────────────────── -->
+<div style="width:100%; max-width:1400px; margin-top:8px; font-size:15px; font-weight:700; color:var(--on-surface); padding: 8px 0 4px;">
+  발견된 문제점
+</div>
+<div class="problem-list">
+  <div class="problem-card">
+    <div class="p-title">⚠ 문제 1 · 클럽 컨텍스트 손실</div>
+    <div class="p-desc">클럽 상세에서 대회 상세로 이동하면 BottomNav의 활성 탭이 <strong>클럽→대회</strong>로 변경된다. 사용자는 자신이 클럽 내 대회를 보는지, 전체 대회를 보는지 구분하기 어렵다.</div>
+  </div>
+  <div class="problem-card">
+    <div class="p-title">⚠ 문제 2 · 관리 기능 접근성 저하</div>
+    <div class="p-desc">설정은 AppBar ⋮ 메뉴 안에 숨어 있어 관리자가 자주 사용하는 기능(멤버 초대, 공개 설정)에 대한 접근이 불편하다. 역할 기반 UI 분기도 없다.</div>
+  </div>
+  <div class="problem-card">
+    <div class="p-title">⚠ 문제 3 · 대회 상세 탭 확장 한계</div>
+    <div class="p-desc">현재 대진표/순위표 두 탭만 있으며, 경기 일정·참가자 등 기능 추가 시 TabBar 레이블이 좁아진다. 클럽 내 대회와 전체 대회의 구조 불일치 문제도 발생 가능하다.</div>
+  </div>
+  <div class="problem-card">
+    <div class="p-title">⚠ 문제 4 · Back 네비게이션 불명확</div>
+    <div class="p-desc">클럽 내 대회 → 대회 상세에서 Back을 누르면 클럽 상세로 돌아가야 하지만, 현재 구조에서는 이전 스택 상태에 따라 동작이 불일치할 수 있다.</div>
+  </div>
+</div>
+
+</body>
+</html>
