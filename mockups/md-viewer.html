@@ -8,8 +8,8 @@
 <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
 <style>
 *, *::before, *::after { box-sizing: border-box; }
-html { overflow-x: hidden; }
-body { padding: 24px 20px; overflow-x: hidden; max-width: 100vw; }
+html { overflow-x: hidden; width: 100%; max-width: 100vw; }
+body { padding: 24px 4vw; overflow-x: hidden; width: 100%; max-width: 100vw; }
 
 .back-link {
   display: inline-flex;
@@ -23,15 +23,16 @@ body { padding: 24px 20px; overflow-x: hidden; max-width: 100vw; }
   padding: 6px 10px;
   border-radius: 6px;
   transition: background 0.15s;
-  max-width: 800px;
 }
 .back-link-wrap {
+  width: 100%;
   max-width: 800px;
   margin: 0 auto;
 }
 .back-link:hover { background: rgba(108,99,255,0.12); }
 
 .doc-header {
+  width: 100%;
   max-width: 800px;
   margin: 0 auto 24px;
   padding-bottom: 20px;
@@ -51,6 +52,7 @@ body { padding: 24px 20px; overflow-x: hidden; max-width: 100vw; }
 }
 
 .content-wrap {
+  width: 100%;
   max-width: 800px;
   margin: 0 auto;
 }
@@ -91,10 +93,13 @@ body { padding: 24px 20px; overflow-x: hidden; max-width: 100vw; }
 
 /* GitHub-style dark markdown */
 .markdown-body {
+  width: 100%;
   color: #C9D1D9;
   font-size: 14px;
   line-height: 1.7;
   word-wrap: break-word;
+  overflow-wrap: break-word;
+  word-break: break-word;
 }
 .markdown-body h1, .markdown-body h2 {
   padding-bottom: 0.3em;
@@ -170,13 +175,22 @@ body { padding: 24px 20px; overflow-x: hidden; max-width: 100vw; }
 .markdown-body img { max-width: 100%; height: auto; display: block; }
 
 @media (max-width: 600px) {
-  body { padding: 16px 14px; }
+  body { padding: 16px 3vw; }
   .markdown-body { font-size: 13px; }
   .markdown-body h1 { font-size: 1.6em; }
   .markdown-body h2 { font-size: 1.3em; }
   .markdown-body h3 { font-size: 1.1em; }
   .markdown-body ul, .markdown-body ol { padding-left: 1.4em; }
   .markdown-body pre { padding: 12px; font-size: 12px; }
+}
+@media (max-width: 480px) {
+  body { padding: 12px 2.5vw; }
+  .markdown-body { font-size: 13px; }
+  .markdown-body h1 { font-size: 1.4em; }
+  .markdown-body h2 { font-size: 1.2em; }
+  .markdown-body h3 { font-size: 1.05em; }
+  .markdown-body pre { padding: 10px; font-size: 11.5px; }
+  .doc-title { font-size: 18px; }
 }
 </style>
 </head>
@@ -225,6 +239,13 @@ async function main() {
     if (!res.ok) throw new Error(`${res.status} ${res.statusText}`);
     const md = await res.text();
     app.querySelector('.content-wrap').innerHTML = `<div class="markdown-body">${marked.parse(md)}</div>`;
+    document.querySelectorAll('.markdown-body table').forEach(t => {
+      const wrapper = document.createElement('div');
+      wrapper.style.overflowX = 'auto';
+      wrapper.style.maxWidth = '100%';
+      t.parentNode.insertBefore(wrapper, t);
+      wrapper.appendChild(t);
+    });
   } catch (err) {
     app.querySelector('.content-wrap').innerHTML = `<div class="error-box"><strong>불러오기 실패</strong>${err.message}</div>`;
   }
