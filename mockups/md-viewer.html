@@ -7,7 +7,9 @@
 <link rel="stylesheet" href="_common.css">
 <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
 <style>
-body { padding: 24px 20px; box-sizing: border-box; }
+*, *::before, *::after { box-sizing: border-box; }
+html { overflow-x: hidden; }
+body { padding: 24px 20px; overflow-x: hidden; max-width: 100vw; }
 
 .back-link {
   display: inline-flex;
@@ -119,11 +121,13 @@ body { padding: 24px 20px; box-sizing: border-box; }
 }
 .markdown-body pre {
   padding: 16px;
-  overflow: auto;
+  overflow-x: auto;
+  max-width: 100%;
   background: #161B22;
   border: 1px solid #30363D;
   border-radius: 6px;
   margin-bottom: 16px;
+  word-wrap: normal;
 }
 .markdown-body pre code {
   padding: 0;
@@ -148,7 +152,6 @@ body { padding: 24px 20px; box-sizing: border-box; }
   border-collapse: collapse;
   display: block;
   overflow-x: auto;
-  width: max-content;
   max-width: 100%;
   margin-bottom: 16px;
 }
