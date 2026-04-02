@@ -9,7 +9,7 @@
 <style>
 *, *::before, *::after { box-sizing: border-box; }
 html { overflow-x: hidden; }
-body { padding: 24px 20px; overflow-x: hidden; max-width: 100vw; }
+body { padding: 16px; overflow-x: hidden; width: 100%; max-width: 100%; }
 
 .back-link {
   display: inline-flex;
@@ -23,17 +23,16 @@ body { padding: 24px 20px; overflow-x: hidden; max-width: 100vw; }
   padding: 6px 10px;
   border-radius: 6px;
   transition: background 0.15s;
-  max-width: 800px;
 }
 .back-link-wrap {
-  max-width: 800px;
-  margin: 0 auto;
+  width: 100%;
+  margin: 0;
 }
 .back-link:hover { background: rgba(108,99,255,0.12); }
 
 .doc-header {
-  max-width: 800px;
-  margin: 0 auto 24px;
+  width: 100%;
+  margin: 0 0 24px;
   padding-bottom: 20px;
   border-bottom: 1px solid #2E2E42;
 }
@@ -51,8 +50,8 @@ body { padding: 24px 20px; overflow-x: hidden; max-width: 100vw; }
 }
 
 .content-wrap {
-  max-width: 800px;
-  margin: 0 auto;
+  width: 100%;
+  margin: 0;
 }
 
 /* Loading */
