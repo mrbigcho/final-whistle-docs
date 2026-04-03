@@ -23,7 +23,7 @@
 |------|------|
 | **인증** | 이메일 기반 로그인/회원가입 (Supabase Auth) |
 | **홈 대시보드** | 참가 중인 대회, 클럽 소식 요약 |
-| **대회 관리** | 대회 생성, 대진표, 매치, 순위표, 참가자 관리 |
+| **대회 관리** | 대회 생성, 대진표, 경기, 순위표, 참가자 관리 |
 | **클럽 관리** | 클럽 생성/가입, 멤버 역할 관리, 초대 코드 |
 | **판타지 리그** | 리그 생성, 상태 관리 (Draft → Auction → InSeason → Playoff → Completed) |
 | **경매** | 실시간 선수 경매, 입찰 |
@@ -112,6 +112,8 @@ padding: horizontal 10, vertical 4
 
 콘텐츠 최대 너비: 800–1200px (`ConstrainedBox`)
 
+> **클럽/대회 컨텍스트**: 모바일에서 독립 BottomNavigationBar로 전환. 태블릿/데스크탑에서는 중첩 Rail/Drawer 방식 적용.
+
 ---
 
 ## 4. 컴포넌트 패턴
@@ -142,6 +144,16 @@ Container
 - **에러**: Center + cloud_off 아이콘 + 메시지 + 재시도 버튼
 - **빈 상태**: Center + 관련 아이콘 + 설명 텍스트
 
+### 4.5 참가자 요약 카드
+```
+Card (elevation: 0, border: #3A3A52)
+  └─ InkWell → 참가자 전체보기 화면
+       └─ Row
+            ├─ 참가자 수 / 최대 인원 표시
+            └─ ChevronRight 아이콘
+```
+탭 시 `ParticipantFullScreen`으로 이동.
+
 ---
 
 ## 5. 스크린별 기능 정의
@@ -168,7 +180,7 @@ Container
 - **Purpose**: 대회 탐색, 필터링, 새 대회 생성
 - **Data**: 대회 카드 리스트 (이름, 상태, 참가자 수, 날짜)
 - **Actions**: FAB "대회 만들기", 필터 칩 (전체/모집중/진행중/완료), 카드 탭 → 상세
-- **Constraints**: 필터 칩은 수평 스크롤. 생성 다이얼로그에 이름 입력 + 최대 참가자 슬라이더
+- **Constraints**: 필터 칩은 수평 스크롤. 생성 다이얼로그에 이름 입력 + 최대 참가자 입력(선택, 미입력 시 제한 없음)
 
 ### 5.4 대회 상세 — 대진표 탭 (CompetitionBracketTabScreen)
 
@@ -178,12 +190,12 @@ Container
 - **Actions**: 스테이지 선택 드롭다운 (복수 스테이지 시)
 - **Constraints**: 대진표는 수평 스크롤 가능한 트리 뷰. 매치 카드 탭 시 매치 상세로 이동
 
-### 5.5 대회 상세 — 매치 탭 (CompetitionMatchesTabScreen)
+### 5.5 대회 상세 — 경기 탭 (CompetitionMatchesTabScreen)
 
 - **User**: 대회 참가자 및 관리자
-- **Purpose**: 대회 내 모든 매치 목록 확인
-- **Data**: 매치 리스트 (참가자, 점수, 상태)
-- **Actions**: 매치 카드 탭 → 매치 상세 화면 이동
+- **Purpose**: 대회 내 모든 경기 목록 확인
+- **Data**: 경기 리스트 (참가자, 점수, 상태)
+- **Actions**: 경기 카드 탭 → 경기 상세 화면 이동
 - **Constraints**: 상태별 색상 구분
 
 ### 5.6 대회 상세 — 순위표 탭 (CompetitionStandingsTabScreen)
@@ -194,20 +206,28 @@ Container
 - **Actions**: 스테이지 선택 드롭다운
 - **Constraints**: 대회 형식에 따라 순위표 레이아웃 변경
 
-### 5.7 대회 상세 — 참가자 탭 (ParticipantListScreen)
+### 5.7 대회 상세 — 참가자 탭 (ParticipantSummaryTabScreen)
 
 - **User**: 대회 참가자 및 관리자
-- **Purpose**: 참가자 목록 확인 및 관리
-- **Data**: 참가자 리스트 (이름, 상태)
-- **Actions**: [관리자] 클럽 멤버 추가, 봇 추가, 참가자 제거
-- **Constraints**: 관리자만 추가/제거 액션 노출
+- **Purpose**: 참가자 현황 요약 확인 및 전체 목록 접근
+- **Data**: 참가자 수, 최대 인원, 요약 카드
+- **Actions**: 요약 카드 탭 → 참가자 전체보기 화면(ParticipantFullScreen)
+- **Constraints**: 탭에는 요약 카드만 노출. 상세 관리는 전체보기 화면에서 진행
+
+### 5.7a 참가자 전체보기 (ParticipantFullScreen)
+
+- **User**: 대회 참가자 및 관리자
+- **Purpose**: 전체 참가자 목록 확인 및 참가자 관리
+- **Data**: 참가자 리스트 (이름, 상태, 역할)
+- **Actions**: [관리자] 클럽 멤버 초대, 봇 추가, 참가자 삭제
+- **Constraints**: 관리자만 추가/삭제 액션 노출. 클럽 owner는 멤버 초대 가능
 
 ### 5.8 대회 상세 — 정보 탭 (CompetitionInfoScreen)
 
 - **User**: 대회 참가자 및 관리자
 - **Purpose**: 대회 메타데이터 및 설정 확인
-- **Data**: 대회 이름, 형식, 상태, 생성일 등
-- **Actions**: [관리자] 대회 설정 변경
+- **Data**: 대회 이름, 형식, 상태, 최대 인원(없으면 "제한 없음"), 생성일 등
+- **Actions**: [관리자] 대회 설정 변경, 대회 상태 전환
 - **Constraints**: 읽기 전용 정보 + 관리자 전용 설정 영역 분리
 
 ### 5.9 클럽 목록 (ClubListScreen)
@@ -242,15 +262,7 @@ Container
 - **Actions**: 대회 카드 탭 → 대회 상세
 - **Constraints**: 빈 상태 아이콘 + 메시지
 
-### 5.13 클럽 상세 — 리그 (ClubLeaguesScreen)
-
-- **User**: 클럽 멤버, 관리자
-- **Purpose**: 판타지 리그 목록 확인 및 생성
-- **Data**: 리그 리스트
-- **Actions**: [권한 있는 사용자] FAB "리그 만들기", 리그 카드 탭 → 상세
-- **Constraints**: 빈 상태 아이콘 + 메시지. 생성 다이얼로그
-
-### 5.14 클럽 상세 — 멤버 (ClubMembersScreen)
+### 5.13 클럽 상세 — 멤버 (ClubMembersScreen)
 
 - **User**: 클럽 멤버
 - **Purpose**: 멤버 목록 확인, 역할 관리
@@ -258,15 +270,15 @@ Container
 - **Actions**: 클럽 탈퇴 확인 다이얼로그, [관리자] 멤버 관리 옵션
 - **Constraints**: 역할 뱃지로 구분
 
-### 5.15 클럽 상세 — 설정 (ClubSettingsScreen)
+### 5.14 클럽 상세 — 설정 (ClubSettingsScreen)
 
 - **User**: 클럽 관리자만
 - **Purpose**: 클럽 설정 관리
-- **Data**: 초대 코드, 클럽 설정 항목
-- **Actions**: 초대 코드 관리, 설정 변경
+- **Data**: 초대 코드, 클럽 이름/설명/공개 여부 설정 항목
+- **Actions**: 초대 코드 관리, 설정 변경, 클럽 정보 수정
 - **Constraints**: 관리자 전용 탭 (일반 멤버에게 탭 자체 숨김)
 
-### 5.16 리그 상세 (LeagueDetailScreen)
+### 5.15 리그 상세 (LeagueDetailScreen)
 
 - **User**: 리그 참가자, 커미셔너
 - **Purpose**: 리그 현황 확인 및 상태 진행
@@ -274,7 +286,7 @@ Container
 - **Actions**: [커미셔너] 상태 전환 버튼 (Draft → Auction → InSeason → Playoff → Completed)
 - **Constraints**: 상태 전환은 순차적으로만 가능
 
-### 5.17 경매 (AuctionScreen)
+### 5.16 경매 (AuctionScreen)
 
 - **User**: 리그 참가자
 - **Purpose**: 실시간 선수 경매 참여
@@ -282,7 +294,7 @@ Container
 - **Actions**: 입찰 제출, 실시간 상태 업데이트 확인
 - **Constraints**: AppBar에 라이브 상태 뱃지. LIVE 상태에서 glow 이펙트. 실시간 업데이트 반영
 
-### 5.18 트랜스퍼 (TransferScreen)
+### 5.17 트랜스퍼 (TransferScreen)
 
 - **User**: 리그 참가자
 - **Purpose**: 선수 이적 시장 운영
@@ -293,7 +305,7 @@ Container
   - **FA 입찰 탭**: 자유계약 선수에 FAAB 예산으로 입찰
 - **Constraints**: 3탭 구조, 각 탭 독립적 폼 제출
 
-### 5.19 매치 상세 (MatchDetailScreen)
+### 5.18 매치 상세 (MatchDetailScreen)
 
 - **User**: 매치 참가자, 대회 관리자
 - **Purpose**: 매치 결과 입력 및 확인
@@ -301,7 +313,7 @@ Container
 - **Actions**: 결과 제출, 결과 확인, 이의 제기, [관리자] 초기화
 - **Constraints**: 결과 확인 워크플로우 — 양측 확인 필요. 상태별 가능한 액션 다름
 
-### 5.20 프로필 (MyScreen)
+### 5.19 프로필 (MyScreen)
 
 - **User**: 인증된 사용자
 - **Purpose**: 개인 정보 확인 및 계정 관리
@@ -309,7 +321,7 @@ Container
 - **Actions**: 프로필 편집, 알림(비활성), 로그아웃
 - **Constraints**: primaryContainer 배경 프로필 카드. 앱 버전 표시
 
-### 5.21 프로필 편집 (EditProfileScreen)
+### 5.20 프로필 편집 (EditProfileScreen)
 
 - **User**: 인증된 사용자
 - **Purpose**: 사용자 정보 수정
@@ -324,55 +336,55 @@ Container
 ```mermaid
 graph TD
     AUTH["/auth<br/>로그인/회원가입"]
-    
-    MAIN["MainShell<br/>반응형 네비게이션"]
+
+    MAIN["MainShell<br/>반응형 네비게이션<br/>(홈 / 대회 / 클럽 / MY)"]
     HOME["/home<br/>홈 대시보드"]
     COMP_LIST["/competitions<br/>대회 목록"]
     CLUB_LIST["/clubs<br/>클럽 목록"]
     MY["/my<br/>프로필"]
-    
-    COMP_SHELL["CompetitionShell<br/>대회 상세 탭"]
+
+    COMP_SHELL["CompetitionShell<br/>독립 BottomNav<br/>(대진표 / 경기 / 참가자 / 순위표 / 정보)"]
     BRACKET["/bracket<br/>대진표"]
-    MATCHES["/matches<br/>매치 목록"]
-    PARTICIPANTS["/participants<br/>참가자"]
+    MATCHES["/matches<br/>경기 목록"]
+    PARTICIPANTS["/participants<br/>참가자 요약"]
+    PARTICIPANT_FULL["/participants/full<br/>참가자 전체보기"]
     STANDINGS["/standings<br/>순위표"]
     INFO["/info<br/>정보"]
-    
-    CLUB_SHELL["ClubShell<br/>클럽 상세 탭"]
+
+    CLUB_SHELL["ClubShell<br/>독립 BottomNav<br/>(홈 / 대회 / 멤버 / 설정)"]
     CLUB_HOME["/home<br/>클럽 홈"]
     CLUB_COMP["/competitions<br/>클럽 대회"]
-    CLUB_LEAGUES["/leagues<br/>리그 목록"]
     CLUB_MEMBERS["/members<br/>멤버"]
     CLUB_SETTINGS["/settings<br/>설정 (관리자)"]
-    
-    MATCH_DETAIL["/matches/:id<br/>매치 상세"]
+
+    MATCH_DETAIL["/matches/:id<br/>경기 상세"]
     LEAGUE_DETAIL["/leagues/:id<br/>리그 상세"]
     AUCTION["/auctions/:id<br/>경매"]
     TRANSFER["/transfers/:id<br/>트랜스퍼"]
     EDIT_PROFILE["/my/edit<br/>프로필 편집"]
-    
+
     AUTH -->|인증 성공| MAIN
     MAIN --> HOME
     MAIN --> COMP_LIST
     MAIN --> CLUB_LIST
     MAIN --> MY
-    
+
     COMP_LIST --> COMP_SHELL
     COMP_SHELL --> BRACKET
     COMP_SHELL --> MATCHES
     COMP_SHELL --> PARTICIPANTS
+    PARTICIPANTS --> PARTICIPANT_FULL
     COMP_SHELL --> STANDINGS
     COMP_SHELL --> INFO
-    
+
     CLUB_LIST --> CLUB_SHELL
     CLUB_SHELL --> CLUB_HOME
     CLUB_SHELL --> CLUB_COMP
-    CLUB_SHELL --> CLUB_LEAGUES
     CLUB_SHELL --> CLUB_MEMBERS
     CLUB_SHELL --> CLUB_SETTINGS
-    
+
     MATCHES --> MATCH_DETAIL
-    CLUB_LEAGUES --> LEAGUE_DETAIL
+    CLUB_HOME --> LEAGUE_DETAIL
     LEAGUE_DETAIL --> AUCTION
     LEAGUE_DETAIL --> TRANSFER
     MY --> EDIT_PROFILE
@@ -382,10 +394,15 @@ graph TD
 - 세션 없음 → `/auth`로 리다이렉트
 - `/auth`에서 세션 있음 → `/`로 리다이렉트
 
-### Shell 구조
-- **MainShell**: 4개 메인 탭 (홈, 대회, 클럽, MY)
-- **CompetitionShell**: 5개 탭 (대진표, 매치, 참가자, 순위, 정보)
-- **ClubShell**: 5개 탭 (홈, 대회, 리그, 멤버, 설정) — 설정은 관리자만
+### Shell 구조 및 네비게이션 방식
+
+| Shell | 탭 | 네비게이션 방식 |
+|-------|----|----------------|
+| **MainShell** | 홈 / 대회 / 클럽 / MY (4개) | Mobile: BottomNav / Tablet: Rail / Desktop: Drawer |
+| **CompetitionShell** | 대진표 / 경기 / 참가자 / 순위표 / 정보 (5개) | 독립 BottomNavigationBar (모든 디바이스 공통) |
+| **ClubShell** | 홈 / 대회 / 멤버 / 설정 (4개, 설정은 관리자만) | 독립 BottomNavigationBar (모든 디바이스 공통) |
+
+> CompetitionShell과 ClubShell은 기존 TabBar 방식이 아닌 **독립 BottomNavigationBar**로 구현되어, 메인 네비게이션과 별도의 컨텍스트를 유지한다.
 
 ---
 
@@ -398,3 +415,5 @@ graph TD
 5. **Material 3** — `useMaterial3: true`, `ColorScheme.fromSeed` 기반
 6. **명확한 빈 상태** — 모든 리스트에 아이콘 + 메시지 + 액션 버튼
 7. **관리자 UI 분리** — 권한 기반으로 액션/탭 표시/숨김
+8. **컨텍스트 분리 네비게이션** — 클럽/대회 진입 시 독립 BottomNav로 전환, 메인 탭과 컨텍스트 충돌 방지
+9. **점진적 정보 공개** — 요약 카드(탭) → 전체보기(화면) 패턴으로 정보 과부하 방지
