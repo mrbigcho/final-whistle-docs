@@ -1,0 +1,258 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>제안 — 스테이지 상세(RR 포맷) · Final Whistle</title>
+<link rel="stylesheet" href="../_common.css">
+<style>
+.breadcrumb {
+  padding: 10px 16px;
+  font-size: 12px;
+  color: var(--on-surface-muted);
+  background: var(--surface);
+  border-bottom: 1px solid var(--border);
+}
+.breadcrumb .bc-parent {
+  color: var(--primary-light);
+  cursor: pointer;
+}
+.breadcrumb .bc-sep { margin: 0 6px; opacity: 0.6; }
+
+.stage-banner {
+  padding: 14px 16px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.stage-banner .stage-format {
+  font-size: 11px;
+  padding: 2px 8px;
+  border-radius: 999px;
+  background: rgba(108,99,255,0.2);
+  color: var(--primary-light);
+  font-weight: 600;
+}
+
+/* Group selector */
+.group-picker {
+  display: flex;
+  gap: 6px;
+  padding: 12px 16px 4px;
+  overflow-x: auto;
+  scrollbar-width: none;
+}
+.group-picker::-webkit-scrollbar { display: none; }
+.group-chip {
+  padding: 5px 14px;
+  border-radius: 999px;
+  border: 1.5px solid var(--border);
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--on-surface-muted);
+  white-space: nowrap;
+  cursor: pointer;
+}
+.group-chip.active {
+  border-color: var(--primary);
+  background: rgba(108,99,255,0.15);
+  color: var(--primary-light);
+}
+
+/* Standings */
+.standings-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 13px;
+  margin-top: 8px;
+}
+.standings-table th {
+  color: var(--on-surface-muted);
+  font-weight: 600;
+  padding: 10px 10px;
+  text-align: center;
+  border-bottom: 1px solid var(--border);
+  font-size: 10px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+.standings-table th:first-child,
+.standings-table th:nth-child(2) { text-align: left; }
+.standings-table td {
+  padding: 11px 10px;
+  color: var(--on-surface);
+  border-bottom: 1px solid rgba(58,58,82,0.5);
+  text-align: center;
+  font-size: 13px;
+}
+.standings-table td:first-child,
+.standings-table td:nth-child(2) { text-align: left; }
+.standings-table tr:last-child td { border-bottom: none; }
+.standings-table tr.advances td {
+  background: rgba(76,175,80,0.05);
+}
+.standings-table tr.advances td:first-child {
+  box-shadow: inset 3px 0 0 #81C784;
+}
+
+.rank-badge {
+  width: 22px; height: 22px;
+  border-radius: 6px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+  font-size: 11px;
+}
+.rank-1 { background: #B8860B; color: #fff; }
+.rank-2 { background: #708090; color: #fff; }
+.rank-3 { background: #8B4513; color: #fff; }
+.rank-other { background: var(--surface3); color: var(--on-surface-muted); }
+
+.player-cell {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-weight: 500;
+}
+.player-avatar-mini {
+  width: 24px; height: 24px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+  display: flex; align-items: center; justify-content: center;
+  font-size: 11px;
+  color: #fff;
+  font-weight: 700;
+  flex-shrink: 0;
+}
+
+.advance-legend {
+  margin: 8px 16px;
+  font-size: 11px;
+  color: var(--on-surface-muted);
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+.advance-legend::before {
+  content: "";
+  display: inline-block;
+  width: 10px; height: 10px;
+  background: #81C784;
+  border-radius: 2px;
+}
+</style>
+</head>
+<body>
+<nav class="page-nav">
+  <span class="nav-title">제안 · 스테이지 중심 네비:</span>
+  <a href="../index.html">← 목록</a>
+  <a href="stage-centric-overview.html">① 대회 상세</a>
+  <a href="stage-centric-elim.html">② Elim 스테이지</a>
+  <a href="stage-centric-standings.html">③ RR 스테이지</a>
+  <a href="stage-centric-matches.html">④ 경기 탭</a>
+</nav>
+
+<div class="phone-frame">
+  <div class="phone-screen">
+    <!-- AppBar -->
+    <div class="app-bar">
+      <div class="app-bar-icon">←</div>
+      <span class="app-bar-title">그룹 스테이지</span>
+      <div class="app-bar-icon" title="스테이지 관리">⋮</div>
+    </div>
+
+    <!-- Breadcrumb -->
+    <div class="breadcrumb">
+      <span class="bc-parent">서울 오픈 2025</span>
+      <span class="bc-sep">›</span>
+      <span>스테이지 ①</span>
+    </div>
+
+    <!-- Stage banner -->
+    <div class="stage-banner">
+      <span class="stage-format">GroupStage</span>
+      <span class="chip done">완료</span>
+      <span class="text-muted text-xs">12 / 12 경기 완료</span>
+    </div>
+
+    <!-- Stage sub-tabs: 포맷별 자동 -->
+    <div class="tab-bar">
+      <div class="tab active">🏅 순위표</div>
+      <div class="tab">⚔️ 경기</div>
+    </div>
+
+    <!-- Group picker -->
+    <div class="group-picker">
+      <div class="group-chip active">조 A</div>
+      <div class="group-chip">조 B</div>
+      <div class="group-chip">조 C</div>
+      <div class="group-chip">조 D</div>
+    </div>
+
+    <!-- Standings -->
+    <table class="standings-table">
+      <thead>
+        <tr>
+          <th>#</th>
+          <th>선수</th>
+          <th>경기</th>
+          <th>승-무-패</th>
+          <th>득실</th>
+          <th>승점</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr class="advances">
+          <td><span class="rank-badge rank-1">1</span></td>
+          <td><div class="player-cell"><div class="player-avatar-mini">김</div>김민준</div></td>
+          <td>3</td>
+          <td>3-0-0</td>
+          <td>+9</td>
+          <td><b>9</b></td>
+        </tr>
+        <tr class="advances">
+          <td><span class="rank-badge rank-2">2</span></td>
+          <td><div class="player-cell"><div class="player-avatar-mini">박</div>박지호</div></td>
+          <td>3</td>
+          <td>2-0-1</td>
+          <td>+3</td>
+          <td><b>6</b></td>
+        </tr>
+        <tr>
+          <td><span class="rank-badge rank-3">3</span></td>
+          <td><div class="player-cell"><div class="player-avatar-mini">이</div>이서준</div></td>
+          <td>3</td>
+          <td>1-0-2</td>
+          <td>-2</td>
+          <td><b>3</b></td>
+        </tr>
+        <tr>
+          <td><span class="rank-badge rank-other">4</span></td>
+          <td><div class="player-cell"><div class="player-avatar-mini">최</div>최현우</div></td>
+          <td>3</td>
+          <td>0-0-3</td>
+          <td>-10</td>
+          <td><b>0</b></td>
+        </tr>
+      </tbody>
+    </table>
+
+    <div class="advance-legend">상위 2명이 8강에 진출합니다</div>
+
+    <!-- Bottom Navigation -->
+    <div class="bottom-nav">
+      <div class="bottom-nav-item"><span class="nav-icon">🏠</span><span class="nav-label">홈</span></div>
+      <div class="bottom-nav-item active"><span class="nav-icon">🏆</span><span class="nav-label">대회</span></div>
+      <div class="bottom-nav-item"><span class="nav-icon">🛡️</span><span class="nav-label">클럽</span></div>
+      <div class="bottom-nav-item"><span class="nav-icon">👤</span><span class="nav-label">MY</span></div>
+    </div>
+  </div>
+</div>
+
+<div style="margin-top:16px; text-align:center; max-width: 390px;">
+  <p class="text-muted text-sm">StageShell (신규) · /competitions/:id/stages/:stageId/standings</p>
+  <p class="text-muted text-xs" style="margin-top:4px">RR / Group / League 포맷은 첫 탭이 <b>순위표</b> (대진표 탭 미노출)</p>
+</div>
+</body>
+</html>

@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>제안 — 스테이지 상세(Elim 포맷) · Final Whistle</title>
+<link rel="stylesheet" href="../_common.css">
+<style>
+/* Breadcrumb */
+.breadcrumb {
+  padding: 10px 16px;
+  font-size: 12px;
+  color: var(--on-surface-muted);
+  background: var(--surface);
+  border-bottom: 1px solid var(--border);
+}
+.breadcrumb .bc-parent {
+  color: var(--primary-light);
+  cursor: pointer;
+}
+.breadcrumb .bc-sep { margin: 0 6px; opacity: 0.6; }
+
+.stage-banner {
+  padding: 14px 16px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.stage-banner .stage-format {
+  font-size: 11px;
+  padding: 2px 8px;
+  border-radius: 999px;
+  background: rgba(108,99,255,0.2);
+  color: var(--primary-light);
+  font-weight: 600;
+}
+
+/* Bracket preview */
+.bracket-preview { padding: 12px 16px 16px; }
+.bracket-round-label {
+  font-size: 11px;
+  color: var(--on-surface-muted);
+  text-align: center;
+  margin-bottom: 8px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+.bracket-match-mini {
+  background: var(--surface3);
+  border-radius: 10px;
+  overflow: hidden;
+  border: 1px solid var(--border);
+  margin-bottom: 8px;
+}
+.bracket-player-mini {
+  padding: 9px 12px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-size: 13px;
+}
+.bracket-player-mini:first-child { border-bottom: 1px solid var(--border); }
+.bracket-player-mini.winner { color: var(--primary-light); font-weight: 600; }
+.bracket-player-mini:not(.winner):not(.tbd) { color: var(--on-surface); }
+.bracket-player-mini.tbd { color: var(--on-surface-muted); font-style: italic; }
+.score-badge {
+  background: var(--surface2);
+  padding: 2px 8px;
+  border-radius: 6px;
+  font-weight: 700;
+  font-size: 12px;
+}
+.score-badge.winner { background: rgba(108,99,255,0.3); color: var(--primary-light); }
+.score-badge.pending { opacity: 0.5; }
+
+.admin-actions {
+  padding: 12px 16px;
+  display: flex;
+  gap: 8px;
+}
+</style>
+</head>
+<body>
+<nav class="page-nav">
+  <span class="nav-title">제안 · 스테이지 중심 네비:</span>
+  <a href="../index.html">← 목록</a>
+  <a href="stage-centric-overview.html">① 대회 상세</a>
+  <a href="stage-centric-elim.html">② Elim 스테이지</a>
+  <a href="stage-centric-standings.html">③ RR 스테이지</a>
+  <a href="stage-centric-matches.html">④ 경기 탭</a>
+</nav>
+
+<div class="phone-frame">
+  <div class="phone-screen">
+    <!-- AppBar -->
+    <div class="app-bar">
+      <div class="app-bar-icon">←</div>
+      <span class="app-bar-title">8강 토너먼트</span>
+      <div class="app-bar-icon" title="스테이지 관리">⋮</div>
+    </div>
+
+    <!-- Breadcrumb -->
+    <div class="breadcrumb">
+      <span class="bc-parent">서울 오픈 2025</span>
+      <span class="bc-sep">›</span>
+      <span>스테이지 ②</span>
+    </div>
+
+    <!-- Stage banner -->
+    <div class="stage-banner">
+      <span class="stage-format">SingleElim</span>
+      <span class="chip progress">진행 중</span>
+      <span class="text-muted text-xs">3 / 4 경기 완료</span>
+    </div>
+
+    <!-- Stage sub-tabs: 포맷별 자동 -->
+    <div class="tab-bar">
+      <div class="tab active">🎯 대진표</div>
+      <div class="tab">⚔️ 경기</div>
+    </div>
+
+    <!-- Bracket preview -->
+    <div class="bracket-preview">
+      <div class="bracket-round-label">준결승</div>
+      <div class="bracket-match-mini">
+        <div class="bracket-player-mini winner">
+          🏆 김민준
+          <span class="score-badge winner">3</span>
+        </div>
+        <div class="bracket-player-mini">
+          이서준
+          <span class="score-badge">1</span>
+        </div>
+      </div>
+      <div class="bracket-match-mini">
+        <div class="bracket-player-mini winner">
+          🏆 박지호
+          <span class="score-badge winner">2</span>
+        </div>
+        <div class="bracket-player-mini">
+          최현우
+          <span class="score-badge">0</span>
+        </div>
+      </div>
+
+      <div class="bracket-round-label" style="margin-top:16px;">결승</div>
+      <div class="bracket-match-mini">
+        <div class="bracket-player-mini">
+          김민준
+          <span class="score-badge pending">-</span>
+        </div>
+        <div class="bracket-player-mini">
+          박지호
+          <span class="score-badge pending">-</span>
+        </div>
+      </div>
+
+      <div style="text-align:center; margin-top:14px;">
+        <a href="#" style="color:var(--primary); font-size:13px; text-decoration:none;">
+          전체 대진표 보기 →
+        </a>
+      </div>
+    </div>
+
+    <!-- Admin action -->
+    <div class="admin-actions">
+      <button class="btn btn-outlined btn-sm">✓ 스테이지 종료</button>
+      <button class="btn btn-text btn-sm">진출 규칙 편집</button>
+    </div>
+
+    <!-- Bottom Navigation -->
+    <div class="bottom-nav">
+      <div class="bottom-nav-item"><span class="nav-icon">🏠</span><span class="nav-label">홈</span></div>
+      <div class="bottom-nav-item active"><span class="nav-icon">🏆</span><span class="nav-label">대회</span></div>
+      <div class="bottom-nav-item"><span class="nav-icon">🛡️</span><span class="nav-label">클럽</span></div>
+      <div class="bottom-nav-item"><span class="nav-icon">👤</span><span class="nav-label">MY</span></div>
+    </div>
+  </div>
+</div>
+
+<div style="margin-top:16px; text-align:center; max-width: 390px;">
+  <p class="text-muted text-sm">StageShell (신규) · /competitions/:id/stages/:stageId/bracket</p>
+  <p class="text-muted text-xs" style="margin-top:4px">Elim 포맷은 첫 탭이 <b>대진표</b> (순위표 탭 미노출)</p>
+</div>
+</body>
+</html>

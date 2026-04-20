@@ -1,0 +1,248 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>제안 — 스테이지 상세(경기 탭) · Final Whistle</title>
+<link rel="stylesheet" href="../_common.css">
+<style>
+.breadcrumb {
+  padding: 10px 16px;
+  font-size: 12px;
+  color: var(--on-surface-muted);
+  background: var(--surface);
+  border-bottom: 1px solid var(--border);
+}
+.breadcrumb .bc-parent {
+  color: var(--primary-light);
+  cursor: pointer;
+}
+.breadcrumb .bc-sep { margin: 0 6px; opacity: 0.6; }
+
+.stage-banner {
+  padding: 14px 16px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.stage-banner .stage-format {
+  font-size: 11px;
+  padding: 2px 8px;
+  border-radius: 999px;
+  background: rgba(108,99,255,0.2);
+  color: var(--primary-light);
+  font-weight: 600;
+}
+
+.round-header {
+  padding: 14px 16px 6px;
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--on-surface-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.match-tile {
+  background: var(--surface2);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  margin: 6px 16px;
+  overflow: hidden;
+  cursor: pointer;
+  transition: border-color 0.15s;
+}
+.match-tile:hover { border-color: var(--primary); }
+.match-tile.scheduled { opacity: 0.82; }
+
+.match-row {
+  display: flex;
+  align-items: center;
+  padding: 10px 14px;
+  gap: 10px;
+}
+.match-row + .match-row { border-top: 1px solid var(--border); }
+.match-row .player-name {
+  flex: 1;
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--on-surface);
+}
+.match-row.winner .player-name { color: var(--primary-light); font-weight: 700; }
+.match-row.loser .player-name { color: var(--on-surface-muted); }
+.match-row .player-avatar-mini {
+  width: 26px; height: 26px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+  display: flex; align-items: center; justify-content: center;
+  font-size: 11px;
+  color: #fff;
+  font-weight: 700;
+  flex-shrink: 0;
+}
+.match-row .score {
+  font-size: 16px;
+  font-weight: 700;
+  min-width: 28px;
+  text-align: center;
+  color: var(--on-surface);
+}
+.match-row.loser .score { color: var(--on-surface-muted); }
+.match-row .score.tbd { color: var(--on-surface-muted); font-weight: 500; }
+
+.match-footer {
+  padding: 8px 14px;
+  font-size: 11px;
+  color: var(--on-surface-muted);
+  background: rgba(0,0,0,0.15);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  justify-content: space-between;
+}
+.match-footer .status-chip { font-size: 10px; }
+
+.filter-chips {
+  padding: 10px 16px;
+}
+</style>
+</head>
+<body>
+<nav class="page-nav">
+  <span class="nav-title">제안 · 스테이지 중심 네비:</span>
+  <a href="../index.html">← 목록</a>
+  <a href="stage-centric-overview.html">① 대회 상세</a>
+  <a href="stage-centric-elim.html">② Elim 스테이지</a>
+  <a href="stage-centric-standings.html">③ RR 스테이지</a>
+  <a href="stage-centric-matches.html">④ 경기 탭</a>
+</nav>
+
+<div class="phone-frame">
+  <div class="phone-screen">
+    <!-- AppBar -->
+    <div class="app-bar">
+      <div class="app-bar-icon">←</div>
+      <span class="app-bar-title">그룹 스테이지</span>
+      <div class="app-bar-icon" title="스테이지 관리">⋮</div>
+    </div>
+
+    <!-- Breadcrumb -->
+    <div class="breadcrumb">
+      <span class="bc-parent">서울 오픈 2025</span>
+      <span class="bc-sep">›</span>
+      <span>스테이지 ①</span>
+    </div>
+
+    <!-- Stage banner -->
+    <div class="stage-banner">
+      <span class="stage-format">GroupStage</span>
+      <span class="chip done">완료</span>
+      <span class="text-muted text-xs">12 / 12 경기 완료</span>
+    </div>
+
+    <!-- Stage sub-tabs -->
+    <div class="tab-bar">
+      <div class="tab">🏅 순위표</div>
+      <div class="tab active">⚔️ 경기</div>
+    </div>
+
+    <!-- Filter chips -->
+    <div class="filter-chips">
+      <button class="filter-chip active">전체</button>
+      <button class="filter-chip">완료</button>
+      <button class="filter-chip">진행 중</button>
+      <button class="filter-chip">예정</button>
+      <button class="filter-chip">조 A</button>
+      <button class="filter-chip">조 B</button>
+    </div>
+
+    <!-- Round 1 -->
+    <div class="round-header">Round 1</div>
+
+    <div class="match-tile">
+      <div class="match-row winner">
+        <div class="player-avatar-mini">김</div>
+        <div class="player-name">김민준</div>
+        <div class="score">3</div>
+      </div>
+      <div class="match-row loser">
+        <div class="player-avatar-mini">박</div>
+        <div class="player-name">박지호</div>
+        <div class="score">1</div>
+      </div>
+      <div class="match-footer">
+        <span>2025-04-15 19:00 · 조 A</span>
+        <span class="chip done status-chip">완료</span>
+      </div>
+    </div>
+
+    <div class="match-tile">
+      <div class="match-row loser">
+        <div class="player-avatar-mini">이</div>
+        <div class="player-name">이서준</div>
+        <div class="score">0</div>
+      </div>
+      <div class="match-row winner">
+        <div class="player-avatar-mini">최</div>
+        <div class="player-name">최현우</div>
+        <div class="score">2</div>
+      </div>
+      <div class="match-footer">
+        <span>2025-04-15 20:30 · 조 A</span>
+        <span class="chip done status-chip">완료</span>
+      </div>
+    </div>
+
+    <!-- Round 2 -->
+    <div class="round-header">Round 2</div>
+
+    <div class="match-tile scheduled">
+      <div class="match-row">
+        <div class="player-avatar-mini">김</div>
+        <div class="player-name">김민준</div>
+        <div class="score tbd">-</div>
+      </div>
+      <div class="match-row">
+        <div class="player-avatar-mini">이</div>
+        <div class="player-name">이서준</div>
+        <div class="score tbd">-</div>
+      </div>
+      <div class="match-footer">
+        <span>2025-04-18 19:00 · 조 A</span>
+        <span class="chip draft status-chip">예정</span>
+      </div>
+    </div>
+
+    <div class="match-tile scheduled">
+      <div class="match-row">
+        <div class="player-avatar-mini">박</div>
+        <div class="player-name">박지호</div>
+        <div class="score tbd">-</div>
+      </div>
+      <div class="match-row">
+        <div class="player-avatar-mini">최</div>
+        <div class="player-name">최현우</div>
+        <div class="score tbd">-</div>
+      </div>
+      <div class="match-footer">
+        <span>2025-04-18 20:30 · 조 A</span>
+        <span class="chip draft status-chip">예정</span>
+      </div>
+    </div>
+
+    <!-- Bottom Navigation -->
+    <div class="bottom-nav">
+      <div class="bottom-nav-item"><span class="nav-icon">🏠</span><span class="nav-label">홈</span></div>
+      <div class="bottom-nav-item active"><span class="nav-icon">🏆</span><span class="nav-label">대회</span></div>
+      <div class="bottom-nav-item"><span class="nav-icon">🛡️</span><span class="nav-label">클럽</span></div>
+      <div class="bottom-nav-item"><span class="nav-icon">👤</span><span class="nav-label">MY</span></div>
+    </div>
+  </div>
+</div>
+
+<div style="margin-top:16px; text-align:center; max-width: 390px;">
+  <p class="text-muted text-sm">StageShell (신규) · /competitions/:id/stages/:stageId/matches</p>
+  <p class="text-muted text-xs" style="margin-top:4px">경기 탭은 모든 포맷에서 공통. 라운드별 그룹핑 유지</p>
+</div>
+</body>
+</html>

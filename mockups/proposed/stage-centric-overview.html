@@ -1,0 +1,234 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>제안 — 대회 상세(스테이지 목록) · Final Whistle</title>
+<link rel="stylesheet" href="../_common.css">
+<style>
+.comp-header {
+  padding: 16px;
+  background: var(--surface);
+  border-bottom: 1px solid var(--border);
+}
+.comp-header-top {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  margin-bottom: 12px;
+}
+.comp-header-icon {
+  width: 52px; height: 52px;
+  border-radius: 14px;
+  background: linear-gradient(135deg, #4B44CC, #6C63FF);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 26px;
+  flex-shrink: 0;
+}
+.comp-header-info { flex: 1; }
+.comp-header-name {
+  font-size: 18px;
+  font-weight: 700;
+  color: var(--on-surface);
+  margin-bottom: 6px;
+}
+.comp-header-meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  align-items: center;
+}
+.meta-item {
+  font-size: 12px;
+  color: var(--on-surface-muted);
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+/* Stage card */
+.stage-card {
+  background: var(--surface2);
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  padding: 14px;
+  margin: 8px 16px;
+  cursor: pointer;
+  transition: all 0.15s;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+.stage-card:hover {
+  border-color: var(--primary);
+  background: rgba(108,99,255,0.08);
+}
+.stage-card.completed { opacity: 0.85; }
+.stage-number {
+  width: 32px; height: 32px;
+  border-radius: 50%;
+  background: var(--surface3);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+  font-size: 14px;
+  color: var(--on-surface-muted);
+  flex-shrink: 0;
+}
+.stage-card.inprogress .stage-number {
+  background: rgba(108,99,255,0.2);
+  color: var(--primary-light);
+}
+.stage-card.completed .stage-number {
+  background: rgba(76,175,80,0.2);
+  color: #81C784;
+}
+.stage-body { flex: 1; min-width: 0; }
+.stage-name {
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--on-surface);
+  margin-bottom: 4px;
+}
+.stage-meta-row {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  flex-wrap: wrap;
+  font-size: 11px;
+  color: var(--on-surface-muted);
+}
+.stage-format {
+  font-weight: 500;
+  color: var(--primary-light);
+}
+.stage-progress {
+  font-size: 12px;
+  color: var(--on-surface-muted);
+  margin-top: 6px;
+}
+.stage-chevron {
+  color: var(--on-surface-muted);
+  font-size: 18px;
+}
+
+.callout {
+  margin: 12px 16px 0;
+  padding: 10px 14px;
+  border-radius: 10px;
+  background: rgba(108,99,255,0.08);
+  border-left: 3px solid var(--primary);
+  font-size: 12px;
+  color: var(--on-surface-muted);
+  line-height: 1.5;
+}
+.callout strong { color: var(--primary-light); }
+</style>
+</head>
+<body>
+<nav class="page-nav">
+  <span class="nav-title">제안 · 스테이지 중심 네비:</span>
+  <a href="../index.html">← 목록</a>
+  <a href="stage-centric-overview.html">① 대회 상세</a>
+  <a href="stage-centric-elim.html">② Elim 스테이지</a>
+  <a href="stage-centric-standings.html">③ RR 스테이지</a>
+  <a href="stage-centric-matches.html">④ 경기 탭</a>
+</nav>
+
+<div class="phone-frame">
+  <div class="phone-screen">
+    <!-- AppBar -->
+    <div class="app-bar">
+      <div class="app-bar-icon">←</div>
+      <span class="app-bar-title">서울 오픈 2025</span>
+      <div class="app-bar-icon" title="더 보기">⋮</div>
+    </div>
+
+    <!-- Competition Header -->
+    <div class="comp-header">
+      <div class="comp-header-top">
+        <div class="comp-header-icon">🏆</div>
+        <div class="comp-header-info">
+          <div class="comp-header-name">서울 오픈 2025</div>
+          <div class="comp-header-meta">
+            <span class="chip progress">진행 중</span>
+            <span class="meta-item">👥 16명</span>
+            <span class="meta-item">📅 2025-03-15</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Top TabBar: 3개로 축소 -->
+    <div class="tab-bar">
+      <div class="tab">👥 참가자</div>
+      <div class="tab active">🗂️ 스테이지</div>
+      <div class="tab">ℹ️ 정보</div>
+    </div>
+
+    <div class="callout">
+      <strong>스테이지</strong> 탭이 대회의 진입점입니다. 대진표·순위표·경기는 각 스테이지 안으로 들어갑니다.
+    </div>
+
+    <!-- Stage list -->
+    <div style="padding-top: 8px;">
+      <div class="stage-card completed">
+        <div class="stage-number">1</div>
+        <div class="stage-body">
+          <div class="stage-name">그룹 스테이지</div>
+          <div class="stage-meta-row">
+            <span class="stage-format">GroupStage</span>
+            <span>·</span>
+            <span class="chip done">완료</span>
+          </div>
+          <div class="stage-progress">16명 → 8명 진출</div>
+        </div>
+        <div class="stage-chevron">›</div>
+      </div>
+
+      <div class="stage-card inprogress">
+        <div class="stage-number">2</div>
+        <div class="stage-body">
+          <div class="stage-name">8강 토너먼트</div>
+          <div class="stage-meta-row">
+            <span class="stage-format">SingleElim</span>
+            <span>·</span>
+            <span class="chip progress">진행 중</span>
+          </div>
+          <div class="stage-progress">3 / 4 경기 완료</div>
+        </div>
+        <div class="stage-chevron">›</div>
+      </div>
+
+      <div class="stage-card">
+        <div class="stage-number">3</div>
+        <div class="stage-body">
+          <div class="stage-name">결승 리그</div>
+          <div class="stage-meta-row">
+            <span class="stage-format">LeaguePhase</span>
+            <span>·</span>
+            <span class="chip draft">대기</span>
+          </div>
+          <div class="stage-progress">이전 스테이지 완료 대기</div>
+        </div>
+        <div class="stage-chevron">›</div>
+      </div>
+    </div>
+
+    <!-- Bottom Navigation -->
+    <div class="bottom-nav">
+      <div class="bottom-nav-item"><span class="nav-icon">🏠</span><span class="nav-label">홈</span></div>
+      <div class="bottom-nav-item active"><span class="nav-icon">🏆</span><span class="nav-label">대회</span></div>
+      <div class="bottom-nav-item"><span class="nav-icon">🛡️</span><span class="nav-label">클럽</span></div>
+      <div class="bottom-nav-item"><span class="nav-icon">👤</span><span class="nav-label">MY</span></div>
+    </div>
+  </div>
+</div>
+
+<div style="margin-top:16px; text-align:center; max-width: 390px;">
+  <p class="text-muted text-sm">competition_detail_screen.dart · CompetitionShell (재편)</p>
+  <p class="text-muted text-xs" style="margin-top:4px">대회 탭 3개로 축소: <b>참가자 · 스테이지 · 정보</b></p>
+</div>
+</body>
+</html>
