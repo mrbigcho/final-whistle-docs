@@ -1,0 +1,803 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Shell A · 대회</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Sora:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #07070B;
+    --ink: #0E0E14;
+    --card: #14141C;
+    --card-hi: #1C1C26;
+    --line: rgba(255,255,255,0.06);
+    --text: #ECECF4;
+    --muted: #7A7A8A;
+    --win: #5BF08A;
+    --win-glow: rgba(91,240,138,0.4);
+    --loss: #FF6B5C;
+    --live: #FF3B5E;
+    --live-glow: rgba(255,59,94,0.5);
+    --accent: #A5FF00;
+    --accent-soft: rgba(165,255,0,0.16);
+    --disp: 'Sora', 'Noto Sans KR', sans-serif;
+    --mono: 'JetBrains Mono', monospace;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    background: #0a0a12;
+    display: flex; flex-direction: column; align-items: center;
+    min-height: 100vh; padding: 20px;
+    font-family: var(--disp);
+  }
+  .page-nav {
+    display: flex; gap: 8px; margin-bottom: 8px;
+    background: #14141c; padding: 10px 14px; border-radius: 12px;
+    color: #888; font-size: 12px; align-items: center;
+    border: 1px solid var(--line);
+    flex-wrap: wrap;
+  }
+  .page-nav .title { color: var(--accent); margin-right: 6px; font-weight: 600; font-family: var(--mono); font-size: 10px; letter-spacing: 0.18em; }
+  .page-nav a {
+    padding: 4px 10px; border-radius: 6px;
+    text-decoration: none; color: #bbb;
+    background: #222; font-weight: 500;
+  }
+  .page-nav a.current { background: var(--accent); color: #000; }
+  .compare-nav {
+    font-size: 10px; color: #666; margin-bottom: 18px;
+    font-family: var(--mono);
+  }
+  .compare-nav a { color: #888; text-decoration: underline; text-underline-offset: 3px; margin: 0 4px; }
+
+  .phone-frame {
+    width: 390px; height: 844px;
+    background: var(--bg);
+    border-radius: 44px;
+    border: 8px solid #060608;
+    box-shadow: 0 40px 80px rgba(0,0,0,0.7);
+    overflow: hidden;
+    position: relative;
+  }
+  .phone-frame::before {
+    content: ''; position: absolute;
+    top: 0; left: 50%; transform: translateX(-50%);
+    width: 126px; height: 34px;
+    background: #060608;
+    border-radius: 0 0 20px 20px;
+    z-index: 100;
+  }
+  .phone-screen {
+    height: 100%; overflow-y: auto; overflow-x: hidden;
+    scrollbar-width: none; position: relative;
+    color: var(--text);
+  }
+  .phone-screen::-webkit-scrollbar { display: none; }
+
+  .status-bar {
+    height: 44px; padding: 14px 24px 0;
+    display: flex; justify-content: space-between; align-items: center;
+    font-family: var(--mono); font-size: 12px; font-weight: 600;
+    color: var(--text);
+  }
+
+  /* ========= Search / Filter header ========= */
+  .top-head {
+    padding: 16px 20px 10px;
+  }
+  .search-box {
+    display: grid;
+    grid-template-columns: 1fr 44px;
+    gap: 8px;
+    margin-bottom: 14px;
+  }
+  .search-input {
+    background: var(--card);
+    border: 1px solid var(--line);
+    border-radius: 14px;
+    padding: 14px 16px 14px 44px;
+    color: var(--text);
+    font-family: var(--disp);
+    font-size: 14px;
+    letter-spacing: -0.01em;
+    position: relative;
+    background-image: radial-gradient(circle, transparent 0, transparent 12px, transparent 0);
+  }
+  .search-wrap { position: relative; }
+  .search-wrap::before {
+    content: '🔍';
+    position: absolute;
+    left: 14px; top: 50%;
+    transform: translateY(-50%);
+    font-size: 14px;
+    opacity: 0.5;
+    z-index: 2;
+  }
+  .search-wrap .search-input::placeholder {
+    color: var(--muted);
+  }
+  .filter-btn {
+    background: var(--card);
+    border: 1px solid var(--line);
+    border-radius: 14px;
+    display: grid; place-items: center;
+    color: var(--accent);
+    font-size: 18px;
+    cursor: pointer;
+  }
+
+  .filter-chips {
+    display: flex; gap: 8px;
+    overflow-x: auto;
+    scrollbar-width: none;
+    padding-bottom: 4px;
+  }
+  .filter-chips::-webkit-scrollbar { display: none; }
+  .fchip {
+    flex-shrink: 0;
+    padding: 7px 14px;
+    border-radius: 999px;
+    border: 1px solid var(--line);
+    background: var(--card);
+    color: var(--muted);
+    font-family: var(--mono);
+    font-size: 10px;
+    font-weight: 600;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    cursor: pointer;
+  }
+  .fchip.active {
+    background: var(--accent);
+    border-color: var(--accent);
+    color: #000;
+  }
+  .fchip.live {
+    color: var(--live);
+    border-color: rgba(255,59,94,0.3);
+  }
+  .fchip.live::before {
+    content: '';
+    display: inline-block;
+    width: 6px; height: 6px;
+    background: var(--live);
+    border-radius: 50%;
+    margin-right: 6px;
+    vertical-align: middle;
+    box-shadow: 0 0 6px var(--live-glow);
+  }
+
+  /* ========= Sections ========= */
+  .sec {
+    padding: 24px 20px 12px;
+    display: flex; justify-content: space-between; align-items: baseline;
+  }
+  .sec h3 {
+    font-family: var(--disp);
+    font-size: 18px;
+    font-weight: 700;
+    letter-spacing: -0.03em;
+    color: var(--text);
+  }
+  .sec h3 small {
+    font-family: var(--mono);
+    font-size: 10px;
+    color: var(--muted);
+    margin-left: 8px;
+    font-weight: 500;
+    letter-spacing: 0.15em;
+  }
+  .sec .link {
+    font-family: var(--disp);
+    font-size: 12px;
+    color: var(--muted);
+    font-weight: 500;
+  }
+  .sec .link::after {
+    content: '  →';
+    color: var(--accent);
+  }
+
+  /* ========= Featured LIVE card ========= */
+  .featured {
+    margin: 0 16px 4px;
+    border-radius: 24px;
+    background: linear-gradient(135deg, #2A0716 0%, #0F0205 70%, #080004 100%);
+    border: 1px solid rgba(255,59,94,0.25);
+    padding: 20px;
+    position: relative;
+    overflow: hidden;
+    box-shadow: 0 20px 50px rgba(255,59,94,0.08);
+  }
+  .featured::before {
+    content: 'LIVE';
+    position: absolute;
+    right: -20px; top: -40px;
+    font-family: var(--disp);
+    font-weight: 800;
+    font-size: 180px;
+    color: rgba(255,59,94,0.06);
+    letter-spacing: -0.08em;
+    pointer-events: none;
+    line-height: 1;
+  }
+  .ft-head {
+    display: flex; justify-content: space-between; align-items: center;
+    margin-bottom: 16px;
+    position: relative;
+  }
+  .ft-badge {
+    display: inline-flex; align-items: center; gap: 6px;
+    font-family: var(--mono);
+    font-size: 10px; font-weight: 700;
+    letter-spacing: 0.22em;
+    color: var(--live);
+    background: rgba(255,59,94,0.12);
+    padding: 5px 10px;
+    border-radius: 4px;
+  }
+  .ft-badge::before {
+    content: ''; width: 6px; height: 6px;
+    background: var(--live); border-radius: 50%;
+    box-shadow: 0 0 8px var(--live-glow);
+    animation: pulse 1.2s infinite;
+  }
+  @keyframes pulse {
+    0%,70%,100%{opacity:1;}
+    80%,90%{opacity:0.3;}
+  }
+  .ft-viewers {
+    font-family: var(--mono);
+    font-size: 10px;
+    color: rgba(255,255,255,0.4);
+    letter-spacing: 0.1em;
+  }
+  .ft-viewers .n { color: var(--text); font-weight: 600; margin-right: 3px; }
+  .ft-title {
+    font-family: var(--disp);
+    font-size: 22px;
+    font-weight: 700;
+    letter-spacing: -0.03em;
+    color: var(--text);
+    margin-bottom: 10px;
+    position: relative;
+  }
+  .ft-sub {
+    font-family: var(--mono);
+    font-size: 11px;
+    color: var(--muted);
+    letter-spacing: 0.04em;
+    margin-bottom: 18px;
+    position: relative;
+  }
+  .ft-score {
+    display: grid;
+    grid-template-columns: 1fr auto 1fr;
+    align-items: center;
+    gap: 10px;
+    padding: 14px;
+    background: rgba(0,0,0,0.3);
+    border-radius: 14px;
+    border: 1px solid rgba(255,255,255,0.03);
+    position: relative;
+  }
+  .ft-team { display: flex; align-items: center; gap: 10px; }
+  .ft-team.r { flex-direction: row-reverse; text-align: right; }
+  .ft-logo {
+    width: 30px; height: 30px;
+    border-radius: 8px;
+    background: #fff;
+    display: grid; place-items: center;
+    color: #000;
+    font-family: var(--disp); font-weight: 700; font-size: 11px;
+  }
+  .ft-logo.op { background: #3A3A4C; color: #fff; }
+  .ft-team .nm {
+    font-family: var(--disp);
+    font-size: 14px;
+    font-weight: 600;
+    letter-spacing: -0.01em;
+    color: var(--text);
+  }
+  .ft-nums {
+    font-family: var(--disp);
+    font-weight: 800;
+    font-size: 28px;
+    letter-spacing: -0.04em;
+    color: var(--text);
+  }
+  .ft-nums .w { color: var(--win); }
+
+  /* ========= Tournament list cards ========= */
+  .tour-list {
+    padding: 0 16px;
+    display: flex; flex-direction: column;
+    gap: 10px;
+  }
+  .tour {
+    background: var(--card);
+    border: 1px solid var(--line);
+    border-radius: 18px;
+    padding: 16px;
+    cursor: pointer;
+    transition: all 0.25s;
+    position: relative;
+    overflow: hidden;
+  }
+  .tour:hover { border-color: rgba(165,255,0,0.2); background: var(--card-hi); }
+
+  .tour-top {
+    display: flex; align-items: flex-start; justify-content: space-between;
+    margin-bottom: 14px;
+  }
+  .tour-sport-row {
+    display: flex; align-items: center; gap: 10px;
+  }
+  .tour-sport {
+    width: 42px; height: 42px;
+    border-radius: 12px;
+    display: grid; place-items: center;
+    font-size: 22px;
+    flex-shrink: 0;
+  }
+  .tour-sport.val { background: linear-gradient(135deg, #3A0F1C, #1A070D); border: 1px solid rgba(255,70,85,0.25); }
+  .tour-sport.lol { background: linear-gradient(135deg, #241336, #0F0720); border: 1px solid rgba(165,100,255,0.3); }
+  .tour-sport.bball { background: linear-gradient(135deg, #331A08, #1A0D04); border: 1px solid rgba(255,140,60,0.25); }
+  .tour-sport.ow { background: linear-gradient(135deg, #1E2F3F, #0A1018); border: 1px solid rgba(100,200,255,0.25); }
+  .tour-info {
+    display: flex; flex-direction: column;
+    gap: 4px;
+  }
+  .tour-stage {
+    font-family: var(--mono);
+    font-size: 9px; font-weight: 700;
+    letter-spacing: 0.22em;
+    color: var(--accent);
+  }
+  .tour-stage.live { color: var(--live); }
+  .tour-stage.open { color: var(--win); }
+  .tour-stage.done { color: var(--muted); }
+  .tour-name {
+    font-family: var(--disp);
+    font-size: 15px;
+    font-weight: 600;
+    color: var(--text);
+    letter-spacing: -0.02em;
+    line-height: 1.25;
+    max-width: 240px;
+  }
+  .tour-dd {
+    text-align: right;
+  }
+  .tour-dd .lbl {
+    font-family: var(--mono);
+    font-size: 9px;
+    color: var(--muted);
+    letter-spacing: 0.18em;
+  }
+  .tour-dd .val {
+    font-family: var(--disp);
+    font-weight: 700;
+    font-size: 20px;
+    color: var(--text);
+    letter-spacing: -0.04em;
+    line-height: 1.1;
+  }
+  .tour-dd .val.live {
+    color: var(--live);
+  }
+  .tour-dd .val.done { color: var(--muted); font-size: 13px; }
+
+  .tour-meta-row {
+    display: flex; align-items: center; gap: 10px;
+    flex-wrap: wrap;
+  }
+  .tour-meta-row .mchip {
+    font-family: var(--mono);
+    font-size: 10px;
+    color: var(--muted);
+    letter-spacing: 0.05em;
+    display: flex; align-items: center; gap: 4px;
+  }
+  .tour-meta-row .mchip .ic { opacity: 0.7; }
+  .tour-meta-row .mchip.won { color: var(--win); }
+  .tour-meta-row .mchip.hl { color: var(--text); font-weight: 600; }
+
+  /* Avatar stack */
+  .avstack {
+    display: inline-flex;
+    align-items: center;
+    margin-right: 4px;
+  }
+  .avstack .av {
+    width: 18px; height: 18px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #6E9FFF, #A5FF00);
+    border: 1.5px solid var(--card);
+    font-family: var(--disp); font-weight: 700; font-size: 7px;
+    display: grid; place-items: center;
+    color: #000;
+    margin-left: -5px;
+  }
+  .avstack .av:first-child { margin-left: 0; }
+  .avstack .av.more {
+    background: var(--card-hi);
+    color: var(--muted);
+    border-color: var(--card);
+  }
+
+  /* Bracket preview strip */
+  .bracket-mini {
+    margin-top: 12px;
+    padding: 10px 12px;
+    background: rgba(0,0,0,0.3);
+    border-radius: 10px;
+    display: flex; align-items: center;
+    gap: 10px;
+    font-family: var(--mono);
+    font-size: 10px;
+  }
+  .bracket-mini .lbl {
+    color: var(--accent);
+    font-weight: 700;
+    letter-spacing: 0.14em;
+  }
+  .bracket-mini .sep { color: var(--muted); }
+  .bracket-mini .round {
+    color: var(--text);
+    display: flex; align-items: center; gap: 4px;
+  }
+  .bracket-mini .round.done { color: var(--muted); text-decoration: line-through; opacity: 0.5; }
+  .bracket-mini .round.active { color: var(--live); }
+  .bracket-mini .round.active::before {
+    content: ''; width: 5px; height: 5px;
+    background: var(--live); border-radius: 50%;
+    margin-right: 2px;
+  }
+
+  /* Join CTA */
+  .tour.open {
+    border-color: rgba(91,240,138,0.2);
+    background: linear-gradient(135deg, rgba(91,240,138,0.04), transparent 60%), var(--card);
+  }
+  .join-btn {
+    margin-top: 12px;
+    padding: 10px 14px;
+    background: rgba(91,240,138,0.12);
+    border: 1px solid rgba(91,240,138,0.3);
+    border-radius: 10px;
+    color: var(--win);
+    font-family: var(--disp);
+    font-size: 12px;
+    font-weight: 600;
+    letter-spacing: -0.005em;
+    display: flex; align-items: center; justify-content: space-between;
+    cursor: pointer;
+  }
+  .join-btn .progress-mini {
+    font-family: var(--mono);
+    font-size: 10px;
+    color: rgba(91,240,138,0.6);
+    letter-spacing: 0.05em;
+  }
+
+  /* FAB */
+  .fab {
+    position: absolute;
+    right: 20px;
+    bottom: 100px;
+    display: flex; align-items: center; gap: 8px;
+    padding: 14px 20px;
+    background: var(--accent);
+    color: #000;
+    border-radius: 16px;
+    font-family: var(--disp);
+    font-weight: 700;
+    font-size: 14px;
+    letter-spacing: -0.01em;
+    box-shadow: 0 10px 30px rgba(165,255,0,0.3),
+                inset 0 1px 0 rgba(255,255,255,0.2);
+    cursor: pointer;
+    z-index: 40;
+  }
+
+  .spacer { height: 120px; }
+
+  /* Floating bottom nav */
+  .fnav {
+    position: absolute;
+    left: 16px; right: 16px;
+    bottom: 20px;
+    height: 64px;
+    background: rgba(14,14,20,0.75);
+    backdrop-filter: blur(24px) saturate(1.4);
+    -webkit-backdrop-filter: blur(24px) saturate(1.4);
+    border-radius: 22px;
+    border: 1px solid rgba(255,255,255,0.06);
+    box-shadow: 0 16px 40px rgba(0,0,0,0.5),
+                inset 0 1px 0 rgba(255,255,255,0.05);
+    display: flex;
+    align-items: center;
+    padding: 6px;
+    z-index: 50;
+  }
+  .fnav-tab {
+    flex: 1;
+    display: flex; flex-direction: column;
+    align-items: center; justify-content: center;
+    gap: 3px; padding: 8px 0;
+    border-radius: 16px;
+    cursor: pointer;
+    color: var(--muted);
+    transition: all 0.25s;
+  }
+  .fnav-tab .ic { font-size: 18px; line-height: 1; }
+  .fnav-tab .lb {
+    font-family: var(--mono);
+    font-size: 9px; font-weight: 700;
+    letter-spacing: 0.14em;
+  }
+  .fnav-tab.active {
+    background: var(--accent-soft);
+    color: var(--accent);
+    box-shadow: 0 0 24px rgba(165,255,0,0.15),
+                inset 0 1px 0 rgba(255,255,255,0.06);
+  }
+</style>
+</head>
+<body>
+
+<div class="page-nav">
+  <span class="title">SHELL · A</span>
+  <a href="shell-home-sample-a.html">홈</a>
+  <a href="shell-competitions.html" class="current">대회</a>
+  <a href="shell-clubs.html">클럽</a>
+  <a href="shell-my.html">MY</a>
+</div>
+<div class="compare-nav">
+  Compare: <a href="shell-home-sample-b.html">B · Terminal</a> / <a href="shell-home-sample-c.html">C · Social</a>
+</div>
+
+<div class="phone-frame">
+  <div class="phone-screen">
+
+    <div class="status-bar">
+      <span>9:41</span>
+      <span>· 5G 🔋</span>
+    </div>
+
+    <!-- Search + filter header -->
+    <section class="top-head">
+      <div class="search-box">
+        <div class="search-wrap">
+          <input class="search-input" placeholder="대회 · 종목 · 크루 검색">
+        </div>
+        <div class="filter-btn">⚙</div>
+      </div>
+      <div class="filter-chips">
+        <div class="fchip active">전체</div>
+        <div class="fchip live">LIVE</div>
+        <div class="fchip">진행중</div>
+        <div class="fchip">예정</div>
+        <div class="fchip">모집중</div>
+        <div class="fchip">완료</div>
+      </div>
+    </section>
+
+    <!-- Featured LIVE -->
+    <div class="sec">
+      <h3>지금 뜨는 대회 <small>NOW</small></h3>
+    </div>
+
+    <div class="featured">
+      <div class="ft-head">
+        <div class="ft-badge">LIVE · MAP 2</div>
+        <div class="ft-viewers"><span class="n">87</span> 관전 중</div>
+      </div>
+      <div class="ft-title">신촌 VALORANT 인비테이셔널</div>
+      <div class="ft-sub">4강 · BO5 · ASCENT · 8팀 · 레거시 게이밍 주최</div>
+      <div class="ft-score">
+        <div class="ft-team">
+          <div class="ft-logo">LG</div>
+          <div class="nm">레거시</div>
+        </div>
+        <div class="ft-nums"><span class="w">1</span> – 0</div>
+        <div class="ft-team r">
+          <div class="ft-logo op">BW</div>
+          <div class="nm">블루웨이브</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- My crew tournaments -->
+    <div class="sec">
+      <h3>내 크루 대회 <small>레거시 게이밍 · 03</small></h3>
+      <a class="link" href="#">전체</a>
+    </div>
+
+    <div class="tour-list">
+      <div class="tour">
+        <div class="tour-top">
+          <div class="tour-sport-row">
+            <div class="tour-sport val">🎯</div>
+            <div class="tour-info">
+              <div class="tour-stage live">4강 · LIVE · BO5</div>
+              <div class="tour-name">신촌 VALORANT 인비</div>
+            </div>
+          </div>
+          <div class="tour-dd">
+            <div class="lbl">MAP</div>
+            <div class="val live">2/5</div>
+          </div>
+        </div>
+        <div class="tour-meta-row">
+          <div class="avstack">
+            <div class="av" style="background:linear-gradient(135deg,#5BF08A,#0D9488);">L</div>
+            <div class="av" style="background:linear-gradient(135deg,#FF6FB5,#C0238B);">B</div>
+            <div class="av" style="background:linear-gradient(135deg,#FFB84D,#D97706);">S</div>
+            <div class="av" style="background:linear-gradient(135deg,#8B7EFF,#5E52C7);">A</div>
+            <div class="av more">+4</div>
+          </div>
+          <div class="mchip">8팀</div>
+          <div class="mchip">BIND→ASCENT</div>
+          <div class="mchip hl">민철 K/D 1.84</div>
+        </div>
+        <div class="bracket-mini">
+          <span class="lbl">BRACKET</span>
+          <span class="round done">16강</span>
+          <span class="sep">›</span>
+          <span class="round done">8강</span>
+          <span class="sep">›</span>
+          <span class="round active">4강</span>
+          <span class="sep">›</span>
+          <span class="round">결승</span>
+        </div>
+      </div>
+
+      <div class="tour">
+        <div class="tour-top">
+          <div class="tour-sport-row">
+            <div class="tour-sport lol">⚔️</div>
+            <div class="tour-info">
+              <div class="tour-stage">SWISS · R4 / R5</div>
+              <div class="tour-name">LoL 5대5 랭크 리그</div>
+            </div>
+          </div>
+          <div class="tour-dd">
+            <div class="lbl">D–</div>
+            <div class="val">03</div>
+          </div>
+        </div>
+        <div class="tour-meta-row">
+          <div class="avstack">
+            <div class="av">L</div>
+            <div class="av" style="background:linear-gradient(135deg,#FF6B5C,#C03030);">K</div>
+            <div class="av" style="background:linear-gradient(135deg,#FFB84D,#D97706);">V</div>
+            <div class="av more">+13</div>
+          </div>
+          <div class="mchip">16팀</div>
+          <div class="mchip">BO3</div>
+          <div class="mchip">TUE 21:00</div>
+          <div class="mchip won">✓ 3승 1패</div>
+        </div>
+      </div>
+
+      <div class="tour">
+        <div class="tour-top">
+          <div class="tour-sport-row">
+            <div class="tour-sport bball">🏀</div>
+            <div class="tour-info">
+              <div class="tour-stage">KO · 8강</div>
+              <div class="tour-name">3학년 반 대항 농구</div>
+            </div>
+          </div>
+          <div class="tour-dd">
+            <div class="lbl">D–</div>
+            <div class="val">02</div>
+          </div>
+        </div>
+        <div class="tour-meta-row">
+          <div class="avstack">
+            <div class="av">3</div>
+            <div class="av" style="background:linear-gradient(135deg,#FF6FB5,#C0238B);">8</div>
+            <div class="av more">+6</div>
+          </div>
+          <div class="mchip">8팀</div>
+          <div class="mchip">학교 체육관</div>
+          <div class="mchip">SAT 15:00</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Public / join-able tournaments -->
+    <div class="sec">
+      <h3>모집 중 <small>OPEN · 내 레이팅 OK</small></h3>
+      <a class="link" href="#">더보기</a>
+    </div>
+
+    <div class="tour-list">
+      <div class="tour open">
+        <div class="tour-top">
+          <div class="tour-sport-row">
+            <div class="tour-sport ow">🛡</div>
+            <div class="tour-info">
+              <div class="tour-stage open">● OPEN · 내일 마감</div>
+              <div class="tour-name">오버워치 2v2 듀얼</div>
+            </div>
+          </div>
+          <div class="tour-dd">
+            <div class="lbl">FEE</div>
+            <div class="val">FREE</div>
+          </div>
+        </div>
+        <div class="tour-meta-row">
+          <div class="mchip">BO3</div>
+          <div class="mchip">플래티넘+</div>
+          <div class="mchip">온라인 · SUN 20:00</div>
+        </div>
+        <div class="join-btn">
+          <span>크루 팀 등록 →</span>
+          <span class="progress-mini">14 / 32팀</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Recent results -->
+    <div class="sec">
+      <h3>최근 결과 <small>DONE</small></h3>
+      <a class="link" href="#">기록</a>
+    </div>
+
+    <div class="tour-list">
+      <div class="tour">
+        <div class="tour-top">
+          <div class="tour-sport-row">
+            <div class="tour-sport val" style="filter:grayscale(0.4);">🎯</div>
+            <div class="tour-info">
+              <div class="tour-stage done">S2 · 완료</div>
+              <div class="tour-name">VALORANT 프리시즌</div>
+            </div>
+          </div>
+          <div class="tour-dd">
+            <div class="lbl">결과</div>
+            <div class="val done" style="color:var(--win);">1위</div>
+          </div>
+        </div>
+        <div class="tour-meta-row">
+          <div class="mchip">16팀</div>
+          <div class="mchip won">✓ 우승 · 트로피 +1</div>
+          <div class="mchip">3월 28일</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="spacer"></div>
+
+    <!-- FAB -->
+    <div class="fab">
+      <span>+</span>
+      <span>대회 만들기</span>
+    </div>
+
+    <!-- Floating nav -->
+    <div class="fnav">
+      <div class="fnav-tab"><div class="ic">🏠</div><div class="lb">HOME</div></div>
+      <div class="fnav-tab active"><div class="ic">🏆</div><div class="lb">대회</div></div>
+      <div class="fnav-tab"><div class="ic">👥</div><div class="lb">클럽</div></div>
+      <div class="fnav-tab"><div class="ic">👤</div><div class="lb">MY</div></div>
+    </div>
+
+  </div>
+</div>
+
+<p style="color:#888;font-size:12px;margin-top:16px;max-width:460px;text-align:center;font-family:sans-serif;line-height:1.7;">
+  <strong style="color:#A5FF00;">대회 · Shell A</strong><br>
+  검색·필터 · LIVE 히어로 카드 · 토너먼트 리스트(미니 브래킷 · 아바타 스택) · 모집중 CTA · 최근 결과<br>
+  <em>FAB: + 대회 만들기</em>
+</p>
+
+</body>
+</html>

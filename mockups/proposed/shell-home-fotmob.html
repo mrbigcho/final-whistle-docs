@@ -1,0 +1,740 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Shell · Home (FotMob style)</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Pretendard:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css" rel="stylesheet">
+<style>
+  :root {
+    --bg: #131418;
+    --surface: #1B1D22;
+    --surface-2: #22252B;
+    --hairline: #2A2D34;
+    --text: #F1F2F4;
+    --text-2: #9EA3AE;
+    --text-3: #6C717B;
+    --live: #F03A47;
+    --win: #22C55E;
+    --loss: #F47171;
+    --accent: #4DA0FF;
+    --accent-soft: rgba(77,160,255,0.14);
+    --font: 'Pretendard Variable', 'Pretendard', -apple-system, BlinkMacSystemFont, sans-serif;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    background: #0C0D10;
+    display: flex; flex-direction: column; align-items: center;
+    min-height: 100vh; padding: 20px;
+    font-family: var(--font);
+  }
+  .page-nav {
+    display: flex; gap: 8px; margin-bottom: 18px;
+    background: #1B1D22; padding: 10px 14px; border-radius: 10px;
+    color: #888; font-size: 12px; align-items: center;
+    border: 1px solid var(--hairline);
+    flex-wrap: wrap;
+  }
+  .page-nav .title { color: var(--accent); margin-right: 6px; font-weight: 700; font-size: 11px; letter-spacing: 0.02em; }
+  .page-nav a {
+    padding: 4px 10px; border-radius: 6px;
+    text-decoration: none; color: #bbb;
+    background: #2A2D34; font-weight: 500;
+  }
+  .page-nav a.current { background: var(--accent); color: #fff; }
+
+  .phone-frame {
+    width: 390px; height: 844px;
+    background: var(--bg);
+    border-radius: 44px;
+    border: 8px solid #080808;
+    box-shadow: 0 40px 80px rgba(0,0,0,0.65);
+    overflow: hidden;
+    position: relative;
+  }
+  .phone-frame::before {
+    content: ''; position: absolute;
+    top: 0; left: 50%; transform: translateX(-50%);
+    width: 126px; height: 34px;
+    background: #080808;
+    border-radius: 0 0 20px 20px;
+    z-index: 100;
+  }
+  .phone-screen {
+    height: 100%; overflow-y: auto; overflow-x: hidden;
+    scrollbar-width: none; position: relative;
+    color: var(--text);
+  }
+  .phone-screen::-webkit-scrollbar { display: none; }
+
+  .status-bar {
+    height: 44px; padding: 14px 20px 0;
+    display: flex; justify-content: space-between; align-items: center;
+    font-size: 13px; font-weight: 600;
+    color: var(--text);
+  }
+
+  /* ========= App bar ========= */
+  .appbar {
+    padding: 12px 20px 10px;
+    display: flex; align-items: center; justify-content: space-between;
+    background: var(--bg);
+    position: sticky; top: 0; z-index: 10;
+  }
+  .ab-title {
+    display: flex; align-items: baseline; gap: 8px;
+  }
+  .ab-title .lg {
+    font-size: 22px;
+    font-weight: 800;
+    letter-spacing: -0.02em;
+    color: var(--text);
+  }
+  .ab-title .date {
+    font-size: 13px;
+    color: var(--text-2);
+    font-weight: 500;
+  }
+  .ab-icons { display: flex; gap: 4px; }
+  .ab-icon {
+    width: 38px; height: 38px;
+    border-radius: 10px;
+    display: grid; place-items: center;
+    color: var(--text);
+    font-size: 17px;
+    cursor: pointer;
+    position: relative;
+  }
+  .ab-icon:hover { background: var(--surface); }
+  .ab-icon .dot {
+    position: absolute; top: 8px; right: 8px;
+    width: 7px; height: 7px;
+    background: var(--live); border-radius: 50%;
+    border: 2px solid var(--bg);
+  }
+
+  /* ========= Sub-tabs (FotMob-style pill segments) ========= */
+  .subtabs {
+    padding: 6px 20px 12px;
+    display: flex; gap: 6px;
+    overflow-x: auto;
+    scrollbar-width: none;
+    background: var(--bg);
+    position: sticky;
+    top: 58px;
+    z-index: 9;
+  }
+  .subtabs::-webkit-scrollbar { display: none; }
+  .subtab {
+    flex-shrink: 0;
+    padding: 7px 14px;
+    border-radius: 999px;
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--text-2);
+    background: transparent;
+    border: 1px solid transparent;
+    cursor: pointer;
+    letter-spacing: -0.01em;
+  }
+  .subtab.active {
+    background: var(--text);
+    color: var(--bg);
+  }
+  .subtab.badge::after {
+    content: attr(data-count);
+    display: inline-block;
+    background: var(--live);
+    color: #fff;
+    font-size: 10px;
+    font-weight: 700;
+    padding: 1px 6px;
+    border-radius: 999px;
+    margin-left: 6px;
+    vertical-align: middle;
+  }
+  .subtab.active.badge::after {
+    background: var(--bg);
+    color: var(--text);
+  }
+
+  /* ========= Section (competition/tournament group) ========= */
+  .group {
+    margin: 6px 12px 10px;
+    background: var(--surface);
+    border-radius: 14px;
+    overflow: hidden;
+  }
+  .group-head {
+    padding: 12px 14px 10px;
+    display: flex; align-items: center; gap: 10px;
+    border-bottom: 1px solid var(--hairline);
+  }
+  .gh-logo {
+    width: 22px; height: 22px;
+    border-radius: 6px;
+    display: grid; place-items: center;
+    font-size: 13px;
+    flex-shrink: 0;
+  }
+  .gh-logo.val { background: #2A0C1A; color: #FF6B5C; border: 1px solid rgba(255,107,92,0.2); }
+  .gh-logo.lol { background: #1E0F2E; color: #B794FF; border: 1px solid rgba(183,148,255,0.2); }
+  .gh-logo.bb { background: #2B1608; color: #FFB84D; border: 1px solid rgba(255,184,77,0.25); }
+  .gh-name {
+    flex: 1;
+    font-size: 13.5px;
+    font-weight: 700;
+    color: var(--text);
+    letter-spacing: -0.01em;
+  }
+  .gh-sub {
+    font-size: 11px;
+    color: var(--text-3);
+    font-weight: 500;
+  }
+  .gh-link {
+    font-size: 11px;
+    color: var(--text-2);
+    font-weight: 600;
+  }
+  .gh-link::after { content: ' ›'; color: var(--text-3); }
+
+  /* Match row — the atomic unit */
+  .match {
+    display: grid;
+    grid-template-columns: 52px 1fr 44px;
+    align-items: center;
+    padding: 11px 14px;
+    cursor: pointer;
+    transition: background 0.15s;
+    border-bottom: 1px solid var(--hairline);
+    gap: 12px;
+  }
+  .match:last-child { border-bottom: none; }
+  .match:hover { background: var(--surface-2); }
+
+  /* Status column */
+  .m-status {
+    text-align: center;
+    display: flex; flex-direction: column;
+    gap: 2px;
+    align-items: center;
+  }
+  .m-time {
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--text-2);
+    letter-spacing: -0.01em;
+    font-variant-numeric: tabular-nums;
+  }
+  .m-stage {
+    font-size: 9.5px;
+    font-weight: 700;
+    color: var(--text-3);
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+  }
+  .m-status.live .m-time {
+    color: var(--live);
+    display: flex; align-items: center; gap: 4px;
+  }
+  .m-status.live .m-time::before {
+    content: '';
+    width: 6px; height: 6px;
+    background: var(--live); border-radius: 50%;
+    animation: blk 1.2s infinite;
+  }
+  @keyframes blk { 0%,70%,100%{opacity:1;} 80%,90%{opacity:0.25;} }
+  .m-status.live .m-stage { color: var(--live); }
+  .m-status.ft .m-time { color: var(--text-3); }
+
+  /* Teams column */
+  .m-teams {
+    display: flex; flex-direction: column;
+    gap: 6px;
+    min-width: 0;
+  }
+  .m-team {
+    display: grid;
+    grid-template-columns: 20px 1fr 22px;
+    gap: 10px;
+    align-items: center;
+    font-size: 14px;
+    font-weight: 500;
+    color: var(--text);
+    letter-spacing: -0.01em;
+    line-height: 1.2;
+  }
+  .m-team.my .tn { font-weight: 700; }
+  .m-team.losing .tn { color: var(--text-2); }
+  .m-team.losing .tl { opacity: 0.55; }
+
+  .tl {
+    width: 20px; height: 20px;
+    border-radius: 6px;
+    display: grid; place-items: center;
+    font-size: 9px;
+    font-weight: 700;
+    color: #000;
+    letter-spacing: -0.04em;
+  }
+  .tn {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+  .ts {
+    font-size: 15px;
+    font-weight: 700;
+    text-align: right;
+    color: var(--text);
+    font-variant-numeric: tabular-nums;
+    letter-spacing: -0.02em;
+  }
+  .m-team.losing .ts { color: var(--text-2); font-weight: 600; }
+  .m-team.winning .ts { color: var(--win); }
+  .m-team.winning .tn { color: var(--text); }
+  .m-team.losing-final .ts { color: var(--loss); }
+
+  /* Favorite star column */
+  .m-fav {
+    display: grid; place-items: center;
+    color: var(--text-3);
+    font-size: 16px;
+    cursor: pointer;
+  }
+  .m-fav.on { color: #EAB308; }
+
+  /* Compact banner row */
+  .banner {
+    margin: 0 12px 10px;
+    background: var(--surface);
+    border-radius: 14px;
+    padding: 14px;
+    display: grid;
+    grid-template-columns: 1fr auto;
+    gap: 10px;
+    align-items: center;
+    border: 1px solid rgba(240,58,71,0.16);
+  }
+  .banner .lb {
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 0.12em;
+    color: var(--live);
+    display: flex; align-items: center; gap: 5px;
+    margin-bottom: 4px;
+  }
+  .banner .lb::before {
+    content: '';
+    width: 6px; height: 6px;
+    background: var(--live); border-radius: 50%;
+    animation: blk 1.2s infinite;
+  }
+  .banner .tx {
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--text);
+    letter-spacing: -0.01em;
+  }
+  .banner .tx strong {
+    font-weight: 700;
+  }
+  .banner .cta {
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--accent);
+    padding: 8px 12px;
+    background: var(--accent-soft);
+    border-radius: 8px;
+  }
+
+  /* Section heading (between cards) */
+  .section-head {
+    padding: 16px 20px 8px;
+    display: flex; align-items: baseline; justify-content: space-between;
+  }
+  .section-head .t {
+    font-size: 16px;
+    font-weight: 800;
+    letter-spacing: -0.02em;
+    color: var(--text);
+  }
+  .section-head .t small {
+    font-weight: 500;
+    font-size: 12px;
+    color: var(--text-3);
+    margin-left: 6px;
+  }
+  .section-head .link {
+    font-size: 12px;
+    color: var(--text-2);
+    font-weight: 600;
+  }
+
+  /* Auction/activity compact card */
+  .act-card {
+    margin: 0 12px 10px;
+    background: var(--surface);
+    border-radius: 14px;
+    padding: 6px;
+  }
+  .act-row {
+    padding: 10px 10px;
+    display: grid;
+    grid-template-columns: 28px 1fr auto;
+    gap: 10px;
+    align-items: center;
+    border-radius: 10px;
+    cursor: pointer;
+  }
+  .act-row:hover { background: var(--surface-2); }
+  .act-row + .act-row { border-top: 1px solid var(--hairline); margin-top: 2px; padding-top: 12px; }
+  .act-row + .act-row:hover { border-top-color: transparent; }
+  .act-ic {
+    width: 28px; height: 28px;
+    border-radius: 8px;
+    display: grid; place-items: center;
+    font-size: 13px;
+    flex-shrink: 0;
+  }
+  .act-ic.bid { background: rgba(255,184,77,0.14); color: #FFB84D; }
+  .act-ic.win { background: rgba(34,197,94,0.14); color: var(--win); }
+  .act-ic.join { background: rgba(77,160,255,0.14); color: var(--accent); }
+  .act-tx {
+    font-size: 13px;
+    color: var(--text);
+    letter-spacing: -0.01em;
+    line-height: 1.35;
+  }
+  .act-tx strong { font-weight: 700; }
+  .act-tx .sub {
+    font-size: 11px;
+    color: var(--text-3);
+    margin-top: 2px;
+    font-weight: 500;
+  }
+  .act-time {
+    font-size: 11px;
+    color: var(--text-3);
+    font-weight: 500;
+    font-variant-numeric: tabular-nums;
+  }
+
+  .spacer { height: 100px; }
+
+  /* ========= Bottom nav (FotMob style: flat, no float) ========= */
+  .bnav {
+    position: absolute;
+    left: 0; right: 0; bottom: 0;
+    height: 78px;
+    background: var(--surface);
+    border-top: 1px solid var(--hairline);
+    display: flex;
+    padding: 6px 4px 18px;
+    z-index: 50;
+  }
+  .bnav-tab {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 3px;
+    cursor: pointer;
+    color: var(--text-3);
+  }
+  .bnav-tab .ic { font-size: 22px; line-height: 1; }
+  .bnav-tab .lb {
+    font-size: 10.5px;
+    font-weight: 600;
+    letter-spacing: -0.01em;
+  }
+  .bnav-tab.active {
+    color: var(--text);
+  }
+  .bnav-tab.active .ic {
+    transform: scale(1.05);
+  }
+</style>
+</head>
+<body>
+
+<div class="page-nav">
+  <span class="title">FotMob Style · Home</span>
+  <a href="shell-home-fotmob.html" class="current">홈 (신규)</a>
+  <span style="font-size:10px;color:#666;margin-left:auto;">Compare old:</span>
+  <a href="shell-home-sample-a.html" style="font-size:10px;">A · Moment</a>
+  <a href="shell-home-sample-b.html" style="font-size:10px;">B · Terminal</a>
+  <a href="shell-home-sample-c.html" style="font-size:10px;">C · Social</a>
+</div>
+
+<div class="phone-frame">
+  <div class="phone-screen">
+
+    <div class="status-bar">
+      <span>9:41</span>
+      <span>· 5G 🔋</span>
+    </div>
+
+    <!-- App bar -->
+    <header class="appbar">
+      <div class="ab-title">
+        <span class="lg">경기</span>
+        <span class="date">토 · 4월 25</span>
+      </div>
+      <div class="ab-icons">
+        <div class="ab-icon">🔍</div>
+        <div class="ab-icon">🔔<span class="dot"></span></div>
+      </div>
+    </header>
+
+    <!-- Sub-tabs -->
+    <nav class="subtabs">
+      <div class="subtab active">내 크루</div>
+      <div class="subtab badge" data-count="2">라이브</div>
+      <div class="subtab">오늘</div>
+      <div class="subtab">결과</div>
+      <div class="subtab">일정</div>
+    </nav>
+
+    <!-- LIVE banner -->
+    <div class="banner">
+      <div>
+        <div class="lb">LIVE · VAL 인비 4강 · MAP 2</div>
+        <div class="tx"><strong>레거시 1 – 0 블루웨이브</strong> · 11라운드</div>
+      </div>
+      <div class="cta">관전</div>
+    </div>
+
+    <!-- Group: VALORANT 인비테이셔널 -->
+    <div class="group">
+      <div class="group-head">
+        <div class="gh-logo val">🎯</div>
+        <div>
+          <div class="gh-name">VALORANT 인비테이셔널</div>
+          <div class="gh-sub">레거시 게이밍 · 4강</div>
+        </div>
+        <span style="flex:1;"></span>
+        <span class="gh-link">브래킷</span>
+      </div>
+
+      <!-- LIVE match -->
+      <div class="match">
+        <div class="m-status live">
+          <div class="m-time">LIVE</div>
+          <div class="m-stage">MAP 2</div>
+        </div>
+        <div class="m-teams">
+          <div class="m-team my winning">
+            <span class="tl" style="background:#A5FF00;">LG</span>
+            <span class="tn">레거시 게이밍</span>
+            <span class="ts">1</span>
+          </div>
+          <div class="m-team">
+            <span class="tl" style="background:#6EB5FF;">BW</span>
+            <span class="tn">블루웨이브</span>
+            <span class="ts">0</span>
+          </div>
+        </div>
+        <div class="m-fav on">★</div>
+      </div>
+
+      <!-- Upcoming -->
+      <div class="match">
+        <div class="m-status">
+          <div class="m-time">SUN</div>
+          <div class="m-stage">22:00</div>
+        </div>
+        <div class="m-teams">
+          <div class="m-team">
+            <span class="tl" style="background:#FF6FB5;">V5</span>
+            <span class="tn">V5 Crew</span>
+            <span class="ts">–</span>
+          </div>
+          <div class="m-team">
+            <span class="tl" style="background:#FFB84D;">SR</span>
+            <span class="tn">스와프 루트</span>
+            <span class="ts">–</span>
+          </div>
+        </div>
+        <div class="m-fav">☆</div>
+      </div>
+
+      <!-- Finished result -->
+      <div class="match">
+        <div class="m-status ft">
+          <div class="m-time">FT</div>
+          <div class="m-stage">M1 · BIND</div>
+        </div>
+        <div class="m-teams">
+          <div class="m-team my winning">
+            <span class="tl" style="background:#A5FF00;">LG</span>
+            <span class="tn">레거시 게이밍</span>
+            <span class="ts">13</span>
+          </div>
+          <div class="m-team losing losing-final">
+            <span class="tl" style="background:#6EB5FF;">BW</span>
+            <span class="tn">블루웨이브</span>
+            <span class="ts">9</span>
+          </div>
+        </div>
+        <div class="m-fav on">★</div>
+      </div>
+    </div>
+
+    <!-- Group: LoL 5대5 랭크 리그 -->
+    <div class="group">
+      <div class="group-head">
+        <div class="gh-logo lol">⚔️</div>
+        <div>
+          <div class="gh-name">LoL 5대5 랭크 리그</div>
+          <div class="gh-sub">Swiss · R4 / R5</div>
+        </div>
+        <span style="flex:1;"></span>
+        <span class="gh-link">순위표</span>
+      </div>
+
+      <div class="match">
+        <div class="m-status">
+          <div class="m-time">TUE</div>
+          <div class="m-stage">21:00</div>
+        </div>
+        <div class="m-teams">
+          <div class="m-team my">
+            <span class="tl" style="background:#A5FF00;">LG</span>
+            <span class="tn">레거시 게이밍</span>
+            <span class="ts">–</span>
+          </div>
+          <div class="m-team">
+            <span class="tl" style="background:#F03A47;">KR</span>
+            <span class="tn">KR Ranked</span>
+            <span class="ts">–</span>
+          </div>
+        </div>
+        <div class="m-fav on">★</div>
+      </div>
+
+      <div class="match">
+        <div class="m-status ft">
+          <div class="m-time">FT</div>
+          <div class="m-stage">R3 · BO3</div>
+        </div>
+        <div class="m-teams">
+          <div class="m-team my winning">
+            <span class="tl" style="background:#A5FF00;">LG</span>
+            <span class="tn">레거시 게이밍</span>
+            <span class="ts">2</span>
+          </div>
+          <div class="m-team losing losing-final">
+            <span class="tl" style="background:#B794FF;">VT</span>
+            <span class="tn">V5 토너스</span>
+            <span class="ts">0</span>
+          </div>
+        </div>
+        <div class="m-fav">☆</div>
+      </div>
+    </div>
+
+    <!-- Group: 3학년 반 대항 농구 -->
+    <div class="group">
+      <div class="group-head">
+        <div class="gh-logo bb">🏀</div>
+        <div>
+          <div class="gh-name">3학년 반 대항 농구</div>
+          <div class="gh-sub">KO · 8강</div>
+        </div>
+        <span style="flex:1;"></span>
+        <span class="gh-link">대진표</span>
+      </div>
+
+      <div class="match">
+        <div class="m-status">
+          <div class="m-time">SAT</div>
+          <div class="m-stage">15:00</div>
+        </div>
+        <div class="m-teams">
+          <div class="m-team my">
+            <span class="tl" style="background:#FF6FB5;font-size:8px;">3-8</span>
+            <span class="tn">3학년 8반</span>
+            <span class="ts">–</span>
+          </div>
+          <div class="m-team">
+            <span class="tl" style="background:#4DA0FF;font-size:8px;">3-5</span>
+            <span class="tn">3학년 5반</span>
+            <span class="ts">–</span>
+          </div>
+        </div>
+        <div class="m-fav">☆</div>
+      </div>
+    </div>
+
+    <!-- Section: 크루 활동 -->
+    <div class="section-head">
+      <div class="t">크루 활동 <small>레거시 · 3건</small></div>
+      <span class="link">전체 ›</span>
+    </div>
+
+    <div class="act-card">
+      <div class="act-row">
+        <div class="act-ic bid">💰</div>
+        <div class="act-tx">
+          <strong>지훈</strong>이 경매에서 <strong>민철</strong>을 <strong>240P</strong>에 영입
+          <div class="sub">FW · VAL 인비 R3 라운드</div>
+        </div>
+        <div class="act-time">12m</div>
+      </div>
+      <div class="act-row">
+        <div class="act-ic win">⚡</div>
+        <div class="act-tx">
+          LoL 스크림 <strong>2–0</strong> · 민수 캐리 (KDA 11/2/8)
+          <div class="sub">랭크 리그 R3 · BO3</div>
+        </div>
+        <div class="act-time">1h</div>
+      </div>
+      <div class="act-row">
+        <div class="act-ic join">🎯</div>
+        <div class="act-tx">
+          <strong>재호</strong>가 LoL 랭크 리그 팀 등록
+          <div class="sub">MID · P2 · 14 / 16팀</div>
+        </div>
+        <div class="act-time">3h</div>
+      </div>
+    </div>
+
+    <div class="spacer"></div>
+
+    <!-- Bottom nav -->
+    <nav class="bnav">
+      <div class="bnav-tab active">
+        <div class="ic">⚽</div>
+        <div class="lb">경기</div>
+      </div>
+      <div class="bnav-tab">
+        <div class="ic">🏆</div>
+        <div class="lb">대회</div>
+      </div>
+      <div class="bnav-tab">
+        <div class="ic">👥</div>
+        <div class="lb">클럽</div>
+      </div>
+      <div class="bnav-tab">
+        <div class="ic">👤</div>
+        <div class="lb">MY</div>
+      </div>
+    </nav>
+
+  </div>
+</div>
+
+<p style="color:#888;font-size:12px;margin-top:16px;max-width:460px;text-align:center;font-family:sans-serif;line-height:1.7;">
+  <strong style="color:#4DA0FF;">FotMob 스타일 · Home</strong><br>
+  매치 로우가 원자 단위 · 대회별 그룹 카드 · 상단 서브탭 세그먼트 · LIVE 빨간 점 · 하단 플랫 내비<br>
+  <em>Pretendard · 데이터 우선 · 시네마틱 히어로 제거 · 내 팀 볼드 · 우승/패배 색상</em>
+</p>
+
+</body>
+</html>

@@ -1,0 +1,655 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>샘플 B · Club Terminal</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=JetBrains+Mono:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0B0A14;
+    --panel: #141327;
+    --panel-2: #1C1A35;
+    --panel-3: #252246;
+    --line: rgba(255,255,255,0.05);
+    --text: #E7E5F5;
+    --muted: #7E7BA0;
+    --violet: #8B7EFF;
+    --violet-glow: rgba(139,126,255,0.35);
+    --mint: #5EEAD4;
+    --amber: #FFB84D;
+    --pink: #FF6FB5;
+    --disp: 'Space Grotesk', 'Noto Sans KR', sans-serif;
+    --mono: 'JetBrains Mono', monospace;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    background: #08071b;
+    display: flex; flex-direction: column; align-items: center;
+    min-height: 100vh; padding: 20px;
+    font-family: var(--disp);
+  }
+  .sample-nav {
+    display: flex; gap: 10px; margin-bottom: 18px;
+    background: #14131e; padding: 10px 14px; border-radius: 12px;
+    color: #888; font-size: 12px; align-items: center;
+    border: 1px solid var(--line);
+  }
+  .sample-nav .title { color: #aaa; margin-right: 6px; }
+  .sample-nav a {
+    padding: 4px 10px; border-radius: 6px;
+    text-decoration: none; color: #bbb;
+    background: #252240; font-weight: 500;
+  }
+  .sample-nav a.current { background: var(--violet); color: #fff; }
+
+  .phone-frame {
+    width: 390px; height: 844px;
+    background: var(--bg);
+    border-radius: 44px;
+    border: 8px solid #060514;
+    box-shadow: 0 40px 80px rgba(0,0,0,0.7),
+                0 0 80px rgba(139,126,255,0.08);
+    overflow: hidden;
+    position: relative;
+  }
+  .phone-frame::before {
+    content: ''; position: absolute;
+    top: 0; left: 50%; transform: translateX(-50%);
+    width: 126px; height: 34px;
+    background: #060514;
+    border-radius: 0 0 20px 20px;
+    z-index: 100;
+  }
+  .phone-screen {
+    height: 100%; overflow-y: auto; overflow-x: hidden;
+    scrollbar-width: none; position: relative;
+    color: var(--text);
+  }
+  .phone-screen::-webkit-scrollbar { display: none; }
+
+  .status-bar {
+    height: 44px; padding: 14px 16px 0 24px;
+    display: flex; justify-content: space-between; align-items: center;
+    font-family: var(--mono); font-size: 12px; font-weight: 500;
+    color: var(--text);
+  }
+
+  /* ========= Club Rail (left edge) ========= */
+  .layout {
+    display: grid;
+    grid-template-columns: 64px 1fr;
+    min-height: calc(100% - 44px);
+  }
+  .club-rail {
+    background: #060513;
+    padding: 14px 0 96px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;
+    border-right: 1px solid var(--line);
+  }
+  .club-rail .rail-avatar {
+    width: 40px; height: 40px;
+    border-radius: 14px;
+    display: grid; place-items: center;
+    font-family: var(--disp);
+    font-weight: 700; font-size: 14px;
+    color: #fff;
+    cursor: pointer;
+    position: relative;
+    transition: all 0.2s;
+  }
+  .club-rail .rail-avatar.active {
+    border-radius: 12px;
+  }
+  .club-rail .rail-avatar.active::before {
+    content: '';
+    position: absolute;
+    left: -10px;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 4px; height: 24px;
+    background: var(--violet);
+    border-radius: 0 4px 4px 0;
+    box-shadow: 0 0 12px var(--violet-glow);
+  }
+  .rail-avatar.a { background: linear-gradient(135deg, #8B7EFF, #5E52C7); }
+  .rail-avatar.b { background: linear-gradient(135deg, #5EEAD4, #0D9488); }
+  .rail-avatar.c { background: linear-gradient(135deg, #FF6FB5, #C0238B); }
+  .rail-avatar.d { background: linear-gradient(135deg, #FFB84D, #D97706); }
+  .rail-avatar.add {
+    background: transparent;
+    border: 1.5px dashed rgba(139,126,255,0.4);
+    color: var(--violet);
+    font-weight: 400;
+    font-size: 22px;
+  }
+  .rail-div {
+    width: 24px; height: 1px;
+    background: var(--line);
+    margin: 4px 0;
+  }
+
+  /* ========= Main column ========= */
+  .main {
+    padding: 14px 16px 0;
+    overflow-x: hidden;
+  }
+
+  .club-header {
+    display: flex; align-items: center; gap: 10px;
+    padding: 6px 0 18px;
+    border-bottom: 1px solid var(--line);
+    margin-bottom: 18px;
+  }
+  .club-header .hash {
+    font-family: var(--mono);
+    font-size: 20px;
+    font-weight: 500;
+    color: var(--muted);
+  }
+  .club-header .nm {
+    font-family: var(--disp);
+    font-size: 18px;
+    font-weight: 700;
+    color: var(--text);
+    letter-spacing: -0.02em;
+  }
+  .club-header .members {
+    margin-left: auto;
+    font-family: var(--mono);
+    font-size: 11px;
+    color: var(--muted);
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+  .club-header .members::before {
+    content: ''; width: 6px; height: 6px;
+    border-radius: 50%;
+    background: var(--mint);
+    box-shadow: 0 0 6px var(--mint);
+  }
+
+  /* Greeting */
+  .greet-block { margin-bottom: 18px; }
+  .greet-eyebrow {
+    font-family: var(--mono);
+    font-size: 10px;
+    letter-spacing: 0.22em;
+    color: var(--violet);
+    margin-bottom: 6px;
+  }
+  .greet-title {
+    font-family: var(--disp);
+    font-size: 26px;
+    font-weight: 500;
+    letter-spacing: -0.035em;
+    color: var(--text);
+    line-height: 1.15;
+  }
+  .greet-title .hl {
+    color: var(--text);
+    font-weight: 700;
+    background: linear-gradient(120deg, var(--violet), var(--mint));
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+  }
+
+  /* Terminal quick-cmd row */
+  .cmd-row {
+    display: flex; gap: 6px;
+    margin-bottom: 20px;
+    flex-wrap: wrap;
+  }
+  .cmd-pill {
+    font-family: var(--mono);
+    font-size: 11px;
+    color: var(--muted);
+    background: var(--panel);
+    border: 1px solid var(--line);
+    padding: 6px 10px;
+    border-radius: 8px;
+    display: flex; align-items: center; gap: 6px;
+    cursor: pointer;
+  }
+  .cmd-pill .key {
+    font-family: var(--mono);
+    font-size: 9px;
+    color: var(--violet);
+    background: rgba(139,126,255,0.12);
+    padding: 1px 5px;
+    border-radius: 3px;
+    letter-spacing: 0.1em;
+  }
+  .cmd-pill:hover { border-color: rgba(139,126,255,0.3); color: var(--text); }
+
+  /* Live channel */
+  .live-channel {
+    background: var(--panel);
+    border: 1px solid var(--line);
+    border-radius: 12px;
+    padding: 14px;
+    margin-bottom: 14px;
+    position: relative;
+    overflow: hidden;
+  }
+  .live-channel::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0; height: 1px;
+    background: linear-gradient(90deg, transparent, var(--mint), transparent);
+    opacity: 0.6;
+  }
+  .lc-head {
+    display: flex; align-items: center; gap: 10px;
+    margin-bottom: 10px;
+  }
+  .lc-live {
+    display: flex; align-items: center; gap: 6px;
+    font-family: var(--mono);
+    font-size: 10px;
+    color: var(--mint);
+    font-weight: 700;
+    letter-spacing: 0.2em;
+  }
+  .lc-live::before {
+    content: ''; width: 6px; height: 6px;
+    background: var(--mint); border-radius: 50%;
+    animation: blk 1.2s infinite;
+  }
+  @keyframes blk {
+    0%, 70%, 100% { opacity: 1; }
+    80%, 90% { opacity: 0.3; }
+  }
+  .lc-channel {
+    font-family: var(--mono);
+    font-size: 11px;
+    color: var(--muted);
+  }
+  .lc-channel .hash { color: var(--muted); margin-right: 3px; }
+  .lc-channel .ch { color: var(--text); }
+  .lc-when { margin-left: auto; font-family: var(--mono); font-size: 10px; color: var(--muted); }
+
+  .lc-score {
+    display: grid;
+    grid-template-columns: 1fr auto 1fr;
+    gap: 12px;
+    align-items: center;
+    padding: 8px 4px;
+  }
+  .lc-side { display: flex; align-items: center; gap: 10px; }
+  .lc-side.r { flex-direction: row-reverse; text-align: right; }
+  .lc-logo {
+    width: 28px; height: 28px;
+    border-radius: 8px;
+    display: grid; place-items: center;
+    font-family: var(--disp); font-weight: 700;
+    font-size: 11px;
+    background: var(--panel-3);
+    color: var(--text);
+  }
+  .lc-nm {
+    font-family: var(--disp);
+    font-size: 13px;
+    font-weight: 500;
+    letter-spacing: -0.01em;
+    color: var(--text);
+  }
+  .lc-nums {
+    font-family: var(--disp);
+    font-weight: 700;
+    font-size: 24px;
+    letter-spacing: -0.04em;
+    color: var(--text);
+  }
+  .lc-nums .wn { color: var(--mint); }
+
+  /* Ongoing comps (compact list) */
+  .sec {
+    display: flex; align-items: baseline; justify-content: space-between;
+    margin: 22px 0 10px;
+  }
+  .sec .lbl {
+    font-family: var(--mono);
+    font-size: 10px;
+    font-weight: 600;
+    letter-spacing: 0.22em;
+    color: var(--muted);
+    text-transform: uppercase;
+  }
+  .sec .ln {
+    font-family: var(--mono);
+    flex: 1;
+    height: 1px;
+    background: var(--line);
+    margin: 0 10px;
+  }
+  .sec .ct {
+    font-family: var(--mono);
+    font-size: 10px;
+    color: var(--muted);
+  }
+
+  .comp-rows { display: flex; flex-direction: column; gap: 6px; }
+  .comp-row {
+    background: var(--panel);
+    border: 1px solid var(--line);
+    border-radius: 10px;
+    padding: 12px;
+    display: grid;
+    grid-template-columns: 24px 1fr auto;
+    gap: 12px;
+    align-items: center;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+  .comp-row:hover { border-color: rgba(139,126,255,0.25); background: var(--panel-2); }
+  .cr-sport {
+    font-size: 16px;
+    text-align: center;
+  }
+  .cr-info { min-width: 0; }
+  .cr-info .top {
+    display: flex; align-items: center; gap: 8px;
+    margin-bottom: 2px;
+  }
+  .cr-info .nm {
+    font-family: var(--disp);
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--text);
+    letter-spacing: -0.01em;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  .cr-info .tag {
+    font-family: var(--mono);
+    font-size: 9px;
+    color: var(--violet);
+    background: rgba(139,126,255,0.12);
+    padding: 1px 5px;
+    border-radius: 3px;
+    letter-spacing: 0.14em;
+    font-weight: 700;
+    flex-shrink: 0;
+  }
+  .cr-info .meta {
+    font-family: var(--mono);
+    font-size: 10px;
+    color: var(--muted);
+    letter-spacing: 0.04em;
+  }
+  .cr-dd {
+    font-family: var(--disp);
+    font-weight: 700;
+    font-size: 16px;
+    color: var(--text);
+    letter-spacing: -0.03em;
+  }
+  .cr-dd .u {
+    font-family: var(--mono);
+    font-size: 9px;
+    font-weight: 500;
+    color: var(--muted);
+    margin-right: 2px;
+  }
+  .cr-dd.live {
+    color: var(--mint);
+  }
+
+  /* Terminal feed */
+  .feed { display: flex; flex-direction: column; gap: 2px; }
+  .feed-item {
+    display: grid;
+    grid-template-columns: 54px 1fr;
+    gap: 10px;
+    padding: 6px 0;
+    font-family: var(--mono);
+    font-size: 11px;
+    line-height: 1.6;
+  }
+  .feed-item .ts {
+    color: var(--muted);
+    font-size: 10px;
+  }
+  .feed-item .msg {
+    color: var(--text);
+    font-family: var(--disp);
+    font-size: 12.5px;
+    letter-spacing: -0.005em;
+  }
+  .feed-item .msg .who {
+    font-weight: 700;
+    color: var(--violet);
+  }
+  .feed-item .msg .ev {
+    color: var(--mint);
+    font-family: var(--mono);
+    font-size: 10px;
+    background: rgba(94,234,212,0.08);
+    padding: 1px 5px;
+    border-radius: 3px;
+    margin-right: 4px;
+    letter-spacing: 0.1em;
+    font-weight: 600;
+  }
+  .feed-item .msg .ev.bid { color: var(--amber); background: rgba(255,184,77,0.08); }
+  .feed-item .msg .ev.win { color: var(--mint); background: rgba(94,234,212,0.08); }
+  .feed-item .msg .ev.join { color: var(--pink); background: rgba(255,111,181,0.08); }
+  .feed-item .msg strong { color: var(--text); font-weight: 600; }
+
+  .spacer { height: 120px; }
+
+  /* Floating bottom nav */
+  .fnav {
+    position: absolute;
+    left: 16px; right: 16px;
+    bottom: 18px;
+    height: 58px;
+    background: rgba(20,19,39,0.8);
+    backdrop-filter: blur(20px) saturate(1.3);
+    -webkit-backdrop-filter: blur(20px) saturate(1.3);
+    border-radius: 16px;
+    border: 1px solid rgba(139,126,255,0.15);
+    box-shadow: 0 12px 28px rgba(0,0,0,0.5),
+                inset 0 1px 0 rgba(255,255,255,0.05);
+    display: flex;
+    align-items: center;
+    padding: 5px;
+    z-index: 50;
+  }
+  .fnav-tab {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    height: 100%;
+    border-radius: 12px;
+    cursor: pointer;
+    color: var(--muted);
+    transition: all 0.25s;
+    font-family: var(--mono);
+    font-size: 9px;
+    font-weight: 700;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+  }
+  .fnav-tab .ic { font-size: 16px; }
+  .fnav-tab.active {
+    background: linear-gradient(135deg, rgba(139,126,255,0.25), rgba(139,126,255,0.1));
+    color: #D4CFFF;
+    box-shadow: 0 0 20px rgba(139,126,255,0.2),
+                inset 0 1px 0 rgba(255,255,255,0.08);
+  }
+</style>
+</head>
+<body>
+
+<div class="sample-nav">
+  <span class="title">Home Samples:</span>
+  <a href="shell-home-sample-a.html">A · Moment</a>
+  <a href="shell-home-sample-b.html" class="current">B · Terminal</a>
+  <a href="shell-home-sample-c.html">C · Social</a>
+</div>
+
+<div class="phone-frame">
+  <div class="phone-screen">
+
+    <div class="status-bar">
+      <span>9:41</span>
+      <span>5G · 92%</span>
+    </div>
+
+    <div class="layout">
+      <aside class="club-rail">
+        <div class="rail-avatar a active">LG</div>
+        <div class="rail-avatar b">V5</div>
+        <div class="rail-avatar c">3-8</div>
+        <div class="rail-avatar d">컴공</div>
+        <div class="rail-div"></div>
+        <div class="rail-avatar add">+</div>
+      </aside>
+
+      <main class="main">
+
+        <div class="club-header">
+          <span class="hash">#</span>
+          <span class="nm">레거시 게이밍</span>
+          <span class="members">온라인 12</span>
+        </div>
+
+        <div class="greet-block">
+          <div class="greet-eyebrow">SAT · 4월 25 · GAME DAY</div>
+          <div class="greet-title">
+            어서 와, <span class="hl">민철</span>.<br>
+            오늘 스크림 <strong>3</strong>개 · 경기 <strong>2</strong>개 대기 중.
+          </div>
+        </div>
+
+        <div class="cmd-row">
+          <div class="cmd-pill"><span class="key">⌘K</span>빠른 검색</div>
+          <div class="cmd-pill">+ 대회 만들기</div>
+          <div class="cmd-pill">결과 등록</div>
+        </div>
+
+        <!-- Live channel card -->
+        <div class="live-channel">
+          <div class="lc-head">
+            <div class="lc-live">LIVE</div>
+            <div class="lc-channel"><span class="hash">#</span><span class="ch">val-인비-4강</span></div>
+            <div class="lc-when">MAP 2 · 11R</div>
+          </div>
+          <div class="lc-score">
+            <div class="lc-side">
+              <div class="lc-logo" style="background:#fff;color:#000;">LG</div>
+              <div class="lc-nm">레거시 게이밍</div>
+            </div>
+            <div class="lc-nums"><span class="wn">1</span> – 0</div>
+            <div class="lc-side r">
+              <div class="lc-logo">BW</div>
+              <div class="lc-nm">블루웨이브</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="sec">
+          <span class="lbl">진행 중인 대회</span>
+          <span class="ln"></span>
+          <span class="ct">03</span>
+        </div>
+
+        <div class="comp-rows">
+          <div class="comp-row">
+            <div class="cr-sport">🎯</div>
+            <div class="cr-info">
+              <div class="top">
+                <span class="tag">4강 BO5</span>
+                <span class="nm">신촌 VALORANT 인비</span>
+              </div>
+              <div class="meta">8팀 · SUN 22:00 · BIND→ASCENT</div>
+            </div>
+            <div class="cr-dd live">LIVE</div>
+          </div>
+          <div class="comp-row">
+            <div class="cr-sport">⚔️</div>
+            <div class="cr-info">
+              <div class="top">
+                <span class="tag">SWISS R4</span>
+                <span class="nm">LoL 5대5 랭크 리그</span>
+              </div>
+              <div class="meta">16팀 · TUE 21:00 · BO3</div>
+            </div>
+            <div class="cr-dd"><span class="u">D-</span>3</div>
+          </div>
+          <div class="comp-row">
+            <div class="cr-sport">🏀</div>
+            <div class="cr-info">
+              <div class="top">
+                <span class="tag">KO 8강</span>
+                <span class="nm">3학년 반 대항 농구</span>
+              </div>
+              <div class="meta">8반 · 학교 체육관 · SAT 15:00</div>
+            </div>
+            <div class="cr-dd"><span class="u">D-</span>2</div>
+          </div>
+        </div>
+
+        <div class="sec">
+          <span class="lbl">클럽 활동</span>
+          <span class="ln"></span>
+          <span class="ct">LIVE</span>
+        </div>
+
+        <div class="feed">
+          <div class="feed-item">
+            <span class="ts">14:08</span>
+            <div class="msg"><span class="ev win">ACE</span><strong>레거시</strong> MAP 1 <strong>13–9</strong> · 민철 K/D 1.84</div>
+          </div>
+          <div class="feed-item">
+            <span class="ts">13:55</span>
+            <div class="msg"><span class="ev bid">BID</span><span class="who">@지훈</span>이 <strong>민철</strong>을 <strong>240P</strong>에 영입 · 듀얼리스트</div>
+          </div>
+          <div class="feed-item">
+            <span class="ts">13:30</span>
+            <div class="msg"><span class="ev win">WIN</span>LoL 스크림 <strong>2–0</strong> · 민수 캐리 (KDA 11/2/8)</div>
+          </div>
+          <div class="feed-item">
+            <span class="ts">11:18</span>
+            <div class="msg"><span class="ev join">JOIN</span><span class="who">@재호</span> LoL 랭크 리그 팀 등록 · MID · P2</div>
+          </div>
+          <div class="feed-item">
+            <span class="ts">09:42</span>
+            <div class="msg"><span class="ev win">WIN</span>3-8반 농구 <strong>52–47</strong> · 학급 라이벌전</div>
+          </div>
+        </div>
+
+        <div class="spacer"></div>
+      </main>
+    </div>
+
+    <div class="fnav">
+      <div class="fnav-tab active"><span class="ic">⌂</span>HOME</div>
+      <div class="fnav-tab"><span class="ic">▲</span>대회</div>
+      <div class="fnav-tab"><span class="ic">◉</span>클럽</div>
+      <div class="fnav-tab"><span class="ic">●</span>MY</div>
+    </div>
+
+  </div>
+</div>
+
+<p style="color:#888;font-size:12px;margin-top:16px;max-width:460px;text-align:center;font-family:sans-serif;line-height:1.7;">
+  <strong style="color:#8B7EFF;">B · Club Terminal</strong><br>
+  Discord-style 클럽 레일 · <code style="color:#5EEAD4;">#채널명</code> 헤더 · 터미널 타임스탬프 피드 · <code style="color:#8B7EFF;">⌘K</code> 커맨드<br>
+  <em>Space Grotesk + JetBrains Mono · 바이올렛 + 민트 듀얼 액센트</em>
+</p>
+
+</body>
+</html>

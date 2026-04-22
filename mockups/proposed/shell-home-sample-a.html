@@ -1,0 +1,653 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>샘플 A · Final Whistle Moment</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Sora:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #07070B;
+    --ink: #0E0E14;
+    --card: #14141C;
+    --card-hi: #1C1C26;
+    --line: rgba(255,255,255,0.06);
+    --text: #ECECF4;
+    --muted: #7A7A8A;
+    --win: #5BF08A;
+    --win-glow: rgba(91,240,138,0.4);
+    --loss: #FF6B5C;
+    --loss-glow: rgba(255,107,92,0.35);
+    --accent: #A5FF00;
+    --accent-soft: rgba(165,255,0,0.16);
+    --disp: 'Sora', 'Noto Sans KR', sans-serif;
+    --mono: 'JetBrains Mono', monospace;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    background: #0a0a12;
+    display: flex; flex-direction: column; align-items: center;
+    min-height: 100vh; padding: 20px;
+    font-family: var(--disp);
+  }
+  .sample-nav {
+    display: flex; gap: 10px; margin-bottom: 18px;
+    background: #14141c; padding: 10px 14px; border-radius: 12px;
+    color: #888; font-size: 12px; align-items: center;
+    border: 1px solid var(--line);
+  }
+  .sample-nav .title { color: #aaa; margin-right: 6px; }
+  .sample-nav a {
+    padding: 4px 10px; border-radius: 6px;
+    text-decoration: none; color: #bbb;
+    background: #222; font-weight: 500;
+  }
+  .sample-nav a.current { background: var(--accent); color: #000; }
+
+  .phone-frame {
+    width: 390px; height: 844px;
+    background: var(--bg);
+    border-radius: 44px;
+    border: 8px solid #060608;
+    box-shadow: 0 40px 80px rgba(0,0,0,0.7),
+                0 0 60px rgba(165,255,0,0.05);
+    overflow: hidden;
+    position: relative;
+  }
+  .phone-frame::before {
+    content: ''; position: absolute;
+    top: 0; left: 50%; transform: translateX(-50%);
+    width: 126px; height: 34px;
+    background: #060608;
+    border-radius: 0 0 20px 20px;
+    z-index: 100;
+  }
+  .phone-screen {
+    height: 100%; overflow-y: auto; overflow-x: hidden;
+    scrollbar-width: none; position: relative;
+    color: var(--text);
+  }
+  .phone-screen::-webkit-scrollbar { display: none; }
+
+  .status-bar {
+    height: 44px; padding: 14px 24px 0;
+    display: flex; justify-content: space-between; align-items: center;
+    font-family: var(--mono); font-size: 12px; font-weight: 600;
+    color: var(--text);
+  }
+
+  /* ========= HERO ========= */
+  .hero {
+    padding: 28px 24px 8px;
+    position: relative;
+    overflow: hidden;
+  }
+  .hero::before {
+    content: ''; position: absolute;
+    top: -40px; right: -80px;
+    width: 360px; height: 360px;
+    background: radial-gradient(circle,
+      var(--accent-soft) 0%,
+      transparent 60%);
+    pointer-events: none;
+  }
+
+  .hero-top {
+    display: flex; align-items: center; justify-content: space-between;
+    margin-bottom: 32px; position: relative;
+  }
+  .club-chip {
+    display: flex; align-items: center; gap: 10px;
+    padding: 6px 12px 6px 6px;
+    background: var(--card);
+    border: 1px solid var(--line);
+    border-radius: 999px;
+    cursor: pointer;
+  }
+  .club-logo {
+    width: 28px; height: 28px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, var(--accent), #6EE800);
+    display: grid; place-items: center;
+    color: #000; font-weight: 700; font-size: 12px;
+    font-family: var(--disp);
+  }
+  .club-chip .nm {
+    font-family: var(--disp);
+    font-size: 12px; font-weight: 600;
+    color: var(--text);
+    letter-spacing: -0.01em;
+  }
+  .club-chip .ar {
+    color: var(--muted); font-size: 10px;
+  }
+  .hero-icons { display: flex; gap: 6px; }
+  .icon-btn {
+    width: 40px; height: 40px;
+    border-radius: 12px;
+    background: var(--card);
+    border: 1px solid var(--line);
+    display: grid; place-items: center;
+    color: var(--text); font-size: 15px;
+    cursor: pointer; position: relative;
+  }
+  .icon-btn .dot {
+    position: absolute; top: 8px; right: 8px;
+    width: 7px; height: 7px; border-radius: 50%;
+    background: var(--accent);
+    box-shadow: 0 0 8px var(--accent);
+  }
+
+  .hero-eyebrow {
+    font-family: var(--mono);
+    font-size: 10px; font-weight: 600;
+    letter-spacing: 0.28em;
+    color: var(--accent);
+    margin-bottom: 12px;
+  }
+  .hero-title {
+    font-family: var(--disp);
+    font-weight: 700;
+    font-size: 40px;
+    line-height: 1.02;
+    letter-spacing: -0.04em;
+    color: var(--text);
+    margin-bottom: 14px;
+  }
+  .hero-title .g {
+    background: linear-gradient(180deg, #fff 0%, #9A9AAA 100%);
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+  }
+  .hero-sub {
+    font-family: var(--disp);
+    font-size: 14px;
+    font-weight: 400;
+    color: var(--muted);
+    letter-spacing: -0.005em;
+  }
+
+  /* ========= RESULT HERO CARD ========= */
+  .result-hero {
+    margin: 24px 20px 0;
+    position: relative;
+    border-radius: 24px;
+    padding: 22px 22px 20px;
+    background: linear-gradient(160deg,
+      #103A1F 0%,
+      #0B1F12 60%,
+      #080E0A 100%);
+    overflow: hidden;
+    border: 1px solid rgba(91,240,138,0.25);
+    box-shadow: 0 18px 40px rgba(91,240,138,0.1),
+                inset 0 1px 0 rgba(255,255,255,0.05);
+  }
+  .result-hero::before {
+    content: 'WIN';
+    position: absolute;
+    right: -10px; top: -30px;
+    font-family: var(--disp);
+    font-weight: 800;
+    font-size: 170px;
+    color: rgba(91,240,138,0.08);
+    letter-spacing: -0.08em;
+    pointer-events: none;
+    line-height: 1;
+  }
+  .rh-top {
+    display: flex; justify-content: space-between; align-items: center;
+    margin-bottom: 18px;
+    position: relative;
+  }
+  .rh-badge {
+    display: inline-flex; align-items: center; gap: 6px;
+    font-family: var(--mono);
+    font-size: 10px; font-weight: 700;
+    letter-spacing: 0.2em;
+    color: var(--win);
+    background: rgba(91,240,138,0.14);
+    padding: 5px 10px;
+    border-radius: 4px;
+  }
+  .rh-badge::before {
+    content: ''; width: 6px; height: 6px;
+    background: var(--win); border-radius: 50%;
+    box-shadow: 0 0 6px var(--win-glow);
+  }
+  .rh-when {
+    font-family: var(--mono);
+    font-size: 10px;
+    color: rgba(91,240,138,0.5);
+    letter-spacing: 0.1em;
+  }
+  .rh-score {
+    display: grid;
+    grid-template-columns: 1fr auto 1fr;
+    gap: 10px;
+    align-items: center;
+    position: relative;
+  }
+  .rh-team { display: flex; flex-direction: column; gap: 6px; }
+  .rh-team.right { text-align: right; align-items: flex-end; }
+  .rh-team .logo {
+    width: 32px; height: 32px;
+    border-radius: 50%;
+    background: #fff;
+    display: grid; place-items: center;
+    font-size: 14px; font-weight: 700;
+    color: #000; font-family: var(--disp);
+  }
+  .rh-team .logo.opp {
+    background: #333343; color: #fff;
+  }
+  .rh-team .nm {
+    font-family: var(--disp);
+    font-size: 15px; font-weight: 600;
+    color: var(--text);
+    letter-spacing: -0.01em;
+  }
+  .rh-team .seed {
+    font-family: var(--mono);
+    font-size: 10px;
+    color: var(--muted);
+  }
+  .rh-nums {
+    font-family: var(--disp);
+    font-weight: 800;
+    font-size: 52px;
+    color: var(--text);
+    letter-spacing: -0.05em;
+    line-height: 1;
+    text-align: center;
+  }
+  .rh-nums .win-score { color: var(--win); text-shadow: 0 0 24px var(--win-glow); }
+  .rh-nums .divider {
+    color: var(--muted);
+    font-weight: 400;
+    font-size: 32px;
+    margin: 0 4px;
+  }
+  .rh-foot {
+    margin-top: 16px;
+    padding-top: 14px;
+    border-top: 1px solid rgba(91,240,138,0.1);
+    display: flex; justify-content: space-between; align-items: center;
+    position: relative;
+  }
+  .rh-foot .meta {
+    font-family: var(--mono);
+    font-size: 10px;
+    color: rgba(255,255,255,0.5);
+    letter-spacing: 0.1em;
+  }
+  .rh-foot .meta .t { color: var(--text); }
+  .rh-share {
+    font-family: var(--disp);
+    font-size: 11px;
+    font-weight: 600;
+    color: var(--win);
+    padding: 6px 12px;
+    border: 1px solid rgba(91,240,138,0.3);
+    border-radius: 999px;
+    cursor: pointer;
+    letter-spacing: -0.005em;
+  }
+
+  /* ========= SECTIONS ========= */
+  .sec {
+    padding: 30px 24px 14px;
+    display: flex; justify-content: space-between; align-items: baseline;
+  }
+  .sec h3 {
+    font-family: var(--disp);
+    font-size: 18px;
+    font-weight: 700;
+    letter-spacing: -0.03em;
+    color: var(--text);
+  }
+  .sec h3 small {
+    font-family: var(--mono);
+    font-size: 10px;
+    color: var(--muted);
+    margin-left: 8px;
+    font-weight: 500;
+    letter-spacing: 0.15em;
+  }
+  .sec .link {
+    font-family: var(--disp);
+    font-size: 12px;
+    color: var(--muted);
+    font-weight: 500;
+  }
+  .sec .link::after {
+    content: '  →';
+    color: var(--accent);
+  }
+
+  /* Comp cards */
+  .comps { padding: 0 20px 4px; display: flex; flex-direction: column; gap: 10px; }
+  .comp {
+    background: var(--card);
+    border: 1px solid var(--line);
+    border-radius: 16px;
+    padding: 16px;
+    display: grid;
+    grid-template-columns: 44px 1fr auto;
+    gap: 14px;
+    align-items: center;
+    position: relative;
+    overflow: hidden;
+    cursor: pointer;
+    transition: all 0.25s;
+  }
+  .comp:hover { border-color: rgba(165,255,0,0.2); background: var(--card-hi); }
+  .comp .sport {
+    width: 44px; height: 44px;
+    border-radius: 12px;
+    display: grid; place-items: center;
+    font-size: 22px;
+  }
+  .comp .sport.futsal { background: linear-gradient(135deg, #14361F, #0A1B10); border: 1px solid rgba(91,240,138,0.2); }
+  .comp .sport.valorant { background: linear-gradient(135deg, #3A0F1C, #1A070D); border: 1px solid rgba(255,70,85,0.25); }
+  .comp .info { min-width: 0; }
+  .comp .info .stage {
+    display: inline-block;
+    font-family: var(--mono);
+    font-size: 9px; font-weight: 700;
+    letter-spacing: 0.2em;
+    color: var(--accent);
+    margin-bottom: 6px;
+  }
+  .comp .info .nm {
+    font-family: var(--disp);
+    font-size: 14px; font-weight: 600;
+    color: var(--text);
+    letter-spacing: -0.02em;
+    line-height: 1.2;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 190px;
+  }
+  .comp .info .meta {
+    font-family: var(--mono);
+    font-size: 10px;
+    color: var(--muted);
+    margin-top: 4px;
+    letter-spacing: 0.05em;
+  }
+  .comp .dd {
+    text-align: right;
+  }
+  .comp .dd .lbl {
+    font-family: var(--mono);
+    font-size: 9px; color: var(--muted);
+    letter-spacing: 0.15em;
+  }
+  .comp .dd .num {
+    font-family: var(--disp);
+    font-size: 28px; font-weight: 800;
+    color: var(--text);
+    letter-spacing: -0.05em;
+    line-height: 1;
+    margin-top: 2px;
+  }
+  .comp .dd .num.live {
+    color: var(--win);
+    text-shadow: 0 0 20px var(--win-glow);
+  }
+
+  /* Feed */
+  .feed { padding: 0 24px; }
+  .feed-item {
+    display: grid;
+    grid-template-columns: 32px 1fr auto;
+    gap: 14px;
+    padding: 13px 0;
+    border-bottom: 1px solid var(--line);
+    align-items: flex-start;
+  }
+  .feed-item:last-child { border-bottom: none; }
+  .fg {
+    width: 32px; height: 32px;
+    border-radius: 10px;
+    display: grid; place-items: center;
+    font-size: 13px; flex-shrink: 0;
+  }
+  .fg.bid { background: rgba(255,177,72,0.12); color: #FFB148; }
+  .fg.win { background: rgba(91,240,138,0.12); color: var(--win); }
+  .fg.enter { background: rgba(165,255,0,0.12); color: var(--accent); }
+  .fb {
+    font-family: var(--disp);
+    font-size: 13px;
+    color: var(--text);
+    line-height: 1.5;
+    letter-spacing: -0.005em;
+  }
+  .fb strong { font-weight: 600; color: var(--text); }
+  .fb .tag {
+    font-family: var(--mono);
+    font-size: 9px;
+    color: var(--muted);
+    letter-spacing: 0.14em;
+    margin-top: 3px;
+    text-transform: uppercase;
+  }
+  .ft {
+    font-family: var(--mono);
+    font-size: 10px;
+    color: var(--muted);
+    white-space: nowrap;
+  }
+
+  .spacer { height: 120px; }
+
+  /* ========= Floating pill nav ========= */
+  .fnav {
+    position: absolute;
+    left: 16px; right: 16px;
+    bottom: 20px;
+    height: 64px;
+    background: rgba(14,14,20,0.75);
+    backdrop-filter: blur(24px) saturate(1.4);
+    -webkit-backdrop-filter: blur(24px) saturate(1.4);
+    border-radius: 22px;
+    border: 1px solid rgba(255,255,255,0.06);
+    box-shadow: 0 16px 40px rgba(0,0,0,0.5),
+                inset 0 1px 0 rgba(255,255,255,0.05);
+    display: flex;
+    align-items: center;
+    padding: 6px;
+    z-index: 50;
+  }
+  .fnav-tab {
+    flex: 1;
+    display: flex; flex-direction: column;
+    align-items: center; justify-content: center;
+    gap: 3px; padding: 8px 0;
+    border-radius: 16px;
+    cursor: pointer;
+    color: var(--muted);
+    transition: all 0.25s;
+  }
+  .fnav-tab .ic { font-size: 18px; line-height: 1; }
+  .fnav-tab .lb {
+    font-family: var(--mono);
+    font-size: 9px; font-weight: 700;
+    letter-spacing: 0.14em;
+  }
+  .fnav-tab.active {
+    background: var(--accent-soft);
+    color: var(--accent);
+    box-shadow: 0 0 24px rgba(165,255,0,0.15),
+                inset 0 1px 0 rgba(255,255,255,0.06);
+  }
+</style>
+</head>
+<body>
+
+<div class="sample-nav" style="margin-bottom:8px;">
+  <span class="title" style="color:var(--accent);font-family:var(--mono);font-size:10px;letter-spacing:0.18em;font-weight:600;">SHELL · A</span>
+  <a href="shell-home-sample-a.html" class="current">홈</a>
+  <a href="shell-competitions.html">대회</a>
+  <a href="shell-clubs.html">클럽</a>
+  <a href="shell-my.html">MY</a>
+</div>
+<div style="font-size:10px;color:#666;margin-bottom:18px;font-family:'JetBrains Mono',monospace;">
+  Compare: <a href="shell-home-sample-b.html" style="color:#888;text-decoration:underline;text-underline-offset:3px;margin:0 4px;">B · Terminal</a> / <a href="shell-home-sample-c.html" style="color:#888;text-decoration:underline;text-underline-offset:3px;margin:0 4px;">C · Social</a>
+</div>
+
+<div class="phone-frame">
+  <div class="phone-screen">
+
+    <div class="status-bar">
+      <span>9:41</span>
+      <span>· 5G 🔋</span>
+    </div>
+
+    <section class="hero">
+      <div class="hero-top">
+        <div class="club-chip">
+          <div class="club-logo">LG</div>
+          <div class="nm">레거시 게이밍</div>
+          <span class="ar">▾</span>
+        </div>
+        <div class="hero-icons">
+          <div class="icon-btn">🔍</div>
+          <div class="icon-btn">🔔<span class="dot"></span></div>
+        </div>
+      </div>
+
+      <div class="hero-eyebrow">SAT · 4월 25 · MATCH DAY</div>
+      <h1 class="hero-title">
+        <span class="g">네 마지막</span><br>
+        <span class="g">휘슬.</span>
+      </h1>
+      <p class="hero-sub">오늘 내 클럽 스크림 3개 · 경기 2개.</p>
+    </section>
+
+    <!-- Final Whistle hero result card -->
+    <div class="result-hero">
+      <div class="rh-top">
+        <div class="rh-badge">ACE · BO3 WIN</div>
+        <div class="rh-when">12분 전</div>
+      </div>
+      <div class="rh-score">
+        <div class="rh-team">
+          <div class="logo">LG</div>
+          <div class="nm">레거시 게이밍</div>
+          <div class="seed">VALORANT · 4승 1패</div>
+        </div>
+        <div class="rh-nums">
+          <span class="win-score">2</span><span class="divider">–</span><span>0</span>
+        </div>
+        <div class="rh-team right">
+          <div class="logo opp">BW</div>
+          <div class="nm">블루웨이브</div>
+          <div class="seed">13–9 / 13–7</div>
+        </div>
+      </div>
+      <div class="rh-foot">
+        <div class="meta"><span class="t">신촌 VALORANT 인비테이셔널</span> · 4강 · BIND→ASCENT</div>
+        <button class="rh-share">공유</button>
+      </div>
+    </div>
+
+    <div class="sec">
+      <h3>진행 중인 대회 <small>FC 신촌 · 03</small></h3>
+      <a class="link" href="#">전체</a>
+    </div>
+
+    <div class="comps">
+      <div class="comp">
+        <div class="sport valorant">🎯</div>
+        <div class="info">
+          <div class="stage">KO · 4강 · BO5</div>
+          <div class="nm">신촌 VALORANT 인비</div>
+          <div class="meta">8팀 · 다음 경기 SUN 22:00 · 온라인</div>
+        </div>
+        <div class="dd">
+          <div class="lbl">D–</div>
+          <div class="num live">1</div>
+        </div>
+      </div>
+      <div class="comp">
+        <div class="sport valorant" style="background:linear-gradient(135deg,#241336,#0F0720);border-color:rgba(165,100,255,0.3);">⚔️</div>
+        <div class="info">
+          <div class="stage">SWISS · R4 / R5</div>
+          <div class="nm">LoL 5대5 랭크 리그</div>
+          <div class="meta">16팀 · 다음 경기 TUE 21:00 · BO3</div>
+        </div>
+        <div class="dd">
+          <div class="lbl">D–</div>
+          <div class="num">3</div>
+        </div>
+      </div>
+      <div class="comp">
+        <div class="sport futsal">🏀</div>
+        <div class="info">
+          <div class="stage">KO · 8강</div>
+          <div class="nm">3학년 반 대항 농구</div>
+          <div class="meta">8반 · 학교 체육관 · SAT 15:00</div>
+        </div>
+        <div class="dd">
+          <div class="lbl">D–</div>
+          <div class="num">2</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="sec">
+      <h3>클럽 활동</h3>
+      <a class="link" href="#">피드</a>
+    </div>
+    <div class="feed">
+      <div class="feed-item">
+        <div class="fg win">⚡</div>
+        <div class="fb">
+          <strong>레거시 게이밍</strong> ACE 완료 · <strong>13–9</strong> BIND
+          <div class="tag">VALORANT · 민철 K/D 1.84 · MVP</div>
+        </div>
+        <div class="ft">12m</div>
+      </div>
+      <div class="feed-item">
+        <div class="fg bid">💰</div>
+        <div class="fb">
+          <strong>지훈</strong>이 FW 경매에서 <strong>민철</strong>을 <strong>240P</strong>에 영입
+          <div class="tag">FANTASY · VAL 인비 R3 · 듀얼리스트</div>
+        </div>
+        <div class="ft">58m</div>
+      </div>
+      <div class="feed-item">
+        <div class="fg enter">🎯</div>
+        <div class="fb">
+          <strong>재호</strong>가 <strong>LoL 5대5 랭크 리그</strong> 팀 등록
+          <div class="tag">MID 라이너 · 플래티넘 2 · 14 / 16 팀 확정</div>
+        </div>
+        <div class="ft">3h</div>
+      </div>
+    </div>
+
+    <div class="spacer"></div>
+
+    <div class="fnav">
+      <div class="fnav-tab active"><div class="ic">🏠</div><div class="lb">HOME</div></div>
+      <div class="fnav-tab"><div class="ic">🏆</div><div class="lb">대회</div></div>
+      <div class="fnav-tab"><div class="ic">👥</div><div class="lb">클럽</div></div>
+      <div class="fnav-tab"><div class="ic">👤</div><div class="lb">MY</div></div>
+    </div>
+
+  </div>
+</div>
+
+<p style="color:#888;font-size:12px;margin-top:16px;max-width:460px;text-align:center;font-family:sans-serif;line-height:1.7;">
+  <strong style="color:#A5FF00;">A · Final Whistle Moment</strong><br>
+  결과 히어로 카드 중심 · 시네마틱 다크 · WIN/LOSS 글로우 · 스포츠 & e스포츠 공존<br>
+  <em>Sora + JetBrains Mono · 앰비언트 샤프 그린 액센트</em>
+</p>
+
+</body>
+</html>

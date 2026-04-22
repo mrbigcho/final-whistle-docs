@@ -1,0 +1,898 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Shell A · 클럽</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Sora:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #07070B;
+    --ink: #0E0E14;
+    --card: #14141C;
+    --card-hi: #1C1C26;
+    --line: rgba(255,255,255,0.06);
+    --text: #ECECF4;
+    --muted: #7A7A8A;
+    --win: #5BF08A;
+    --win-glow: rgba(91,240,138,0.4);
+    --loss: #FF6B5C;
+    --live: #FF3B5E;
+    --accent: #A5FF00;
+    --accent-soft: rgba(165,255,0,0.16);
+    --violet: #B794FF;
+    --disp: 'Sora', 'Noto Sans KR', sans-serif;
+    --mono: 'JetBrains Mono', monospace;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    background: #0a0a12;
+    display: flex; flex-direction: column; align-items: center;
+    min-height: 100vh; padding: 20px;
+    font-family: var(--disp);
+  }
+  .page-nav {
+    display: flex; gap: 8px; margin-bottom: 8px;
+    background: #14141c; padding: 10px 14px; border-radius: 12px;
+    color: #888; font-size: 12px; align-items: center;
+    border: 1px solid var(--line);
+    flex-wrap: wrap;
+  }
+  .page-nav .title { color: var(--accent); margin-right: 6px; font-weight: 600; font-family: var(--mono); font-size: 10px; letter-spacing: 0.18em; }
+  .page-nav a {
+    padding: 4px 10px; border-radius: 6px;
+    text-decoration: none; color: #bbb;
+    background: #222; font-weight: 500;
+  }
+  .page-nav a.current { background: var(--accent); color: #000; }
+  .compare-nav { font-size: 10px; color: #666; margin-bottom: 18px; font-family: var(--mono); }
+  .compare-nav a { color: #888; text-decoration: underline; text-underline-offset: 3px; margin: 0 4px; }
+
+  .phone-frame {
+    width: 390px; height: 844px;
+    background: var(--bg);
+    border-radius: 44px;
+    border: 8px solid #060608;
+    box-shadow: 0 40px 80px rgba(0,0,0,0.7);
+    overflow: hidden;
+    position: relative;
+  }
+  .phone-frame::before {
+    content: ''; position: absolute;
+    top: 0; left: 50%; transform: translateX(-50%);
+    width: 126px; height: 34px;
+    background: #060608;
+    border-radius: 0 0 20px 20px;
+    z-index: 100;
+  }
+  .phone-screen {
+    height: 100%; overflow-y: auto; overflow-x: hidden;
+    scrollbar-width: none; position: relative;
+    color: var(--text);
+  }
+  .phone-screen::-webkit-scrollbar { display: none; }
+
+  .status-bar {
+    height: 44px; padding: 14px 24px 0;
+    display: flex; justify-content: space-between; align-items: center;
+    font-family: var(--mono); font-size: 12px; font-weight: 600;
+    color: var(--text);
+  }
+
+  /* ========= Crew switcher strip ========= */
+  .crew-strip {
+    padding: 14px 0 4px;
+    overflow-x: auto;
+    scrollbar-width: none;
+    white-space: nowrap;
+  }
+  .crew-strip::-webkit-scrollbar { display: none; }
+  .crew-strip-inner {
+    display: inline-flex;
+    gap: 10px;
+    padding: 0 20px 8px;
+  }
+  .crew-dot {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 6px;
+    cursor: pointer;
+    width: 62px;
+  }
+  .cd-ring {
+    width: 52px; height: 52px;
+    border-radius: 16px;
+    padding: 2px;
+    display: grid; place-items: center;
+    background: var(--card);
+    border: 1px solid var(--line);
+  }
+  .cd-ring .inner {
+    width: 100%; height: 100%;
+    border-radius: 12px;
+    display: grid; place-items: center;
+    font-family: var(--disp);
+    font-weight: 700;
+    font-size: 13px;
+    color: #fff;
+    letter-spacing: -0.02em;
+  }
+  .crew-dot.active .cd-ring {
+    border-color: var(--accent);
+    background: var(--accent-soft);
+    box-shadow: 0 0 16px rgba(165,255,0,0.2);
+  }
+  .crew-dot .lb {
+    font-family: var(--mono);
+    font-size: 9px;
+    font-weight: 600;
+    letter-spacing: 0.05em;
+    color: var(--muted);
+    max-width: 62px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+  .crew-dot.active .lb { color: var(--accent); }
+  .crew-dot.add .cd-ring {
+    border-style: dashed;
+    border-color: var(--line);
+  }
+  .crew-dot.add .cd-ring .inner {
+    background: transparent;
+    color: var(--muted);
+    font-size: 22px;
+    font-weight: 300;
+  }
+
+  /* ========= Crew Hero ========= */
+  .crew-hero {
+    margin: 8px 16px 0;
+    border-radius: 24px;
+    position: relative;
+    overflow: hidden;
+    background: linear-gradient(135deg, #0F1408 0%, #0B0F06 70%, #060808 100%);
+    border: 1px solid rgba(165,255,0,0.18);
+    padding: 24px 22px 22px;
+    box-shadow: 0 18px 44px rgba(165,255,0,0.05);
+  }
+  .crew-hero::before {
+    content: 'LG';
+    position: absolute;
+    right: -20px; top: -60px;
+    font-family: var(--disp);
+    font-weight: 800;
+    font-size: 220px;
+    color: rgba(165,255,0,0.04);
+    letter-spacing: -0.08em;
+    pointer-events: none;
+    line-height: 1;
+  }
+  .ch-top {
+    display: flex; justify-content: space-between; align-items: flex-start;
+    margin-bottom: 14px;
+    position: relative;
+  }
+  .crew-logo-big {
+    width: 64px; height: 64px;
+    border-radius: 18px;
+    background: linear-gradient(135deg, var(--accent), #6EE800);
+    color: #000;
+    display: grid; place-items: center;
+    font-family: var(--disp);
+    font-weight: 800;
+    font-size: 22px;
+    letter-spacing: -0.03em;
+    box-shadow: 0 10px 30px rgba(165,255,0,0.3);
+  }
+  .crew-actions { display: flex; gap: 8px; }
+  .crew-btn {
+    padding: 8px 14px;
+    background: rgba(255,255,255,0.06);
+    border: 1px solid var(--line);
+    border-radius: 10px;
+    color: var(--text);
+    font-family: var(--mono);
+    font-size: 10px;
+    font-weight: 600;
+    letter-spacing: 0.14em;
+    cursor: pointer;
+  }
+  .crew-btn.primary {
+    background: var(--accent);
+    color: #000;
+    border-color: var(--accent);
+  }
+
+  .ch-name {
+    font-family: var(--disp);
+    font-size: 26px;
+    font-weight: 700;
+    color: var(--text);
+    letter-spacing: -0.035em;
+    margin-bottom: 4px;
+    position: relative;
+  }
+  .ch-handle {
+    font-family: var(--mono);
+    font-size: 11px;
+    color: var(--muted);
+    letter-spacing: 0.04em;
+    margin-bottom: 16px;
+    position: relative;
+  }
+  .ch-handle .tag {
+    display: inline-block;
+    padding: 2px 6px;
+    background: var(--accent-soft);
+    color: var(--accent);
+    border-radius: 3px;
+    margin-left: 6px;
+    font-weight: 700;
+    letter-spacing: 0.1em;
+  }
+
+  .ch-bio {
+    font-family: var(--disp);
+    font-size: 13px;
+    color: rgba(236,236,244,0.75);
+    line-height: 1.5;
+    margin-bottom: 18px;
+    letter-spacing: -0.005em;
+    position: relative;
+  }
+
+  .ch-stats {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 4px;
+    padding: 14px 0 0;
+    border-top: 1px solid var(--line);
+    position: relative;
+  }
+  .ch-stat { text-align: center; }
+  .ch-stat .n {
+    font-family: var(--disp);
+    font-weight: 700;
+    font-size: 22px;
+    color: var(--text);
+    letter-spacing: -0.04em;
+    line-height: 1;
+  }
+  .ch-stat.hl .n { color: var(--accent); }
+  .ch-stat .l {
+    font-family: var(--mono);
+    font-size: 9px;
+    color: var(--muted);
+    letter-spacing: 0.18em;
+    margin-top: 6px;
+  }
+
+  /* ========= Section ========= */
+  .sec {
+    padding: 26px 20px 12px;
+    display: flex; justify-content: space-between; align-items: baseline;
+  }
+  .sec h3 {
+    font-family: var(--disp);
+    font-size: 18px;
+    font-weight: 700;
+    letter-spacing: -0.03em;
+    color: var(--text);
+  }
+  .sec h3 small {
+    font-family: var(--mono);
+    font-size: 10px;
+    color: var(--muted);
+    margin-left: 8px;
+    font-weight: 500;
+    letter-spacing: 0.15em;
+  }
+  .sec .link {
+    font-family: var(--disp);
+    font-size: 12px;
+    color: var(--muted);
+    font-weight: 500;
+  }
+  .sec .link::after {
+    content: '  →';
+    color: var(--accent);
+  }
+
+  /* ========= Feed posts ========= */
+  .feed-wrap { padding: 0 16px; display: flex; flex-direction: column; gap: 10px; }
+  .feed-post {
+    background: var(--card);
+    border: 1px solid var(--line);
+    border-radius: 18px;
+    padding: 16px;
+    transition: border-color 0.2s;
+  }
+  .feed-post:hover { border-color: rgba(165,255,0,0.2); }
+  .fp-head {
+    display: flex; align-items: center; gap: 10px;
+    margin-bottom: 10px;
+  }
+  .fp-avatar {
+    width: 36px; height: 36px;
+    border-radius: 50%;
+    display: grid; place-items: center;
+    font-family: var(--disp);
+    font-weight: 700; font-size: 13px;
+    color: #000;
+    flex-shrink: 0;
+  }
+  .fp-meta { flex: 1; min-width: 0; }
+  .fp-meta .who {
+    font-family: var(--disp);
+    font-size: 13.5px;
+    font-weight: 600;
+    color: var(--text);
+    letter-spacing: -0.01em;
+  }
+  .fp-meta .who .handle {
+    color: var(--muted);
+    font-family: var(--mono);
+    font-weight: 400;
+    font-size: 11px;
+    margin-left: 4px;
+  }
+  .fp-meta .action {
+    font-family: var(--mono);
+    font-size: 10px;
+    color: var(--muted);
+    letter-spacing: 0.05em;
+    margin-top: 2px;
+  }
+  .fp-meta .action .ev { color: var(--accent); font-weight: 700; }
+  .fp-meta .action .ev.win { color: var(--win); }
+  .fp-meta .action .ev.bid { color: #FFB84D; }
+  .fp-time {
+    font-family: var(--mono);
+    font-size: 10px;
+    color: var(--muted);
+    white-space: nowrap;
+  }
+
+  .fp-body {
+    font-family: var(--disp);
+    font-size: 14px;
+    color: var(--text);
+    line-height: 1.5;
+    letter-spacing: -0.005em;
+    padding: 4px 0;
+  }
+  .fp-body strong { font-weight: 700; }
+
+  /* Embedded score */
+  .fp-score-embed {
+    margin-top: 10px;
+    background: linear-gradient(135deg, #0B1F0E, #060908);
+    border: 1px solid rgba(91,240,138,0.2);
+    border-radius: 12px;
+    padding: 14px;
+    display: grid;
+    grid-template-columns: 1fr auto 1fr;
+    gap: 10px;
+    align-items: center;
+    position: relative;
+    overflow: hidden;
+  }
+  .fp-score-embed::before {
+    content: 'WIN';
+    position: absolute;
+    right: -10px; top: -20px;
+    font-family: var(--disp);
+    font-weight: 800;
+    font-size: 90px;
+    color: rgba(91,240,138,0.06);
+    line-height: 1; letter-spacing: -0.08em;
+    pointer-events: none;
+  }
+  .fp-se-team { display: flex; align-items: center; gap: 8px; position: relative; }
+  .fp-se-team.r { flex-direction: row-reverse; text-align: right; }
+  .fp-se-logo {
+    width: 24px; height: 24px;
+    border-radius: 6px;
+    background: #fff;
+    color: #000;
+    display: grid; place-items: center;
+    font-family: var(--disp); font-weight: 700; font-size: 9px;
+  }
+  .fp-se-logo.op { background: #3A3A4C; color: #fff; }
+  .fp-se-team .nm {
+    font-family: var(--disp); font-size: 12px;
+    font-weight: 600; color: var(--text);
+    letter-spacing: -0.005em;
+  }
+  .fp-se-nums {
+    font-family: var(--disp);
+    font-weight: 800;
+    font-size: 26px;
+    letter-spacing: -0.04em;
+    color: var(--text);
+    line-height: 1;
+    position: relative;
+  }
+  .fp-se-nums .w { color: var(--win); }
+
+  .fp-actions {
+    display: flex; align-items: center; gap: 18px;
+    margin-top: 12px;
+    padding-top: 10px;
+    border-top: 1px solid var(--line);
+  }
+  .fp-action {
+    display: flex; align-items: center; gap: 5px;
+    font-family: var(--mono);
+    font-size: 11px;
+    font-weight: 500;
+    color: var(--muted);
+    cursor: pointer;
+  }
+  .fp-action .ic { font-size: 14px; }
+  .fp-action.liked { color: var(--live); }
+  .fp-action.spacer { margin-left: auto; }
+
+  /* Auction event card */
+  .fp-auction {
+    margin-top: 10px;
+    background: linear-gradient(135deg, #2A1E08, #0E0A04);
+    border: 1px solid rgba(255,184,77,0.22);
+    border-radius: 12px;
+    padding: 14px;
+    display: flex; align-items: center; gap: 12px;
+    position: relative;
+    overflow: hidden;
+  }
+  .fp-auction::before {
+    content: 'BID';
+    position: absolute;
+    right: -6px; top: -20px;
+    font-family: var(--disp);
+    font-weight: 800;
+    font-size: 80px;
+    color: rgba(255,184,77,0.07);
+    letter-spacing: -0.08em;
+    line-height: 1;
+    pointer-events: none;
+  }
+  .fp-auction .av {
+    width: 40px; height: 40px;
+    border-radius: 12px;
+    background: linear-gradient(135deg, #6E9FFF, #A5FF00);
+    color: #000;
+    display: grid; place-items: center;
+    font-family: var(--disp); font-weight: 700; font-size: 14px;
+    flex-shrink: 0;
+  }
+  .fp-auction .txt { flex: 1; position: relative; }
+  .fp-auction .pname {
+    font-family: var(--disp);
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--text);
+    letter-spacing: -0.01em;
+  }
+  .fp-auction .meta {
+    font-family: var(--mono);
+    font-size: 10px;
+    color: #FFB84D;
+    letter-spacing: 0.05em;
+    margin-top: 3px;
+  }
+  .fp-auction .price {
+    font-family: var(--disp);
+    font-weight: 800;
+    font-size: 22px;
+    color: #FFB84D;
+    letter-spacing: -0.04em;
+    position: relative;
+  }
+  .fp-auction .price .unit {
+    font-family: var(--mono);
+    font-size: 10px;
+    font-weight: 600;
+    opacity: 0.7;
+  }
+
+  /* ========= Members grid ========= */
+  .members {
+    padding: 0 20px;
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 12px;
+  }
+  .member {
+    display: flex; flex-direction: column;
+    align-items: center; gap: 6px;
+    cursor: pointer;
+  }
+  .member .ava {
+    width: 56px; height: 56px;
+    border-radius: 16px;
+    color: #fff;
+    display: grid; place-items: center;
+    font-family: var(--disp); font-weight: 700; font-size: 16px;
+    position: relative;
+  }
+  .member .ava.online::after {
+    content: '';
+    position: absolute;
+    bottom: -2px; right: -2px;
+    width: 14px; height: 14px;
+    background: var(--win);
+    border: 3px solid var(--bg);
+    border-radius: 50%;
+  }
+  .member .ava.playing::after {
+    background: var(--live);
+  }
+  .member .nm {
+    font-family: var(--disp);
+    font-size: 11px;
+    color: var(--text);
+    font-weight: 500;
+    letter-spacing: -0.01em;
+    max-width: 100%;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  .member .rl {
+    font-family: var(--mono);
+    font-size: 8.5px;
+    color: var(--muted);
+    letter-spacing: 0.15em;
+  }
+  .member.crown .nm::after {
+    content: ' 👑';
+  }
+
+  /* ========= Upcoming matches compact ========= */
+  .up-list {
+    padding: 0 16px;
+    display: flex; flex-direction: column;
+    gap: 8px;
+  }
+  .up-row {
+    background: var(--card);
+    border: 1px solid var(--line);
+    border-radius: 12px;
+    padding: 12px 14px;
+    display: grid;
+    grid-template-columns: 36px 1fr auto;
+    gap: 12px;
+    align-items: center;
+  }
+  .up-row .icn {
+    width: 36px; height: 36px;
+    border-radius: 10px;
+    display: grid; place-items: center;
+    font-size: 16px;
+  }
+  .up-row .icn.val { background: linear-gradient(135deg, #3A0F1C, #1A070D); }
+  .up-row .icn.lol { background: linear-gradient(135deg, #241336, #0F0720); }
+  .up-row .inf { min-width: 0; }
+  .up-row .inf .sa {
+    font-family: var(--disp);
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--text);
+    letter-spacing: -0.01em;
+  }
+  .up-row .inf .mt {
+    font-family: var(--mono);
+    font-size: 10px;
+    color: var(--muted);
+    margin-top: 2px;
+    letter-spacing: 0.04em;
+  }
+  .up-row .tm {
+    font-family: var(--mono);
+    font-size: 11px;
+    font-weight: 600;
+    color: var(--accent);
+    white-space: nowrap;
+  }
+
+  .spacer { height: 120px; }
+
+  .fnav {
+    position: absolute;
+    left: 16px; right: 16px;
+    bottom: 20px;
+    height: 64px;
+    background: rgba(14,14,20,0.75);
+    backdrop-filter: blur(24px) saturate(1.4);
+    -webkit-backdrop-filter: blur(24px) saturate(1.4);
+    border-radius: 22px;
+    border: 1px solid rgba(255,255,255,0.06);
+    box-shadow: 0 16px 40px rgba(0,0,0,0.5),
+                inset 0 1px 0 rgba(255,255,255,0.05);
+    display: flex;
+    align-items: center;
+    padding: 6px;
+    z-index: 50;
+  }
+  .fnav-tab {
+    flex: 1;
+    display: flex; flex-direction: column;
+    align-items: center; justify-content: center;
+    gap: 3px; padding: 8px 0;
+    border-radius: 16px;
+    cursor: pointer;
+    color: var(--muted);
+    transition: all 0.25s;
+  }
+  .fnav-tab .ic { font-size: 18px; line-height: 1; }
+  .fnav-tab .lb {
+    font-family: var(--mono);
+    font-size: 9px; font-weight: 700;
+    letter-spacing: 0.14em;
+  }
+  .fnav-tab.active {
+    background: var(--accent-soft);
+    color: var(--accent);
+    box-shadow: 0 0 24px rgba(165,255,0,0.15),
+                inset 0 1px 0 rgba(255,255,255,0.06);
+  }
+</style>
+</head>
+<body>
+
+<div class="page-nav">
+  <span class="title">SHELL · A</span>
+  <a href="shell-home-sample-a.html">홈</a>
+  <a href="shell-competitions.html">대회</a>
+  <a href="shell-clubs.html" class="current">클럽</a>
+  <a href="shell-my.html">MY</a>
+</div>
+<div class="compare-nav">
+  Compare: <a href="shell-home-sample-b.html">B · Terminal</a> / <a href="shell-home-sample-c.html">C · Social</a>
+</div>
+
+<div class="phone-frame">
+  <div class="phone-screen">
+
+    <div class="status-bar">
+      <span>9:41</span>
+      <span>· 5G 🔋</span>
+    </div>
+
+    <!-- Crew switcher -->
+    <div class="crew-strip">
+      <div class="crew-strip-inner">
+        <div class="crew-dot active">
+          <div class="cd-ring"><div class="inner" style="background:linear-gradient(135deg,#A5FF00,#6EE800);color:#000;">LG</div></div>
+          <div class="lb">레거시</div>
+        </div>
+        <div class="crew-dot">
+          <div class="cd-ring"><div class="inner" style="background:linear-gradient(135deg,#8B7EFF,#5E52C7);">V5</div></div>
+          <div class="lb">V5 Crew</div>
+        </div>
+        <div class="crew-dot">
+          <div class="cd-ring"><div class="inner" style="background:linear-gradient(135deg,#FF6FB5,#C0238B);font-size:11px;">3-8</div></div>
+          <div class="lb">3학년 8반</div>
+        </div>
+        <div class="crew-dot">
+          <div class="cd-ring"><div class="inner" style="background:linear-gradient(135deg,#FFB84D,#D97706);font-size:10px;">컴공</div></div>
+          <div class="lb">컴공 학회</div>
+        </div>
+        <div class="crew-dot add">
+          <div class="cd-ring"><div class="inner">+</div></div>
+          <div class="lb">새 크루</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Crew hero -->
+    <section class="crew-hero">
+      <div class="ch-top">
+        <div class="crew-logo-big">LG</div>
+        <div class="crew-actions">
+          <button class="crew-btn">초대</button>
+          <button class="crew-btn primary">+ 팔로우</button>
+        </div>
+      </div>
+      <h2 class="ch-name">레거시 게이밍</h2>
+      <div class="ch-handle">
+        @legacy-gg · 신촌
+        <span class="tag">VALORANT</span>
+        <span class="tag" style="background:rgba(183,148,255,0.16);color:var(--violet);">LoL</span>
+      </div>
+      <p class="ch-bio">"끝나는 휘슬까지 끝난 게 아니다"<br>— 신촌 기반 20대 멀티 종목 크루. 매주 금·토 스크림.</p>
+      <div class="ch-stats">
+        <div class="ch-stat"><div class="n">12</div><div class="l">멤버</div></div>
+        <div class="ch-stat hl"><div class="n">7</div><div class="l">트로피</div></div>
+        <div class="ch-stat"><div class="n">24</div><div class="l">경기</div></div>
+        <div class="ch-stat"><div class="n">67%</div><div class="l">승률</div></div>
+      </div>
+    </section>
+
+    <!-- Feed -->
+    <div class="sec">
+      <h3>크루 피드 <small>LIVE</small></h3>
+      <a class="link" href="#">채널</a>
+    </div>
+
+    <div class="feed-wrap">
+
+      <!-- Win result post -->
+      <div class="feed-post">
+        <div class="fp-head">
+          <div class="fp-avatar" style="background:linear-gradient(135deg,#A5FF00,#6EE800);">민</div>
+          <div class="fp-meta">
+            <div class="who">민철 <span class="handle">@mc</span></div>
+            <div class="action"><span class="ev win">ACE</span> VALORANT 인비 · MAP 1 승리</div>
+          </div>
+          <span class="fp-time">12m</span>
+        </div>
+        <div class="fp-body">
+          MVP 가져왔다 🎯 MAP 2 이번엔 가볍게 가자. ASCENT 존버각.
+        </div>
+        <div class="fp-score-embed">
+          <div class="fp-se-team">
+            <div class="fp-se-logo">LG</div>
+            <div class="nm">레거시</div>
+          </div>
+          <div class="fp-se-nums"><span class="w">13</span>–9</div>
+          <div class="fp-se-team r">
+            <div class="fp-se-logo op">BW</div>
+            <div class="nm">블루웨이브</div>
+          </div>
+        </div>
+        <div class="fp-actions">
+          <div class="fp-action liked"><span class="ic">♥</span>32</div>
+          <div class="fp-action"><span class="ic">💬</span>11</div>
+          <div class="fp-action spacer"><span class="ic">↗</span>공유</div>
+        </div>
+      </div>
+
+      <!-- Auction event -->
+      <div class="feed-post">
+        <div class="fp-head">
+          <div class="fp-avatar" style="background:linear-gradient(135deg,#FFB84D,#D97706);">지</div>
+          <div class="fp-meta">
+            <div class="who">지훈 <span class="handle">@jh</span></div>
+            <div class="action"><span class="ev bid">BID</span> FW 경매 · VALORANT 인비 R3</div>
+          </div>
+          <span class="fp-time">58m</span>
+        </div>
+        <div class="fp-auction">
+          <div class="av">민</div>
+          <div class="txt">
+            <div class="pname">민철 영입 · 듀얼리스트</div>
+            <div class="meta">최고 입찰 · 4명 경쟁</div>
+          </div>
+          <div class="price">240<span class="unit">P</span></div>
+        </div>
+        <div class="fp-actions">
+          <div class="fp-action"><span class="ic">♥</span>14</div>
+          <div class="fp-action"><span class="ic">💬</span>3</div>
+          <div class="fp-action spacer"><span class="ic">↗</span>공유</div>
+        </div>
+      </div>
+
+      <!-- Text post / schedule -->
+      <div class="feed-post">
+        <div class="fp-head">
+          <div class="fp-avatar" style="background:linear-gradient(135deg,#8B7EFF,#5E52C7);">소</div>
+          <div class="fp-meta">
+            <div class="who">소영 <span class="handle">@soy</span> · <span style="color:var(--accent);font-size:10px;font-family:var(--mono);letter-spacing:0.14em;">CREW LEAD</span></div>
+            <div class="action"><span class="ev">ANNOUNCE</span> 다음주 일정</div>
+          </div>
+          <span class="fp-time">2h</span>
+        </div>
+        <div class="fp-body">
+          <strong>📌 다음주 일정</strong><br>
+          · 월: LoL 랭크 스크림 21:00<br>
+          · 화: LoL 5대5 리그 R5<br>
+          · 토: VAL 인비 결승 · 3학년 8반 농구<br>
+          모두 접수 완료. 결석 알림 필수!
+        </div>
+        <div class="fp-actions">
+          <div class="fp-action"><span class="ic">♥</span>8</div>
+          <div class="fp-action"><span class="ic">💬</span>5</div>
+          <div class="fp-action spacer"><span class="ic">📌</span>고정</div>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- Members -->
+    <div class="sec">
+      <h3>멤버 <small>온라인 8 / 12</small></h3>
+      <a class="link" href="#">전체</a>
+    </div>
+
+    <div class="members">
+      <div class="member crown">
+        <div class="ava online" style="background:linear-gradient(135deg,#8B7EFF,#5E52C7);">소</div>
+        <div class="nm">소영</div>
+        <div class="rl">LEAD</div>
+      </div>
+      <div class="member">
+        <div class="ava online" style="background:linear-gradient(135deg,#A5FF00,#6EE800);color:#000;">민</div>
+        <div class="nm">민철</div>
+        <div class="rl">DUEL</div>
+      </div>
+      <div class="member">
+        <div class="ava playing" style="background:linear-gradient(135deg,#FFB84D,#D97706);">지</div>
+        <div class="nm">지훈</div>
+        <div class="rl">SENT</div>
+      </div>
+      <div class="member">
+        <div class="ava online" style="background:linear-gradient(135deg,#FF6FB5,#C0238B);">재</div>
+        <div class="nm">재호</div>
+        <div class="rl">MID · P2</div>
+      </div>
+      <div class="member">
+        <div class="ava" style="background:linear-gradient(135deg,#5BF0C7,#0D9488);">민</div>
+        <div class="nm">민수</div>
+        <div class="rl">JG · G1</div>
+      </div>
+      <div class="member">
+        <div class="ava online" style="background:linear-gradient(135deg,#6EB5FF,#2553B5);">현</div>
+        <div class="nm">현우</div>
+        <div class="rl">CNTR</div>
+      </div>
+      <div class="member">
+        <div class="ava" style="background:linear-gradient(135deg,#B794FF,#5E52C7);">은</div>
+        <div class="nm">은지</div>
+        <div class="rl">FLEX</div>
+      </div>
+      <div class="member">
+        <div class="ava" style="background:#2A2A38;color:var(--muted);">+5</div>
+        <div class="nm">더보기</div>
+        <div class="rl">&nbsp;</div>
+      </div>
+    </div>
+
+    <!-- Upcoming matches -->
+    <div class="sec">
+      <h3>크루 일정 <small>이번 주</small></h3>
+      <a class="link" href="#">전체</a>
+    </div>
+
+    <div class="up-list">
+      <div class="up-row">
+        <div class="icn val">🎯</div>
+        <div class="inf">
+          <div class="sa">VAL 인비 · 4강 MAP 2 (ASCENT)</div>
+          <div class="mt">BO5 · SUN 22:00 · LIVE 진행 중</div>
+        </div>
+        <div class="tm" style="color:var(--live);">LIVE</div>
+      </div>
+      <div class="up-row">
+        <div class="icn lol">⚔️</div>
+        <div class="inf">
+          <div class="sa">LoL 랭크 리그 · R5 vs KR Ranked</div>
+          <div class="mt">BO3 · TUE 21:00</div>
+        </div>
+        <div class="tm">D-03</div>
+      </div>
+    </div>
+
+    <div class="spacer"></div>
+
+    <div class="fnav">
+      <div class="fnav-tab"><div class="ic">🏠</div><div class="lb">HOME</div></div>
+      <div class="fnav-tab"><div class="ic">🏆</div><div class="lb">대회</div></div>
+      <div class="fnav-tab active"><div class="ic">👥</div><div class="lb">클럽</div></div>
+      <div class="fnav-tab"><div class="ic">👤</div><div class="lb">MY</div></div>
+    </div>
+
+  </div>
+</div>
+
+<p style="color:#888;font-size:12px;margin-top:16px;max-width:460px;text-align:center;font-family:sans-serif;line-height:1.7;">
+  <strong style="color:#A5FF00;">클럽 · Shell A</strong><br>
+  크루 스위처 스트립 · 크루 히어로 카드(4스탯) · 믹스 피드(결과/경매/공지) · 멤버 그리드 + 온라인 인디케이터 · 이번 주 일정
+</p>
+
+</body>
+</html>
