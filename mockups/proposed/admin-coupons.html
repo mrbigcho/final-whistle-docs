@@ -226,14 +226,14 @@
 
 <div class="canvas">
 
-  <h2>① 첫 방문 — API 키 게이트 (fw.dongne.dev/admin)</h2>
+  <h2>① 첫 방문 — Google 로그인 게이트 (fw.dongne.dev/admin)</h2>
   <div class="admin-page">
     <div class="gate">
       <div class="lock">🔑</div>
       <h2>이용권 쿠폰 관리자</h2>
-      <p>관리자 API 키를 입력하세요.<br>키는 이 브라우저에만 저장되며, 모든 요청의 <b>X-Admin-API-Key</b> 헤더로 전송됩니다.</p>
-      <input class="input mono" placeholder="관리자 API 키" value="">
-      <button class="btn-primary">저장하고 시작</button>
+      <p>관리자 계정으로 로그인하세요.<br>관리자 지정·해제는 로그인 후 "관리자 설정"에서 할 수 있습니다.</p>
+      <button class="btn-primary" style="background:#fff; color:#1f1f1f;">G&nbsp; Google로 로그인</button>
+      <p class="note" style="margin-top:14px;">첫 관리자 지정은 MCP <code>grant_admin</code> 도구로 합니다.<br>비관리자 계정 로그인 시: "관리자 권한이 없습니다" 안내 + 로그아웃 버튼.</p>
     </div>
   </div>
 
@@ -244,8 +244,8 @@
       <h1>이용권 쿠폰 관리자<small>fw.dongne.dev/admin</small></h1>
       <div class="spacer"></div>
       <div class="env-select"><span class="on">production</span><span>staging</span></div>
-      <div class="key-state">키 확인됨 <b>····A7F2</b></div>
-      <button class="btn-ghost">키 변경</button>
+      <div class="key-state">조상우 (mrbigcho@gmail.com)</div>
+      <button class="btn-ghost">로그아웃</button>
     </div>
 
     <div class="admin-body">
@@ -390,9 +390,11 @@
 
   <p class="note" style="margin:16px 4px 40px;">
     구현: <code>hosting/public/admin/index.html</code> (정적, hosting <code>styles.css</code> 재사용) ·
-    API: <code>src/Api/Endpoints/AdminCouponEndpoints.cs</code> (<code>X-Admin-API-Key</code>) ·
+    API: <code>src/Api/Endpoints/AdminCouponEndpoints.cs</code>·<code>AdminEndpoints.cs</code> (Firebase 관리자 로그인) ·
+    부트스트랩: <code>src/Api/McpTools/AdminTools.cs</code> ·
     설계 문서: 메인 레포 <code>docs/이용권_쿠폰_설계.md</code> §7<br>
-    회수 버튼은 confirm 다이얼로그 필수 · 환경 전환 시 API base 와 저장 키(<code>fw_admin_key_*</code>)가 함께 전환됨
+    회수 버튼은 confirm 다이얼로그 필수 · 환경 전환 시 API base 와 Firebase 프로젝트(prod=dongne-final-whistle, staging=final-whistle-dev)가 함께 전환됨 ·
+    실제 페이지에는 발급 폼 아래 "관리자 설정" 카드(목록·username 추가·해제)가 추가됨
   </p>
 
 </div>
