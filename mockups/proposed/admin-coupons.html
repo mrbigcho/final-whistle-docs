@@ -1,0 +1,401 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Final Whistle — 이용권 쿠폰 관리자 (fw.dongne.dev/admin)</title>
+<link href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css" rel="stylesheet">
+<style>
+  /* hosting/public/styles.css 팔레트 차용 — 실제 페이지는 해당 파일을 그대로 link */
+  :root {
+    --bg: #131418;
+    --surface: #1b1d22;
+    --surface2: #22252b;
+    --hairline: #2a2d34;
+    --ink: #f1f2f4;
+    --muted: #9ea3ae;
+    --muted2: #6c717b;
+    --accent: #4da0ff;
+    --accent-soft: rgba(77, 160, 255, .14);
+    --live: #f03a47;
+    --live-soft: rgba(240, 58, 71, .14);
+    --win: #22c55e;
+    --win-soft: rgba(34, 197, 94, .14);
+    --warn: #ffb84d;
+    --warn-soft: rgba(255, 184, 77, .16);
+    --radius: 14px;
+    --shadow: 0 1px 2px rgba(0,0,0,.4), 0 8px 24px rgba(0,0,0,.28);
+    --font: 'Pretendard Variable', 'Pretendard', -apple-system, BlinkMacSystemFont, sans-serif;
+    --mono: 'SF Mono', ui-monospace, 'JetBrains Mono', Menlo, monospace;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    background: #0c0d10;
+    min-height: 100vh;
+    padding: 20px;
+    font-family: var(--font);
+    color: var(--ink);
+    display: flex; flex-direction: column; align-items: center;
+  }
+  .page-nav {
+    width: 100%; max-width: 1100px;
+    background: var(--surface2); border-radius: 12px;
+    padding: 12px 16px; margin-bottom: 20px;
+    display: flex; align-items: center; gap: 12px; flex-wrap: wrap;
+  }
+  .page-nav .nav-title { color: var(--muted2); font-size: 12px; margin-right: 4px; }
+  .page-nav a {
+    color: var(--accent); text-decoration: none; font-size: 13px;
+    padding: 4px 10px; border-radius: 6px; background: rgba(255,255,255,.05);
+  }
+  .page-nav a.current { background: var(--accent); color: #fff; }
+
+  .canvas { width: 100%; max-width: 1100px; }
+  .canvas > h2 { font-size: 15px; color: var(--muted); margin: 26px 0 12px; font-weight: 600; }
+
+  /* ── 관리자 페이지 본체 ── */
+  .admin-page {
+    background: var(--bg);
+    border: 1px solid var(--hairline);
+    border-radius: 18px;
+    overflow: hidden;
+    box-shadow: var(--shadow);
+  }
+  .admin-bar {
+    display: flex; align-items: center; gap: 12px;
+    padding: 14px 20px;
+    background: var(--surface);
+    border-bottom: 1px solid var(--hairline);
+  }
+  .admin-bar .logo {
+    width: 28px; height: 28px; border-radius: 8px;
+    background: var(--accent-soft); color: var(--accent);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 15px;
+  }
+  .admin-bar h1 { font-size: 15px; font-weight: 700; }
+  .admin-bar h1 small { color: var(--muted2); font-weight: 400; font-size: 12px; margin-left: 6px; }
+  .admin-bar .spacer { flex: 1; }
+  .env-select {
+    display: flex; gap: 2px; background: var(--surface2);
+    border: 1px solid var(--hairline); border-radius: 9px; padding: 3px;
+    font-size: 12px;
+  }
+  .env-select span { padding: 4px 12px; border-radius: 7px; color: var(--muted); cursor: pointer; }
+  .env-select span.on { background: var(--accent); color: #fff; font-weight: 600; }
+  .key-state {
+    font-size: 12px; color: var(--win); background: var(--win-soft);
+    border-radius: 8px; padding: 5px 10px;
+  }
+  .key-state b { font-family: var(--mono); font-weight: 500; }
+  .btn-ghost {
+    font-size: 12px; color: var(--muted); background: none;
+    border: 1px solid var(--hairline); border-radius: 8px;
+    padding: 5px 10px; cursor: pointer; font-family: var(--font);
+  }
+
+  .admin-body {
+    display: grid; grid-template-columns: 370px 1fr;
+    gap: 16px; padding: 16px 20px 20px;
+  }
+  @media (max-width: 900px) { .admin-body { grid-template-columns: 1fr; } }
+
+  .card {
+    background: var(--surface); border: 1px solid var(--hairline);
+    border-radius: var(--radius); padding: 16px;
+  }
+  .card h3 { font-size: 13px; color: var(--muted); font-weight: 600; margin-bottom: 14px; }
+
+  /* 발급 폼 */
+  .field { margin-bottom: 12px; }
+  .field label { display: block; font-size: 11.5px; color: var(--muted2); margin-bottom: 5px; }
+  .field label em { color: var(--muted2); font-style: normal; opacity: .7; }
+  .seg {
+    display: flex; gap: 2px; background: var(--surface2);
+    border: 1px solid var(--hairline); border-radius: 10px; padding: 3px;
+  }
+  .seg span {
+    flex: 1; text-align: center; font-size: 12.5px; padding: 7px 0;
+    border-radius: 8px; color: var(--muted); cursor: pointer;
+  }
+  .seg span.on { background: var(--accent-soft); color: var(--accent); font-weight: 600; }
+  .row2 { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+  .input {
+    width: 100%; background: var(--surface2); border: 1px solid var(--hairline);
+    border-radius: 10px; padding: 9px 12px; font-size: 13px;
+    color: var(--ink); font-family: var(--font);
+  }
+  .input.mono { font-family: var(--mono); letter-spacing: .5px; }
+  .input::placeholder { color: var(--muted2); }
+  .btn-primary {
+    width: 100%; background: var(--accent); color: #fff; border: none;
+    border-radius: 10px; padding: 11px 0; font-size: 13.5px; font-weight: 700;
+    cursor: pointer; font-family: var(--font); margin-top: 4px;
+  }
+
+  /* 발급 결과 */
+  .issued {
+    margin-top: 14px; border: 1px dashed var(--win); border-radius: 10px;
+    background: var(--win-soft); padding: 12px;
+  }
+  .issued .t { font-size: 12px; color: var(--win); font-weight: 600; margin-bottom: 8px; }
+  .issued-code {
+    display: flex; align-items: center; gap: 8px;
+    padding: 6px 0; font-family: var(--mono); font-size: 14px;
+  }
+  .issued-code .copy {
+    margin-left: auto; font-size: 11px; color: var(--accent);
+    border: 1px solid var(--hairline); border-radius: 6px;
+    padding: 3px 8px; cursor: pointer; background: var(--surface);
+    font-family: var(--font);
+  }
+
+  /* 목록 */
+  .chips { display: flex; gap: 6px; margin-bottom: 12px; flex-wrap: wrap; }
+  .chip {
+    font-size: 12px; color: var(--muted); padding: 5px 12px;
+    border-radius: 999px; border: 1px solid var(--hairline); cursor: pointer;
+  }
+  .chip.on { background: var(--accent-soft); color: var(--accent); border-color: transparent; font-weight: 600; }
+  table { width: 100%; border-collapse: collapse; font-size: 12.5px; }
+  th {
+    text-align: left; color: var(--muted2); font-size: 11px; font-weight: 500;
+    padding: 6px 10px; border-bottom: 1px solid var(--hairline);
+  }
+  td { padding: 9px 10px; border-bottom: 1px solid var(--hairline); vertical-align: middle; }
+  tr.sel td { background: var(--accent-soft); }
+  tr:last-child td { border-bottom: none; }
+  .code { font-family: var(--mono); font-size: 13px; letter-spacing: .5px; }
+  .badge { font-size: 11px; padding: 3px 9px; border-radius: 999px; white-space: nowrap; }
+  .badge.active   { color: var(--win);  background: var(--win-soft); }
+  .badge.exhausted{ color: var(--muted); background: rgba(255,255,255,.06); }
+  .badge.revoked  { color: var(--live); background: var(--live-soft); }
+  .badge.expired  { color: var(--warn); background: var(--warn-soft); }
+  .type-tag { font-size: 11px; color: var(--muted); }
+  .num { font-variant-numeric: tabular-nums; }
+  .memo { color: var(--muted2); font-size: 11.5px; max-width: 150px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .act { font-size: 11.5px; color: var(--accent); cursor: pointer; white-space: nowrap; }
+  .act.danger { color: var(--live); margin-left: 8px; }
+  .act.disabled { color: var(--muted2); cursor: default; margin-left: 8px; }
+
+  /* 이력 패널 */
+  .history { margin-top: 16px; }
+  .history .hd { display: flex; align-items: center; gap: 8px; margin-bottom: 10px; }
+  .history .hd .code { color: var(--accent); }
+  .history .hd .sub { font-size: 11.5px; color: var(--muted2); }
+  .h-row {
+    display: flex; align-items: center; gap: 10px;
+    padding: 9px 4px; border-bottom: 1px solid var(--hairline); font-size: 12.5px;
+  }
+  .h-row:last-child { border-bottom: none; }
+  .h-row .avatar {
+    width: 26px; height: 26px; border-radius: 50%;
+    background: var(--surface2); color: var(--muted);
+    display: flex; align-items: center; justify-content: center; font-size: 11px;
+  }
+  .h-row .who b { font-weight: 600; }
+  .h-row .who .club { color: var(--muted); font-size: 11.5px; }
+  .h-row .when { margin-left: auto; color: var(--muted2); font-size: 11.5px; font-variant-numeric: tabular-nums; }
+
+  /* 키 게이트 상태 데모 */
+  .gate {
+    max-width: 420px; margin: 0 auto; padding: 48px 24px; text-align: center;
+  }
+  .gate .lock {
+    width: 52px; height: 52px; border-radius: 16px; margin: 0 auto 16px;
+    background: var(--accent-soft); color: var(--accent);
+    display: flex; align-items: center; justify-content: center; font-size: 24px;
+  }
+  .gate h2 { font-size: 16px; margin-bottom: 6px; }
+  .gate p { font-size: 12.5px; color: var(--muted); margin-bottom: 18px; line-height: 1.6; }
+  .gate .input { text-align: center; }
+  .gate .btn-primary { margin-top: 10px; }
+
+  .note { font-size: 11px; color: var(--muted2); margin-top: 8px; line-height: 1.7; }
+  .note code { font-family: var(--mono); color: var(--muted); background: var(--surface2); padding: 1px 5px; border-radius: 4px; }
+</style>
+</head>
+<body>
+
+<div class="page-nav">
+  <span class="nav-title">BILLING · 관리자</span>
+  <a href="../index.html">목록</a>
+  <a href="billing-pricing.html">가격표·이용권·잠금</a>
+  <a href="admin-coupons.html" class="current">쿠폰 관리자 (웹)</a>
+</div>
+
+<div class="canvas">
+
+  <h2>① 첫 방문 — API 키 게이트 (fw.dongne.dev/admin)</h2>
+  <div class="admin-page">
+    <div class="gate">
+      <div class="lock">🔑</div>
+      <h2>이용권 쿠폰 관리자</h2>
+      <p>관리자 API 키를 입력하세요.<br>키는 이 브라우저에만 저장되며, 모든 요청의 <b>X-Admin-API-Key</b> 헤더로 전송됩니다.</p>
+      <input class="input mono" placeholder="관리자 API 키" value="">
+      <button class="btn-primary">저장하고 시작</button>
+    </div>
+  </div>
+
+  <h2>② 메인 — 발급 · 목록 · 이력</h2>
+  <div class="admin-page">
+    <div class="admin-bar">
+      <div class="logo">🎟️</div>
+      <h1>이용권 쿠폰 관리자<small>fw.dongne.dev/admin</small></h1>
+      <div class="spacer"></div>
+      <div class="env-select"><span class="on">production</span><span>staging</span></div>
+      <div class="key-state">키 확인됨 <b>····A7F2</b></div>
+      <button class="btn-ghost">키 변경</button>
+    </div>
+
+    <div class="admin-body">
+      <!-- 발급 폼 -->
+      <div>
+        <div class="card">
+          <h3>새 쿠폰 발급</h3>
+          <div class="field">
+            <label>증정 유형</label>
+            <div class="seg"><span class="on">클럽 이용권</span><span>Plus</span></div>
+          </div>
+          <div class="field">
+            <label>기간</label>
+            <div class="seg"><span>1개월</span><span class="on">3개월</span><span>6개월</span></div>
+          </div>
+          <div class="row2">
+            <div class="field">
+              <label>발급 매수</label>
+              <input class="input num" value="1">
+            </div>
+            <div class="field">
+              <label>코드당 최대 등록</label>
+              <input class="input num" value="1">
+            </div>
+          </div>
+          <div class="row2">
+            <div class="field">
+              <label>등록 가능 기한 <em>(선택)</em></label>
+              <input class="input" placeholder="2026-12-31">
+            </div>
+            <div class="field">
+              <label>커스텀 코드 <em>(선택)</em></label>
+              <input class="input mono" placeholder="자동 생성">
+            </div>
+          </div>
+          <div class="field">
+            <label>메모 (발급 사유)</label>
+            <input class="input" value="베타 테스터 보상 — FC 한강">
+          </div>
+          <button class="btn-primary">쿠폰 발급</button>
+
+          <div class="issued">
+            <div class="t">✓ 1장 발급 완료 — 클럽 이용권 3개월</div>
+            <div class="issued-code">7XKQ2M9F <span class="copy">복사</span></div>
+          </div>
+          <p class="note">
+            쿠폰은 <b>무료 증정 전용</b> — 판매 금지 (Apple 3.1.1).<br>
+            커스텀 코드: 대문자+숫자 4~16자.
+          </p>
+        </div>
+      </div>
+
+      <!-- 목록 + 이력 -->
+      <div>
+        <div class="card">
+          <h3>발급된 쿠폰</h3>
+          <div class="chips">
+            <span class="chip on">전체</span>
+            <span class="chip">활성</span>
+            <span class="chip">소진</span>
+            <span class="chip">회수</span>
+            <span class="chip">만료</span>
+          </div>
+          <table>
+            <thead>
+              <tr><th>코드</th><th>유형</th><th>소진</th><th>기한</th><th>메모</th><th>상태</th><th></th></tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td class="code">7XKQ2M9F</td>
+                <td class="type-tag">클럽 3개월</td>
+                <td class="num">0 / 1</td>
+                <td class="num">—</td>
+                <td class="memo">베타 테스터 보상 — FC 한강</td>
+                <td><span class="badge active">활성</span></td>
+                <td><span class="act">이력</span><span class="act danger">회수</span></td>
+              </tr>
+              <tr class="sel">
+                <td class="code">LAUNCH26</td>
+                <td class="type-tag">클럽 1개월</td>
+                <td class="num">37 / 100</td>
+                <td class="num">2026-08-31</td>
+                <td class="memo">출시 캠페인 (선착순 100클럽)</td>
+                <td><span class="badge active">활성</span></td>
+                <td><span class="act">이력</span><span class="act danger">회수</span></td>
+              </tr>
+              <tr>
+                <td class="code">BETA1FCH</td>
+                <td class="type-tag">클럽 6개월</td>
+                <td class="num">1 / 1</td>
+                <td class="num">—</td>
+                <td class="memo">파트너 제휴 — 조기축구연합</td>
+                <td><span class="badge exhausted">소진</span></td>
+                <td><span class="act">이력</span><span class="act disabled">회수</span></td>
+              </tr>
+              <tr>
+                <td class="code">Q2CSPLUS</td>
+                <td class="type-tag">Plus 1개월</td>
+                <td class="num">0 / 1</td>
+                <td class="num">2026-06-01</td>
+                <td class="memo">CS 보상 — 결제 오류 보전</td>
+                <td><span class="badge expired">만료</span></td>
+                <td><span class="act">이력</span><span class="act disabled">회수</span></td>
+              </tr>
+              <tr>
+                <td class="code">EVENT5K9</td>
+                <td class="type-tag">클럽 1개월</td>
+                <td class="num">2 / 50</td>
+                <td class="num">—</td>
+                <td class="memo">(오발급) 조건 잘못 설정</td>
+                <td><span class="badge revoked">회수됨</span></td>
+                <td><span class="act">이력</span><span class="act disabled">회수</span></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <div class="card history">
+          <div class="hd">
+            <span class="code">LAUNCH26</span>
+            <span class="sub">등록 이력 37건 — 최근순</span>
+          </div>
+          <div class="h-row">
+            <div class="avatar">김</div>
+            <div class="who"><b>김민준</b> <span class="club">→ FC 한강 (클럽 이용권 1개월)</span></div>
+            <div class="when">2026-06-09 21:14</div>
+          </div>
+          <div class="h-row">
+            <div class="avatar">박</div>
+            <div class="who"><b>박서연</b> <span class="club">→ 강서 유나이티드 (클럽 이용권 1개월)</span></div>
+            <div class="when">2026-06-09 18:02</div>
+          </div>
+          <div class="h-row">
+            <div class="avatar">이</div>
+            <div class="who"><b>이도현</b> <span class="club">→ 도봉 FC (클럽 이용권 1개월)</span></div>
+            <div class="when">2026-06-08 09:47</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <p class="note" style="margin:16px 4px 40px;">
+    구현: <code>hosting/public/admin/index.html</code> (정적, hosting <code>styles.css</code> 재사용) ·
+    API: <code>src/Api/Endpoints/AdminCouponEndpoints.cs</code> (<code>X-Admin-API-Key</code>) ·
+    설계 문서: 메인 레포 <code>docs/이용권_쿠폰_설계.md</code> §7<br>
+    회수 버튼은 confirm 다이얼로그 필수 · 환경 전환 시 API base 와 저장 키(<code>fw_admin_key_*</code>)가 함께 전환됨
+  </p>
+
+</div>
+
+</body>
+</html>
